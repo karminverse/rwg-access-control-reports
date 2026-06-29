@@ -1,0 +1,59 @@
+{
+  "_note": "Per-report PROSE overlay for the RWG directory, keyed by file basename (no extension). Entirely OPTIONAL and now intentionally minimal: every factual stat on a card (contracts, privileged fns, EOA holders, critical roles, control surface, proxy/upgradability, scan date) is read live from the report's own Markdown header by api/reports.js, so it never needs hand-maintaining here. This file only carries the analyst-authored prose the report does not contain: protocol, a one-line summary, the analyst review 'status' (reviewed | in-review | monitoring | parked), display name overrides (asset/subtitle), and 'order'. A report with no entry still appears, named from its own header.",
+  "collateral": {
+    "DOLA": {
+      "protocol": "Inverse Finance",
+      "summary": "Debt-backed USD stablecoin minted by FiRM Feds against collateral.",
+      "status": "reviewed",
+      "order": 1
+    },
+    "crvUSD": {
+      "protocol": "Curve Finance",
+      "summary": "Crypto-collateralized USD stablecoin with LLAMMA soft-liquidation.",
+      "status": "reviewed",
+      "order": 2
+    },
+    "scrvUSD": {
+      "subtitle": "Savings crvUSD (Yearn V3 Vault)",
+      "protocol": "Curve Finance",
+      "summary": "Savings crvUSD: an unmodified Yearn V3 vault accruing crvUSD yield.",
+      "status": "reviewed",
+      "order": 3
+    },
+    "USDe": {
+      "protocol": "Ethena",
+      "summary": "Synthetic dollar backed by a delta-neutral, off-chain-custodied basis position.",
+      "status": "reviewed",
+      "order": 4
+    },
+    "StakedUSDeV2": {
+      "asset": "sUSDe",
+      "subtitle": "StakedUSDeV2",
+      "protocol": "Ethena",
+      "summary": "Staked USDe: an ERC-4626 vault distributing USDe protocol yield.",
+      "status": "reviewed",
+      "order": 5
+    },
+    "frxUSD": {
+      "protocol": "Frax Finance",
+      "summary": "Frax USD stablecoin backed by off-chain RWA custodians plus on-chain reserves.",
+      "status": "reviewed",
+      "order": 7
+    },
+    "sfrxUSD": {
+      "protocol": "Frax Finance",
+      "summary": "Staked frxUSD: an ERC-4626 vault distributing Frax yield.",
+      "status": "reviewed",
+      "order": 8
+    },
+    "rewardVault": {
+      "asset": "Stake DAO Reward Vault",
+      "subtitle": "sd-DOLA-sUSDe (OnlyBoost v2)",
+      "protocol": "Stake DAO",
+      "summary": "OnlyBoost v2 reward vault wrapping the sd-DOLA/sUSDe Curve gauge position.",
+      "status": "reviewed",
+      "order": 9
+    }
+  },
+  "weekly": {}
+}
