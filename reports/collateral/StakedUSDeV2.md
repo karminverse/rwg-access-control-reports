@@ -13,7 +13,7 @@
 | ERC-4626 Vault | ✅ Underlying: `0x4c9EDD5852cd905f086C759E8383e09bff1E68B3` |
 | Control Surface | — |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:07 UTC |
+| Report Date | 2026-06-29 21:58 UTC |
 
 ### Surface Summary
 
@@ -27,139 +27,77 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-02T22:18:17Z** (block 25232619) → **2026-06-25T23:06:57Z** (block 25397797).
+> Comparing **2026-06-22T15:43:18Z** (block 25374098) → **2026-06-29T21:57:28Z** (block 25426135).
 
 ### Roles
 - 🔄 `FULL_RESTRICTED_STAKER_ROLE` on **StakedUSDeV2** (`0x9d39a5…3497`)
     - member ➕ `0x024304…7ef1`
-    - member ➕ `0x05a2a0…56f1`
-    - member ➕ `0x05d25f…d0b2`
-    - member ➕ `0x061d5d…a153`
-    - member ➕ `0x07c5bb…6292`
-    - member ➕ `0x0af4e0…7a35`
-    - member ➕ `0x0bf40d…2d95`
-    - member ➕ `0x0cfea1…bfa2`
-    - member ➕ `0x0eed55…f0ab`
-    - member ➕ `0x10c5b5…87f7`
-    - member ➕ `0x10ef12…a3d6`
-    - member ➕ `0x131015…38e0`
-    - member ➕ `0x198c6d…247c`
-    - member ➕ `0x1c2328…fff8`
-    - member ➕ `0x1d60ab…cb65`
+    - member ➕ `0x0fb6f1…f480`
+    - member ➕ `0x1574f5…feff`
+    - member ➕ `0x1bfaef…6afb`
     - member ➕ `0x1e5a12…acad`
-    - member ➕ `0x267028…de39`
-    - member ➕ `0x26aa47…a9e7`
-    - member ➕ `0x26caf6…0318`
-    - member ➕ `0x27c036…51f2`
-    - member ➕ `0x2add70…354c`
+    - member ➕ `0x22e7c6…07d9`
+    - member ➕ `0x243bfa…76ca`
     - member ➕ `0x35e6ef…a57e`
+    - member ➕ `0x370159…c305`
+    - member ➕ `0x3cd733…f506`
+    - member ➕ `0x3d3827…5bfa`
     - member ➕ `0x3e797d…df48`
+    - member ➕ `0x412632…afae`
     - member ➕ `0x420554…a9eb`
     - member ➕ `0x4243bf…f359`
-    - member ➕ `0x45c603…2c4d`
-    - member ➕ `0x462f21…1f9b`
-    - member ➕ `0x46c5ae…ffba`
-    - member ➕ `0x46c6e1…7313`
-    - member ➕ `0x48467b…4aa6`
-    - member ➕ `0x494852…c855`
-    - member ➕ `0x4b9cd4…0801`
-    - member ➕ `0x4f4e21…b291`
-    - member ➕ `0x5062d1…d80b`
+    - member ➕ `0x4cb8d2…0326`
     - member ➕ `0x509253…3bc9`
-    - member ➕ `0x518d80…d4a5`
-    - member ➕ `0x530b81…b808`
+    - member ➕ `0x52edf3…117c`
     - member ➕ `0x54297f…ef5a`
-    - member ➕ `0x548abe…49d2`
     - member ➕ `0x586849…a3d6`
-    - member ➕ `0x5910a9…e697`
-    - member ➕ `0x5af96f…f2f7`
     - member ➕ `0x5c278f…e72b`
-    - member ➕ `0x6485bb…a83c`
-    - member ➕ `0x65319d…51ab`
-    - member ➕ `0x65991e…4b50`
-    - member ➕ `0x67b482…a7f6`
-    - member ➕ `0x688d5c…c463`
-    - member ➕ `0x6dd526…5688`
-    - member ➕ `0x6e8e8c…721d`
-    - member ➕ `0x6e9c5a…e190`
-    - member ➕ `0x71a478…4a4a`
-    - member ➕ `0x726920…119f`
-    - member ➕ `0x735e74…52f3`
     - member ➕ `0x739466…6fd1`
-    - member ➕ `0x739dea…452f`
-    - member ➕ `0x7408ee…631c`
     - member ➕ `0x7849ba…a32e`
-    - member ➕ `0x78cfe1…0367`
-    - member ➕ `0x79f798…14e8`
+    - member ➕ `0x798f05…a74f`
     - member ➕ `0x7ab33a…a22e`
-    - member ➕ `0x7cbc8f…705c`
+    - member ➕ `0x7db798…8303`
+    - member ➕ `0x7dec71…dd9c`
     - member ➕ `0x7e96a4…7f9d`
-    - member ➕ `0x86bc48…ef88`
-    - member ➕ `0x86bf73…cefe`
     - member ➕ `0x8773db…3c01`
-    - member ➕ `0x881fd9…4185`
+    - member ➕ `0x89e40e…3a26`
     - member ➕ `0x8c0528…c848`
     - member ➕ `0x8d87fe…e680`
     - member ➕ `0x8e2b06…b738`
-    - member ➕ `0x8eaacd…58e6`
-    - member ➕ `0x906e6c…927e`
-    - member ➕ `0x92d208…23ca`
+    - member ➕ `0x90165f…3014`
     - member ➕ `0x978d82…b984`
-    - member ➕ `0x99f512…0f02`
-    - member ➕ `0x9a9c93…eac4`
     - member ➕ `0x9ab00d…03d5`
     - member ➕ `0x9be57b…7516`
-    - member ➕ `0x9be5b8…7516`
-    - member ➕ `0xa04a19…d359`
-    - member ➕ `0xa25e59…340f`
-    - member ➕ `0xa56ab8…45ed`
+    - member ➕ `0x9e0bf0…64c2`
+    - member ➕ `0xa5996c…b084`
     - member ➕ `0xa5ddd7…6fda`
+    - member ➕ `0xa62194…0f58`
     - member ➕ `0xa6c2df…3846`
-    - member ➕ `0xa70341…cd8f`
     - member ➕ `0xa93c5d…0b92`
-    - member ➕ `0xa95d91…d09f`
-    - member ➕ `0xaba491…33f5`
+    - member ➕ `0xae4ae1…13ee`
     - member ➕ `0xb1449b…6998`
     - member ➕ `0xb22684…a573`
-    - member ➕ `0xb2431e…c924`
-    - member ➕ `0xb593d5…c75f`
     - member ➕ `0xb5f715…5480`
-    - member ➕ `0xb757df…77a3`
     - member ➕ `0xb8de72…7c5a`
-    - member ➕ `0xbc6313…d559`
-    - member ➕ `0xbd1504…5daa`
-    - member ➕ `0xbe85fe…606b`
-    - member ➕ `0xbf5ca1…9a13`
-    - member ➕ `0xbf72ca…19a9`
-    - member ➕ `0xc0db7f…3d86`
+    - member ➕ `0xbee6c2…4f7d`
     - member ➕ `0xc0de34…a4fb`
-    - member ➕ `0xc2bb00…0267`
-    - member ➕ `0xca29b1…fbe1`
-    - member ➕ `0xcb8697…eb55`
-    - member ➕ `0xcbb691…a9cf`
+    - member ➕ `0xc10ca5…41be`
+    - member ➕ `0xc3b120…2de0`
     - member ➕ `0xd09e06…72ac`
     - member ➕ `0xd2c4f9…890f`
     - member ➕ `0xd2f8ec…2276`
-    - member ➕ `0xd7e42d…bd22`
-    - member ➕ `0xe0a4be…4894`
-    - member ➕ `0xe39a4f…2e57`
-    - member ➕ `0xe72295…e9a8`
+    - member ➕ `0xd50f87…fbfd`
     - member ➕ `0xe79538…82ba`
-    - member ➕ `0xe88cc9…1869`
     - member ➕ `0xe99d1b…2430`
-    - member ➕ `0xea6268…4e78`
-    - member ➕ `0xeced01…cfa4`
-    - member ➕ `0xee1a24…791c`
-    - member ➕ `0xf9926b…3c04`
-    - member ➕ `0xf9a04c…7627`
-    - member ➕ `0xfb96e3…9403`
+    - member ➕ `0xeeacad…05d0`
+    - member ➕ `0xf23416…3dc9`
     - member ➕ `0xfbe891…b90d`
     - member ➕ `0xfc384d…8545`
     - member ➕ `0xfe20dd…a699`
 
 ### Parameters
 - 🔄 `transferInRewards` on **StakingRewardsDistributor** (`0xf2fa33…b439`)
-    - set_at_block: `25230944` → `25396095`
+    - set_at_block: `25372189` → `25424788`
 
 
 ## 📋 Protocol Context
@@ -276,7 +214,7 @@
 - 🔄 [**Observed: volatile parameter `cooldownDuration` on StakedUSDeV2**](#c-0x9d39a5de30e57443bff2a8307a4256c8797a3497) — `setCooldownDuration(uint24 duration)` changed 7 times. Current value: `86400`. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `transferInRewards` on StakedUSDeV2**](#c-0x9d39a5de30e57443bff2a8307a4256c8797a3497) — `transferInRewards(uint256 amount)` changed 7 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `operator` on StakingRewardsDistributor**](#c-0xf2fa332bd83149c66b09b45670bce64746c6b439) — `setOperator(address _newOperator)` changed 6 times. Current value: `0xe3880B792F6F0f8795CbAACd92E7Ca78F5d3646e`. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `transferInRewards` on StakingRewardsDistributor**](#c-0xf2fa332bd83149c66b09b45670bce64746c6b439) — `transferInRewards(uint256 _rewardsAmount)` changed 2489 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `transferInRewards` on StakingRewardsDistributor**](#c-0xf2fa332bd83149c66b09b45670bce64746c6b439) — `transferInRewards(uint256 _rewardsAmount)` changed 2501 times. Current value: ``. Assess change pattern.
 
 </details>
 
@@ -384,7 +322,7 @@
 
 | Signer | Type | Owner Since | Notes |
 |---|---|---|---|
-| `0x66096e581863EC2682e4E317Da41B80510a274F6` | EOA | 2026-05-28 🆕 | EOA |
+| `0x66096e581863EC2682e4E317Da41B80510a274F6` | EOA | 2026-05-28 | EOA |
 | `0x18d32B1AB042b5E9a3430e77fDE8B4783A019234` | EOA | 2025-04-29 | EOA |
 | `0xb93C042c688F1Cf038bab03C4F832F2630Bb7d8F` | EOA | 2025-04-10 | EOA |
 | `0x66892C66711B2640360C3123E6C23C0cFa50550F` | EOA | 2025-01-02 | EOA |
@@ -495,12 +433,12 @@
   - 2023-11-20: 🟢 increased 3 → 4
   - 2024-01-17: 🟢 increased 4 → 5
 
-### 🔴 `FULL_RESTRICTED_STAKER_ROLE` 🔄 741 changes · 👤 user
+### 🔴 `FULL_RESTRICTED_STAKER_ROLE` 🔄 767 changes · 👤 user
 
 **Hash:** `0x0a4af4bcc1942295207d9f047442ebdae6170a6e324850f758b14cf99b65c3bd`  
 **Managed by:** `DEFAULT_ADMIN_ROLE`  
 
-**Members: 705** _(KYC-whitelisted participants — individual addresses omitted)_
+**Members: 731** _(KYC-whitelisted participants — individual addresses omitted)_
 
 
 #### 🔧 Permissioned Parameters
@@ -581,7 +519,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `REWARDER_ROLE` on **StakedUSDeV2**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `USDE_TOKEN()` → USDe (USDe), `mintContract()` → EthenaMinting, `STAKING_VAULT()` → sUSDe (StakedUSDeV2)
+> 🔒 **Immutable References:** `STAKING_VAULT()` → sUSDe (StakedUSDeV2), `mintContract()` → EthenaMinting, `USDE_TOKEN()` → USDe (USDe)
 
 > ✅ **Two-step admin transfer:** `OZ Ownable2Step` — prevents accidental hand-off (request → accept flow).
 
@@ -675,30 +613,30 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`transferInRewards`** 🔄 **ACTIVE** (2489 changes) 🔴 **SILENT** *(no event)*
+> **`transferInRewards`** 🔄 **ACTIVE** (2501 changes) 🔴 **SILENT** *(no event)*
 
 > > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
 
-> > ⚠️ This parameter has been changed **2489 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **2501 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `transferInRewards(uint256 _rewardsAmount)` |
 > | Gated by | `operator()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-06-25 |
+> | Last called | 2026-06-29 |
 > | Called by | `0xe388...646e` (EOA) |
-> | Total calls | 2489 🔄 |
+> | Total calls | 2501 🔄 |
 
-> **Recent changes (showing last 5 of 2489):**
+> **Recent changes (showing last 5 of 2501):**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `54449105714285714285714 (54,449.105714e18)` | `0xe388...646e` (EOA) | 2026-06-25 |
-> | 2 | `54449105714285714285714 (54,449.105714e18)` | `0xe388...646e` (EOA) | 2026-06-25 |
-> | 3 | `54449105714285714285714 (54,449.105714e18)` | `0xe388...646e` (EOA) | 2026-06-25 |
-> | 4 | `54449105714285714285714 (54,449.105714e18)` | `0xe388...646e` (EOA) | 2026-06-24 |
-> | 5 | `54449105714285714285714 (54,449.105714e18)` | `0xe388...646e` (EOA) | 2026-06-24 |
+> | 1 | `57612668571428571428572 (57,612.668571e18)` | `0xe388...646e` (EOA) | 2026-06-29 |
+> | 2 | `57612668571428571428572 (57,612.668571e18)` | `0xe388...646e` (EOA) | 2026-06-29 |
+> | 3 | `57612668571428571428572 (57,612.668571e18)` | `0xe388...646e` (EOA) | 2026-06-29 |
+> | 4 | `57612668571428571428572 (57,612.668571e18)` | `0xe388...646e` (EOA) | 2026-06-28 |
+> | 5 | `57612668571428571428572 (57,612.668571e18)` | `0xe388...646e` (EOA) | 2026-06-28 |
 
 ---
 <a id="c-0x7fc7c91d556b400afa565013e3f32055a0713425"></a>
@@ -716,8 +654,8 @@ Controls **4 role(s)** across **2 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| StakedUSDeV2 `0x9D39...3497` | `BLACKLIST_MANAGER_ROLE` | `addToBlacklist(address target, bool isFullBlacklisting)`, `removeFromBlacklist(address target, bool isFullBlacklisting)` | 2024-04-29 |
 | StakedUSDeV2 `0x9D39...3497` | `REWARDER_ROLE` | `transferInRewards(uint256 amount)` | 2023-11-14 |
+| StakedUSDeV2 `0x9D39...3497` | `BLACKLIST_MANAGER_ROLE` | `addToBlacklist(address target, bool isFullBlacklisting)`, `removeFromBlacklist(address target, bool isFullBlacklisting)` | 2024-04-29 |
 | StakedUSDeV2 `0x9D39...3497` | `DEFAULT_ADMIN_ROLE` | `setCooldownDuration(uint24 duration)`, `rescueTokens(address token, uint256 amount, address to)`, `redistributeLockedAmount(address from, address to)`, `transferAdmin(address newAdmin)` +3 more | 2023-11-14 |
 | StakingRewardsDistributor `0xf2fa...b439` | `owner()` | `rescueTokens(address _token, address _to, uint256 _amount)`, `setMintingContract(EthenaMinting _newMintingContract)`, `approveToMintContract(address[] memory _assets)`, `revokeApprovals(address[] memory _assets, address _target)` +3 more | — |
 
@@ -727,9 +665,9 @@ Controls **4 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
-| **Result** | 751 addresses screened · ⛔ **76 flagged** |
+| **Result** | 777 addresses screened · ⛔ **76 flagged** |
 
 The following addresses were flagged against OFAC SDN and/or Chainalysis databases.  
 **Active holders** currently hold a role. **Prev holders** had their role revoked.

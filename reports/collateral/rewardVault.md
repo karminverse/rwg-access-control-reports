@@ -13,7 +13,7 @@
 | ERC-4626 Vault | ✅ Underlying: `0x744793B5110f6ca9cC7CDfe1CE16677c3Eb192ef` |
 | Control Surface | ✅ Fully on-chain |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:06 UTC |
+| Report Date | 2026-06-29 21:57 UTC |
 
 ### Surface Summary
 
@@ -27,13 +27,13 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-12T17:34:04Z** (block 25302894) → **2026-06-25T23:05:41Z** (block 25397799).
+> Comparing **2026-06-22T15:51:27Z** (block 25374134) → **2026-06-29T21:56:34Z** (block 25426137).
 
 ### Roles
-- 🔄 `DEFAULT_ADMIN_ROLE` on **ProtocolTimelock** (`0xb27afc…8e6a`)
-    - member ➖ `0xb0552b…c765`
 - 🔄 `CANCELLER_ROLE` on **ProtocolTimelock** (`0xb27afc…8e6a`)
     - member ➕ `0xce71c0…26f1`
+- 🔄 `DEFAULT_ADMIN_ROLE` on **ProtocolTimelock** (`0xb27afc…8e6a`)
+    - member ➖ `0xb0552b…c765`
 
 
 ## 📋 Protocol Context
@@ -43,7 +43,7 @@
 <details>
 <summary><strong>Architecture</strong></summary>
 
-- **Architectural shape:** OZ AccessControl + OZ TimelockController (2d) + Safe 3/5 proposer/executor. Stake DAO OnlyBoost v2 four-contract architecture (RewardVault clone / ProtocolController / Accountant / CurveStrategy). FiRM-relevant SUPPLY surface routes through ProtocolController.setStrategy + setAllocator (CRITICAL, 2d-buffered via Timelock); Safe 3/5 is sole proposer AND executor — executor is Safe-gated, NOT permissionless (verified hasRole(EXECUTOR_ROLE, address(0))=False, block 25302753, 2026-06-12). The same Safe 3/5 also solely holds CANCELLER_ROLE + DEFAULT_ADMIN_ROLE → single-multisig SPOF over the entire timelock lifecycle (see decisions[]).
+- **Architectural shape:** OZ AccessControl + OZ TimelockController (2d) + Safe 3/5 proposer/executor. Stake DAO OnlyBoost v2 four-contract architecture (RewardVault clone / ProtocolController / Accountant / CurveStrategy). FiRM-relevant SUPPLY surface routes through ProtocolController.setStrategy + setAllocator (CRITICAL, 2d-buffered via Timelock); chair Safe proposes, anyone executes after delay.
 - OnlyBoost v2 is Stake DAO's yield aggregator that splits boosted LP deposits between Convex (sidecar) and Stake DAO's own veCRV locker to maximize CRV emissions. The Allocator contract (per-protocol, looked up via PROTOCOL_ID) decides the routing for each deposit/withdraw based on on-chain math (boost levels, current allocations).
 - Architecture is FOUR-CONTRACT-per-protocol: (1) ProtocolController — central authority / permission grid / shutdown switch; (2) Accountant — balance ledger (totalSupply, balanceOf, harvested-fee ledger, CRV reward distribution); (3) Strategy — interacts with the underlying gauge / Convex sidecar; (4) Allocator — routing decision. All four are looked up on the ProtocolController via PROTOCOL_ID. Each RewardVault clone is a thin wrapper around these four.
 - RewardVault is CLONED per-gauge via EIP-1167 minimal proxy. Immutable args (gauge, asset) are appended to the clone bytecode and read via ImmutableArgsParser. The clone bytecode is 85 bytes (50 standard EIP-1167 + 40 for two immutable addresses).
@@ -167,7 +167,7 @@
 - **`setPermissionSetter(address setter, bool allowed)`** 🔴 on [**ProtocolController (0x2d8bCE1FaE00A959354aCD9eBF9174337A64d4fb)**](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb)
     - *Role gate:* owner() = TimelockController (2d) 0xb27a…8E6a; Timelock admin/proposer/executor/canceller = Gnosis Safe 3/5 0xB055…C765 [verified eth_call 2026-05-14]
     - *Live current value (as of block 23,669,616):* `Gnosis Safe 3/5: True`
-    - *Recorded changes:* 4 historical event(s); last setter `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765`
+    - *Recorded changes:* 6 historical event(s); last setter `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765`
     - *Profile-declared value:* `permissionSetters mapping — sole entry: Gnosis Safe 3/5 0xB055…C765 (set 2025-10-27 via Timelock execute)`
     - *Threshold:* Meta-privilege: one-step from full permission-grid control. Adding a new permissionSetter via Timelock owner path requires 2-day delay.
     - *Impact:* META_ADMIN. The PROTOCOL_CONTROLLER owner is upstream of every other ProtocolController lever (strategy/allocator/target/shutdown). Confirmed Safe + Timelock structure: Safe 3/5 acts as proposer, 2-day Timelock buffers all changes. Authority chain is structurally sound — no single-EOA owner. (Originally graded CRITICAL pending verification of holder; remains CRITICAL because META_ADMIN status is inherent regardless of holder structure.)
@@ -191,15 +191,15 @@
 1. [Analyst Focus Areas](#analyst-focus-areas)
 2. Contracts
    - [sd-DOLA-sUSDe-vault ★](#c-0x0c36ad1a68cdbbbfafad7d03bb97cbab24174e55)
-   - [ProtocolController](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb)
    - [CurveStrategy](#c-0xb010c392f9572aeb5ea3817e94dc6745421b2bb5)
-   - [Accountant](#c-0x93b4b9bd266ffa8af68e39edfa8cfe2a62011ce0)
-   - [LiquidityGaugeV6](#c-0x8f5e52be9b7bde850ba13e40284f63f14677058f)
+   - [ProtocolController](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb)
    - [OnlyBoostAllocator](#c-0xc0238579e281dae9403b7a3c1d22a14d61d7de69)
-   - [ProtocolTimelock](#c-0xb27afc7844988948fbd6210aef4e1362bc2d8e6a)
-   - [CRV [Vyper_contract]](#c-0xd533a949740bb3306d119cc777fa900ba034cd52)
+   - [LiquidityGaugeV6](#c-0x8f5e52be9b7bde850ba13e40284f63f14677058f)
+   - [Accountant](#c-0x93b4b9bd266ffa8af68e39edfa8cfe2a62011ce0)
    - [Vyper_contract](#c-0xd061d61a4d941c39e5453435b6345dc261c2fce0)
+   - [CRV [Vyper_contract]](#c-0xd533a949740bb3306d119cc777fa900ba034cd52)
    - [CurveYCRVVoter](#c-0x52f541764e6e90eebc5c21ff570de0e2d63766b6)
+   - [ProtocolTimelock](#c-0xb27afc7844988948fbd6210aef4e1362bc2d8e6a)
    - [ConvexSidecarFactory](#c-0x6dfa6232ec23e029d4322115f491a912de9cf9e7)
 3. [⚡ Authority Concentration](#-authority-concentration)
 4. [⛔ Sanctions Screening](#-sanctions-screening)
@@ -210,16 +210,16 @@
 
 > **Observational findings — not risk determinations.** Each item below is a focus point for the Risk Analyst to interpret against collateralization context and the protocol's stated intent. Attention levels (CRITICAL / HIGH / LOW) reflect the scanner's heuristic weight — not a realized risk to FiRM. These observations support future risk assessments; they do not constitute one.
 
-> **3 critical-attention** and **11 high-attention** observation(s) across 12 contract(s).
+> **3 critical-attention** and **13 high-attention** observation(s) across 12 contract(s).
 
 
 ### 🔴 CRITICAL (3)
 
-- 🔴 [**Observed: EOA holds `manager()` on LiquidityGaugeV6**](#c-0x8f5e52be9b7bde850ba13e40284f63f14677058f) — `0xEC092c15e8D5A48a77Cde36827F8e228CE39471a` (EOA) — single key controls a role whose functions (`add_reward`, `set_gauge_manager`, `set_reward_distributor`) may reach inherited [PAUSE] authority via RewardVault. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `manager()` on LiquidityGaugeV6**](#c-0x8f5e52be9b7bde850ba13e40284f63f14677058f) — `0xEC092c15e8D5A48a77Cde36827F8e228CE39471a` (EOA) — single key controls a role whose config functions (e.g. peer/delegate/bridge setters) reach inherited [PAUSE] authority via RewardVault. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `GUARDIAN_ROLE` on ProtocolTimelock**](#c-0xb27afc7844988948fbd6210aef4e1362bc2d8e6a) — `0xf3a5AC78f47638C60117D9fA3dc7Be96625947aF` (EOA) — single key controls [PAUSE] capability. Assess custody and intent.
 - 🎚️ [**Observed: 9 critical parameter levers (CRITICAL: 3, HIGH: 1, MEDIUM: 2, LOW: 2)**](#sec-critical-params) — Asset has 9 on-chain parameter levers curated as high-impact for lender-side risk. See the 🎚️ Critical Parameter Levers section for the role gate, current value, threshold, and impact of each. These are singular setters / function calls that flip risk surface in one tx — direct dilution, safety-mechanism closure, authority transfer, or oracle repointing. Verify role-gate identities and threshold distance-to-trigger against current operating posture.
 
-### 🟠 HIGH (11)
+### 🟠 HIGH (13)
 
 - 💰 **Observed: 2 role(s) with supply-altering capability** — Supply-altering surface detected: `admin()` on CRV [Vyper_contract], `minter()` on CRV [Vyper_contract]. Assess each holder's custody and governance.
 - ⏸️ **Observed: 4 role(s) with pause capability** — Pause surface detected: `owner()` on ProtocolController, `GUARDIAN_ROLE` on ProtocolTimelock, `PROTOCOL_CONTROLLER()` on RewardVault. Assess pause authority governance.
@@ -228,9 +228,11 @@
 - ⚠️ [**No Timelock in admin chain: `minter()` on CRV [Vyper_contract]**](#c-0xd533a949740bb3306d119cc777fa900ba034cd52) — `minter()` has SUPPLY capability and is held by: `0xd061...fcE0` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 
 <details>
-<summary>🔄 **5 volatile parameter(s) observed across 3 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
+<summary>🔄 **7 volatile parameter(s) observed across 3 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
 
 - 🔄 [**Observed: volatile parameter `registrar` on ProtocolController**](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb) — `setRegistrar(address registrar_, bool allowed)` changed 11 times. Current value: 9 keys · all 0 — full per-key breakdown in the Permissioned Parameters table on ProtocolController. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `permissionSetters` on ProtocolController**](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb) — `setPermissionSetter(address setter, bool allowed)` changed 6 times. Current value: 1 keys · all 0 — full per-key breakdown in the Permissioned Parameters table on ProtocolController. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `unpause` on ProtocolController**](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb) — `unpause(bytes4 protocolId)` changed 6 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `setPermission` on ProtocolController**](#c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb) — `setPermission(address,address,bytes4,bool)` changed 6 times. Current value: 6 keys · all 0 — full per-key breakdown in the Permissioned Parameters table on ProtocolController. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getHarvestFeePercent` on Accountant**](#c-0x93b4b9bd266ffa8af68e39edfa8cfe2a62011ce0) — `setHarvestFeePercent(uint128 newHarvestFeePercent)` changed 6 times. Current value: `1000000000000000`. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getProtocolFeePercent` on Accountant**](#c-0x93b4b9bd266ffa8af68e39edfa8cfe2a62011ce0) — `setProtocolFeePercent(uint128 newProtocolFeePercent)` changed 6 times. Current value: `165000000000000000 (0.165000e18)`. Assess change pattern.
@@ -260,7 +262,7 @@
 <a id="c-0x0c36ad1a68cdbbbfafad7d03bb97cbab24174e55"></a>
 ## RewardVault `0x0c36ad1a68cdbBBFafaD7d03bb97cbaB24174e55`
 
-🔒 **Immutable References:** `strategy()` → CurveStrategy, `ACCOUNTANT()` → Accountant, `allocator()` → OnlyBoostAllocator
+🔒 **Immutable References:** `strategy()` → CurveStrategy, `allocator()` → OnlyBoostAllocator, `ACCOUNTANT()` → Accountant
 
 ### 🟠 `PROTOCOL_CONTROLLER()`
 
@@ -306,6 +308,81 @@
 | Last called | — |
 | Called by | — |
 | Total calls | 0 ❄️ |
+
+---
+<a id="c-0xb010c392f9572aeb5ea3817e94dc6745421b2bb5"></a>
+## > CurveStrategy `0xb010C392F9572aEb5Ea3817e94DC6745421b2bb5`
+
+> 🔒 **Immutable References:** `GATEWAY()` → Gnosis Safe 1/1
+
+### > 🟠 `ACCOUNTANT()`
+
+> **Privileged write functions:**
+> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
+> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
+> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+> - `flush()` — Transfers accumulated rewards to accountant after batch harvest Called once after harvesting multiple gauges to save gas
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x93b4B9bd266fFA8AF68e39EDFa8cFe2A62011Ce0` | Accountant | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `LOCKER()`
+
+> **Privileged write functions:**
+> - `claimExtraRewards(address gauge)` — Claims extra rewards from a Curve gauge
+> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
+> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
+> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x52f541764E6e90eeBc5c21Ff570De0e2D63766B6` | CurveYCRVVoter | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `MINTER()`
+
+> **Privileged write functions:**
+> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
+> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
+> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0` | Contract | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `PROTOCOL_CONTROLLER()`
+
+> **Privileged write functions:**
+> - `claimExtraRewards(address gauge)` — Claims extra rewards from a Curve gauge
+> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
+> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
+> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x2d8BcE1FaE00a959354aCD9eBf9174337A64d4fb` | ProtocolController | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `REWARD_TOKEN()`
+
+> **Privileged write functions:**
+> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
+> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
+> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+> - `flush()` — Transfers accumulated rewards to accountant after batch harvest Called once after harvesting multiple gauges to save gas
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xD533a949740bb3306d119CC777fa900bA034cd52` | CRV | 🟠 HIGH | — | Storage only |  |
 
 ---
 <a id="c-0x2d8bce1fae00a959354acd9ebf9174337a64d4fb"></a>
@@ -401,7 +478,9 @@
 > |---|---|---|---|
 > | 1 | `90048930453244945537516081201650314051182950674274211470581517268792347983872` | `0x0007...ff62` | 2025-08-26 |
 
-> **`permissionSetters`** *(per-asset)*
+> **`permissionSetters`** *(per-asset)* 🔄 **ACTIVE** (6 changes)
+
+> > ⚠️ This parameter has been changed **6 times** — monitor for unexpected modifications.
 
 > | Asset | Current Value |
 > |---|---|
@@ -414,16 +493,17 @@
 > | Tags | — |
 > | Last changed | 2025-10-27 |
 > | Changed by | `0xB055...C765` (Gnosis Safe 3/5) |
-> | Total changes | 4 |
+> | Total changes | 6 🔄 |
 
-> **Recent changes:**
+> **Recent changes (showing last 5 of 6):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
 > | 1 | Gnosis Safe 3/5 | `allowed=True` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-10-27 |
 > | 2 | Gnosis Safe 3/5 | `allowed=True` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-10-27 |
 > | 3 | Gnosis Safe 3/5 | `allowed=True` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-10-27 |
-> | 4 | Gnosis Safe 3/5 | `—` | `0x8888...A553` | 2025-10-27 |
+> | 4 | Gnosis Safe 3/5 | `allowed=True` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-10-27 |
+> | 5 | Gnosis Safe 3/5 | `allowed=True` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-10-27 |
 
 > **`registrar`** *(per-asset)* 🔄 **ACTIVE** (11 changes)
 
@@ -515,7 +595,9 @@
 > | Called by | — |
 > | Total calls | 0 ❄️ |
 
-> **`unpause`**
+> **`unpause`** 🔄 **ACTIVE** (6 changes)
+
+> > ⚠️ This parameter has been changed **6 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
@@ -524,91 +606,55 @@
 > | Tags | `PAUSE` |
 > | Last called | 2025-08-27 |
 > | Called by | `0xB055...C765` (Gnosis Safe 3/5) |
-> | Total calls | 4 |
+> | Total calls | 6 🔄 |
 
-> **Recent changes:**
+> **Recent changes (showing last 5 of 6):**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `protocolId=0xc715e373` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-08-27 |
 > | 2 | `protocolId=0xc715e373` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-08-27 |
 > | 3 | `protocolId=0xc715e373` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-08-27 |
-> | 4 | `90048930453244945537516081201650314051182950674274211470581517268792347983872` | `0x8888...A553` | 2025-08-27 |
+> | 4 | `protocolId=0xc715e373` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-08-27 |
+> | 5 | `protocolId=0xc715e373` | `0xB055...C765` (Gnosis Safe 3/5) | 2025-08-27 |
 
 ---
-<a id="c-0xb010c392f9572aeb5ea3817e94dc6745421b2bb5"></a>
-## > CurveStrategy `0xb010C392F9572aEb5Ea3817e94DC6745421b2bb5`
+<a id="c-0xc0238579e281dae9403b7a3c1d22a14d61d7de69"></a>
+## > OnlyBoostAllocator `0xC0238579E281DaE9403B7A3c1D22a14D61D7De69`
 
-> 🔒 **Immutable References:** `GATEWAY()` → Gnosis Safe 1/1
+> 🔒 **Immutable References:** `SIDECAR_BOOST_HOLDER()` → CurveVoterProxy, `PROTOCOL_CONTROLLER()` → ProtocolController, `GATEWAY()` → Gnosis Safe 1/1, `BOOST_PROVIDER()` → veBoost (Boost Delegation V3), `GAUGE_CONTROLLER()` → Contract, `LOCKER()` → CurveYCRVVoter
 
-### > 🟠 `ACCOUNTANT()`
+### > 🟠 `SIDECAR_FACTORY()`
 
 > **Privileged write functions:**
-> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
-> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
-> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
-> - `flush()` — Transfers accumulated rewards to accountant after batch harvest Called once after harvesting multiple gauges to save gas
+> - `setGaugeWeights(address gauge, uint256 lockerWeight)` — Sets manual allocation weights for a gauge, overriding automated boost logic.
 
 > **Members (1):**
 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
-> | `0x93b4B9bd266fFA8AF68e39EDFa8cFe2A62011Ce0` | Accountant | 🟠 HIGH | — | Storage only |  |
+> | `0x6DFA6232eC23E029d4322115f491a912De9cF9E7` | ConvexSidecarFactory | 🟠 HIGH | — | Storage only |  |
 
-### > 🟠 `LOCKER()`
+---
+<a id="c-0x8f5e52be9b7bde850ba13e40284f63f14677058f"></a>
+## > LiquidityGaugeV6 `0x8f5e52BE9B7BDe850BA13e40284F63f14677058f`
+
+> > ⚡ **Inherited authority** [PAUSE] — via `gauge()` on **RewardVault**
+
+> 🔒 **Immutable References:** `lp_token()` → DOLA-sUSDe (CurveStableSwapNG)
+
+### > 🔴 `manager()`
 
 > **Privileged write functions:**
-> - `claimExtraRewards(address gauge)` — Claims extra rewards from a Curve gauge
-> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
-> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
-> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
+> - `set_gauge_manager(address _gauge_manager)` — @notice Change the gauge manager for a gauge
+> - `add_reward(address _reward_token, address _distributor)` — @notice Add additional rewards to be distributed to stakers
+> - `set_reward_distributor(address _reward_token, address _distributor)` — @notice Reassign the reward distributor for a reward token
 
 > **Members (1):**
 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
-> | `0x52f541764E6e90eeBc5c21Ff570De0e2D63766B6` | CurveYCRVVoter | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `MINTER()`
-
-> **Privileged write functions:**
-> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
-> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
-> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0` | Contract | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `PROTOCOL_CONTROLLER()`
-
-> **Privileged write functions:**
-> - `claimExtraRewards(address gauge)` — Claims extra rewards from a Curve gauge
-> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
-> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
-> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x2d8BcE1FaE00a959354aCD9eBf9174337A64d4fb` | ProtocolController | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `REWARD_TOKEN()`
-
-> **Privileged write functions:**
-> - `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)` — Deposits LP tokens into gauge/sidecars according to allocator's distribution Called by vault after transferring LP tokens to targets
-> - `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)` — Withdraws LP tokens from gauge/sidecars and sends to receiver Skips withdrawal if gauge is shutdown (requires shutdown() instead)
-> - `harvest(address gauge, bytes memory extraData)` — Claims rewards from gauge and sidecars (accountant batch harvest) Uses transient storage to defer reward transfers for gas efficiency
-> - `flush()` — Transfers accumulated rewards to accountant after batch harvest Called once after harvesting multiple gauges to save gas
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xD533a949740bb3306d119CC777fa900bA034cd52` | CRV | 🟠 HIGH | — | Storage only |  |
+> | `0xEC092c15e8D5A48a77Cde36827F8e228CE39471a` | EOA | 🔴 CRITICAL | — | Storage only | ⚠️ Single private key |
 
 ---
 <a id="c-0x93b4b9bd266ffa8af68e39edfa8cfe2a62011ce0"></a>
@@ -736,18 +782,18 @@
 > | Gated by | `owner()` |
 > | Tags | — |
 > | Last changed | 2026-01-16 |
-> | Changed by | `0x20aC...3D2e` |
+> | Changed by | `0x20aC...3D2e` (EOA) |
 > | Total changes | 6 🔄 |
 
 > **Recent changes (showing last 5 of 6):**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `5000000000000000 (0.005000e18)` | `0x20aC...3D2e` | 2026-01-16 |
+> | 1 | `5000000000000000 (0.005000e18)` | `0x20aC...3D2e` (EOA) | 2026-01-16 |
 > | 2 | `newHarvestFeePercent=5000000000000000 (0.005000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-02 |
 > | 3 | `newHarvestFeePercent=5000000000000000 (0.005000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-02 |
 > | 4 | `newHarvestFeePercent=5000000000000000 (0.005000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-02 |
-> | 5 | `1000000000000000` | `0x9056...Fc75` | 2025-09-02 |
+> | 5 | `newHarvestFeePercent=5000000000000000 (0.005000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-02 |
 
 > **`getProtocolFeePercent`** 🔄 **ACTIVE** (6 changes)
 
@@ -770,8 +816,8 @@
 > | 1 | `newProtocolFeePercent=165000000000000000 (0.165000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-05 |
 > | 2 | `newProtocolFeePercent=165000000000000000 (0.165000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-05 |
 > | 3 | `newProtocolFeePercent=165000000000000000 (0.165000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-05 |
-> | 4 | `170000000000000000 (0.170000e18)` | `0x8888...A553` | 2025-09-05 |
-> | 5 | `0` | `0x0007...ff62` | 2025-08-26 |
+> | 4 | `newProtocolFeePercent=165000000000000000 (0.165000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-05 |
+> | 5 | `newProtocolFeePercent=165000000000000000 (0.165000e18)` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-05 |
 
 > **`MAX_FEE_PERCENT`** 🔒 **IMMUTABLE**
 
@@ -794,247 +840,21 @@
 > | Tags | `IMMUTABLE` |
 
 ---
-<a id="c-0x8f5e52be9b7bde850ba13e40284f63f14677058f"></a>
-## > LiquidityGaugeV6 `0x8f5e52BE9B7BDe850BA13e40284F63f14677058f`
+<a id="c-0xd061d61a4d941c39e5453435b6345dc261c2fce0"></a>
+## > Vyper_contract `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0`
 
-> > ⚡ **Inherited authority** [PAUSE] — via `gauge()` on **RewardVault**
+> > 💰 **Inherited supply authority** — holds `MINTER()` on **CurveStrategy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `lp_token()` → DOLA-sUSDe (CurveStableSwapNG)
+> 🔒 **Immutable References:** `token()` → CRV
 
-### > 🔴 `manager()`
+### > 🟠 `controller()`
 
-> **Privileged write functions:**
-> - `set_gauge_manager(address _gauge_manager)` — @notice Change the gauge manager for a gauge
-> - `add_reward(address _reward_token, address _distributor)` — @notice Add additional rewards to be distributed to stakers
-> - `set_reward_distributor(address _reward_token, address _distributor)` — @notice Reassign the reward distributor for a reward token
 
 > **Members (1):**
 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
-> | `0xEC092c15e8D5A48a77Cde36827F8e228CE39471a` | EOA | 🔴 CRITICAL | — | Storage only | ⚠️ Single private key |
-
----
-<a id="c-0xc0238579e281dae9403b7a3c1d22a14d61d7de69"></a>
-## > OnlyBoostAllocator `0xC0238579E281DaE9403B7A3c1D22a14D61D7De69`
-
-> 🔒 **Immutable References:** `GATEWAY()` → Gnosis Safe 1/1, `PROTOCOL_CONTROLLER()` → ProtocolController, `SIDECAR_BOOST_HOLDER()` → CurveVoterProxy, `GAUGE_CONTROLLER()` → Contract, `BOOST_PROVIDER()` → veBoost (Boost Delegation V3), `LOCKER()` → CurveYCRVVoter
-
-### > 🟠 `SIDECAR_FACTORY()`
-
-> **Privileged write functions:**
-> - `setGaugeWeights(address gauge, uint256 lockerWeight)` — Sets manual allocation weights for a gauge, overriding automated boost logic.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x6DFA6232eC23E029d4322115f491a912De9cF9E7` | ConvexSidecarFactory | 🟠 HIGH | — | Storage only |  |
-
----
-<a id="c-0xb27afc7844988948fbd6210aef4e1362bc2d8e6a"></a>
-## > ProtocolTimelock `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a`
-
-> > ⚡ **Inherited authority** [CONFIG, PAUSE] — via `owner()` on **ProtocolController**
-
-> 🔒 **Immutable References:** `protocolController()` → ProtocolController
-
-### > 🟢 `DEFAULT_ADMIN_ROLE`
-
-> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `initialize()` — Initializes the timelock by accepting ownership of the protocol controller. Only callable by addresses with DEFAULT_ADMIN_ROLE. Requires the protocol controller to be owned by the timelock.
-> - `addGuardian(address guardian)` — Adds a new guardian address. Only callable by addresses with DEFAULT_ADMIN_ROLE. Guardians can execute emergency security functions immediately without timelock delay.
-> - `removeGuardian(address guardian)` — Removes a guardian address. Only callable by addresses with DEFAULT_ADMIN_ROLE.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a` | TimelockController (2d) | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 2d delay (⚠ changed 1x) |
-
-> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
-
-> | Address | Name / Type | Granted | Status |
-> |---|---|---|---|
-> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 2025-10-09 | 🕘 HISTORICAL |
-
-
-> **Delay history for `TimelockController (2d)` (0xb27a...8E6a):** 2d → 2d
-
-### > 🔴 `GUARDIAN_ROLE`
-
-> **Hash:** `0x55435dd261a4b9b3364963f7738a7a662ad9c84396d64be3365284bb7f0a5041`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**  
-> **Capabilities:** ⏸️ **PAUSE**
-> - `pause(bytes4 protocolId)` — Immediately pauses deposits for a specific protocol. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Withdrawals remain functional during pause to protect user funds. Directly calls ProtocolController.pause(protocolId). `[PAUSE]`
-> - `unpause(bytes4 protocolId)` — Immediately unpauses deposits for a specific protocol. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Directly calls ProtocolController.unpause(protocolId). `[PAUSE]`
-> - `shutdown(address gauge)` — Immediately shuts down a specific gauge, preventing new deposits and withdrawing all funds. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Shutdown prevents new deposits while allowing users to withdraw their funds. Directly calls ProtocolController.shutdown(gauge). `[PAUSE]`
-> - `unshutdown(address gauge)` — Immediately resumes a previously shutdown gauge. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Allows a previously shutdown gauge to resume normal operations. Directly calls ProtocolController.unshutdown(gauge).
-
-> **Members (2):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2026-01-12 | Events only · hasRole ✓ | 3/5 signers |
-> | `0xf3a5AC78f47638C60117D9fA3dc7Be96625947aF` | EOA | 🔴 CRITICAL | 2025-10-13 | Events only · hasRole ✓ | ⚠️ Single private key |
-
-> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
-> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
-> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
-> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
-> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
-
-> **Enabled modules:**
->   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
->   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
-
-### > 🟢 `CANCELLER_ROLE`
-
-> **Hash:** `0xfd643c72710c63c0180259aba6b2d05451e3591a24e58b62239378085726f783`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `cancel(bytes32 id)` — Cancel an operation. Requirements:
-
-> **Members (2):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
-> | `0xce71C076da091a4Fd0CE5d6dC4A8b292032926F1` | Gnosis Safe 2/5 | 🟢 LOW | 2026-06-25 🆕 | Events only · hasRole ✓ | 2/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
-> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
-> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
-> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
-> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
-
-> **Enabled modules:**
->   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
->   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
-
-> **Signers of `Gnosis Safe 2/5` (0xce71...26F1):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
-> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
-> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
-> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
-> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
-
-### > 🟢 `EXECUTOR_ROLE`
-
-> **Hash:** `0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`
-> - `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
-> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
-> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
-> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
-> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
-
-> **Enabled modules:**
->   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
->   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
-
-### > 🟢 `PROPOSER_ROLE`
-
-> **Hash:** `0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a single transaction. Emits {CallSalt} if salt is nonzero, and {CallScheduled}.
-> - `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a batch of transactions. Emits {CallSalt} if salt is nonzero, and one {CallScheduled} event per transaction in the batch.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
-> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
-> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
-> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
-> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
-
-> **Enabled modules:**
->   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
->   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
-
-> #### 🔧 Permissioned Parameters
-
-> **`pause`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `pause(bytes4 protocolId)` |
-> | Gated by | `GUARDIAN_ROLE` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
-
-> **`shutdown`** *(per-asset)* ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `shutdown(address gauge)` |
-> | Gated by | `GUARDIAN_ROLE` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
-
-> **`unpause`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `unpause(bytes4 protocolId)` |
-> | Gated by | `GUARDIAN_ROLE` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
+> | `0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB` | Contract | 🟠 HIGH | — | Storage only |  |
 
 ---
 <a id="c-0xd533a949740bb3306d119cc777fa900ba034cd52"></a>
@@ -1128,27 +948,10 @@
 > | Total calls | 0 ❄️ |
 
 ---
-<a id="c-0xd061d61a4d941c39e5453435b6345dc261c2fce0"></a>
-## > Vyper_contract `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0`
-
-> > 💰 **Inherited supply authority** — holds `MINTER()` on **CurveStrategy**. Access controls on this contract gate root token supply.
-
-> 🔒 **Immutable References:** `token()` → CRV
-
-### > 🟠 `controller()`
-
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB` | Contract | 🟠 HIGH | — | Storage only |  |
-
----
 <a id="c-0x52f541764e6e90eebc5c21ff570de0e2d63766b6"></a>
 ## > CurveYCRVVoter `0x52f541764E6e90eeBc5c21Ff570De0e2D63766B6`
 
-> 🔒 **Immutable References:** `pool()` → Contract, `want()` → yDAI+yUSDC+yUSDT+yTUSD, `escrow()` → veCRV, `mintr()` → Contract, `crv()` → CRV
+> 🔒 **Immutable References:** `escrow()` → veCRV, `pool()` → Contract, `want()` → yDAI+yUSDC+yUSDT+yTUSD, `mintr()` → Contract, `crv()` → CRV
 
 ### > 🟢 `governance()`
 
@@ -1286,6 +1089,211 @@
 > | 5 | `_strategy=0xe5d6D047DF95c6627326465cB27B64A8b77A8b91` | `0xe5d6...8b91` (Gnosis Safe 1/1) | 2025-09-08 |
 
 ---
+<a id="c-0xb27afc7844988948fbd6210aef4e1362bc2d8e6a"></a>
+## > ProtocolTimelock `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a`
+
+> > ⚡ **Inherited authority** [CONFIG, PAUSE] — via `owner()` on **ProtocolController**
+
+> 🔒 **Immutable References:** `protocolController()` → ProtocolController
+
+### > 🟢 `DEFAULT_ADMIN_ROLE`
+
+> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `initialize()` — Initializes the timelock by accepting ownership of the protocol controller. Only callable by addresses with DEFAULT_ADMIN_ROLE. Requires the protocol controller to be owned by the timelock.
+> - `addGuardian(address guardian)` — Adds a new guardian address. Only callable by addresses with DEFAULT_ADMIN_ROLE. Guardians can execute emergency security functions immediately without timelock delay.
+> - `removeGuardian(address guardian)` — Removes a guardian address. Only callable by addresses with DEFAULT_ADMIN_ROLE.
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a` | TimelockController (2d) | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 2d delay (⚠ changed 1x) |
+
+> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
+
+> | Address | Name / Type | Granted | Status |
+> |---|---|---|---|
+> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 2025-10-09 | 🕘 HISTORICAL |
+
+
+> **Delay history for `TimelockController (2d)` (0xb27a...8E6a):** 2d → 2d
+
+### > 🔴 `GUARDIAN_ROLE`
+
+> **Hash:** `0x55435dd261a4b9b3364963f7738a7a662ad9c84396d64be3365284bb7f0a5041`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**  
+> **Capabilities:** ⏸️ **PAUSE**
+> - `pause(bytes4 protocolId)` — Immediately pauses deposits for a specific protocol. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Withdrawals remain functional during pause to protect user funds. Directly calls ProtocolController.pause(protocolId). `[PAUSE]`
+> - `unpause(bytes4 protocolId)` — Immediately unpauses deposits for a specific protocol. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Directly calls ProtocolController.unpause(protocolId). `[PAUSE]`
+> - `shutdown(address gauge)` — Immediately shuts down a specific gauge, preventing new deposits and withdrawing all funds. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Shutdown prevents new deposits while allowing users to withdraw their funds. Directly calls ProtocolController.shutdown(gauge). `[PAUSE]`
+> - `unshutdown(address gauge)` — Immediately resumes a previously shutdown gauge. Only callable by addresses with GUARDIAN_ROLE. This function bypasses the timelock delay for emergency response. Allows a previously shutdown gauge to resume normal operations. Directly calls ProtocolController.unshutdown(gauge).
+
+> **Members (2):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2026-01-12 | Events only · hasRole ✓ | 3/5 signers |
+> | `0xf3a5AC78f47638C60117D9fA3dc7Be96625947aF` | EOA | 🔴 CRITICAL | 2025-10-13 | Events only · hasRole ✓ | ⚠️ Single private key |
+
+> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x88883560AD02A31D299865B1fCE0aaF350AaA553` | EOA | — | EOA |
+> | `0x02e4De712d99f4B1b1e12aa3675D8b0A582caA5D` | EOA ⚠️ Hot wallet (1,477 txs) | — | EOA |
+> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
+> | `0x20aCB38B9268F694657EbefcD2aC9bCb8A103D2e` | EOA ⚠️ Hot wallet (1,873 txs) | — | EOA |
+> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
+
+> **Enabled modules:**
+>   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
+>   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
+
+### > 🟢 `CANCELLER_ROLE`
+
+> **Hash:** `0xfd643c72710c63c0180259aba6b2d05451e3591a24e58b62239378085726f783`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `cancel(bytes32 id)` — Cancel an operation. Requirements:
+
+> **Members (2):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
+> | `0xce71C076da091a4Fd0CE5d6dC4A8b292032926F1` | Gnosis Safe 2/5 | 🟢 LOW | 2026-06-25 🆕 | Events only · hasRole ✓ | 2/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x88883560AD02A31D299865B1fCE0aaF350AaA553` | EOA | — | EOA |
+> | `0x02e4De712d99f4B1b1e12aa3675D8b0A582caA5D` | EOA ⚠️ Hot wallet (1,477 txs) | — | EOA |
+> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
+> | `0x20aCB38B9268F694657EbefcD2aC9bCb8A103D2e` | EOA ⚠️ Hot wallet (1,873 txs) | — | EOA |
+> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
+
+> **Enabled modules:**
+>   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
+>   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
+
+> **Signers of `Gnosis Safe 2/5` (0xce71...26F1):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0xF2875cB91c35e0DDc9b76B15E2Aae236d393efFf` | EOA | — | EOA |
+> | `0xE3268ADB23043b3Acc7083E96912aeeb4feB4DF2` | EOA | — | EOA |
+> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
+> | `0x4046B37Ffc36B0C723d7Fc64e0C763B698D81934` | EOA | — | EOA |
+> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
+
+### > 🟢 `EXECUTOR_ROLE`
+
+> **Hash:** `0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`
+> - `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x88883560AD02A31D299865B1fCE0aaF350AaA553` | EOA | — | EOA |
+> | `0x02e4De712d99f4B1b1e12aa3675D8b0A582caA5D` | EOA ⚠️ Hot wallet (1,477 txs) | — | EOA |
+> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
+> | `0x20aCB38B9268F694657EbefcD2aC9bCb8A103D2e` | EOA ⚠️ Hot wallet (1,873 txs) | — | EOA |
+> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
+
+> **Enabled modules:**
+>   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
+>   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
+
+### > 🟢 `PROPOSER_ROLE`
+
+> **Hash:** `0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a single transaction. Emits {CallSalt} if salt is nonzero, and {CallScheduled}.
+> - `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a batch of transactions. Emits {CallSalt} if salt is nonzero, and one {CallScheduled} event per transaction in the batch.
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xB0552b6860CE5C0202976Db056b5e3Cc4f9CC765` | Gnosis Safe 3/5 | 🟢 LOW | 2025-10-09 | Events only · hasRole ✓ | 3/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0xB055...C765):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x88883560AD02A31D299865B1fCE0aaF350AaA553` | EOA | — | EOA |
+> | `0x02e4De712d99f4B1b1e12aa3675D8b0A582caA5D` | EOA ⚠️ Hot wallet (1,477 txs) | — | EOA |
+> | `0x1fF4CE381E38cD6469b0f67703E667C861e1Eb43` | EOA | — | EOA |
+> | `0x20aCB38B9268F694657EbefcD2aC9bCb8A103D2e` | EOA ⚠️ Hot wallet (1,873 txs) | — | EOA |
+> | `0x07c2D0E24530199e2c9A15bfeD4496d8E3798003` | EOA | — | EOA |
+
+> **Enabled modules:**
+>   - `0x43F8F8472FEbd6e7481e0AB43F49A683F9Fbedb7` — GaugeVoter
+>   - `0x665d334388012d17F1d197dE72b7b708ffCCB67d` — GovCurveVoter
+
+> #### 🔧 Permissioned Parameters
+
+> **`pause`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `pause(bytes4 protocolId)` |
+> | Gated by | `GUARDIAN_ROLE` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+> **`shutdown`** *(per-asset)* ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `shutdown(address gauge)` |
+> | Gated by | `GUARDIAN_ROLE` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+> **`unpause`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `unpause(bytes4 protocolId)` |
+> | Gated by | `GUARDIAN_ROLE` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+---
 <a id="c-0x6dfa6232ec23e029d4322115f491a912de9cf9e7"></a>
 ## > ConvexSidecarFactory `0x6DFA6232eC23E029d4322115f491a912De9cF9E7`
 
@@ -1334,9 +1342,9 @@ Controls **4 role(s)** across **1 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | ProtocolTimelock `0xb27a...8E6a` | `EXECUTOR_ROLE` | `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`, `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)` | 2025-10-09 |
-| ProtocolTimelock `0xb27a...8E6a` | `PROPOSER_ROLE` | `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)`, `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` | 2025-10-09 |
 | ProtocolTimelock `0xb27a...8E6a` | `GUARDIAN_ROLE` | `pause(bytes4 protocolId)`, `unpause(bytes4 protocolId)`, `shutdown(address gauge)`, `unshutdown(address gauge)` | 2026-01-12 |
 | ProtocolTimelock `0xb27a...8E6a` | `CANCELLER_ROLE` | `cancel(bytes32 id)` | 2025-10-09 |
+| ProtocolTimelock `0xb27a...8E6a` | `PROPOSER_ROLE` | `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)`, `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` | 2025-10-09 |
 
 ### 🟢 `0xe5d6D047DF95c6627326465cB27B64A8b77A8b91` — Gnosis Safe 1/1
 Controls **3 role(s)** across **2 contract(s)**
@@ -1347,13 +1355,13 @@ Controls **3 role(s)** across **2 contract(s)**
 | CurveYCRVVoter `0x52f5...66B6` | `strategy()` | `withdraw(IERC20 _asset)`, `withdraw(uint256 _amount)`, `withdrawAll()`, `createLock(uint256 _value, uint256 _unlockTime)` +3 more | — |
 | CurveYCRVVoter `0x52f5...66B6` | `governance()` | `setStrategy(address _strategy)`, `createLock(uint256 _value, uint256 _unlockTime)`, `increaseAmount(uint256 _value)`, `release()` +2 more | — |
 
-### 🟢 `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a` — TimelockController (2d)
+### 🟠 `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0` — Contract
 Controls **2 role(s)** across **2 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| ProtocolController `0x2d8B...d4fb` | `owner()` | `setRegistrar(address registrar_, bool allowed)`, `setPermissionSetter(address setter, bool allowed)`, `setPermission(address target, address caller, bytes4 selector, bool allowed)`, `setStrategy(bytes4 protocolId, address strategy)` +16 more | — |
-| ProtocolTimelock `0xb27a...8E6a` | `DEFAULT_ADMIN_ROLE` | `initialize()`, `addGuardian(address guardian)`, `removeGuardian(address guardian)` | 2025-10-09 |
+| CurveStrategy `0xb010...2bb5` | `MINTER()` | `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)`, `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)`, `harvest(address gauge, bytes memory extraData)` | — |
+| CRV [Vyper_contract] `0xD533...cd52` | `minter()` | `mint(address _to, uint256 _value)` | — |
 
 ### 🟠 `0xD533a949740bb3306d119CC777fa900bA034cd52` — CRV
 Controls **2 role(s)** across **2 contract(s)**
@@ -1363,13 +1371,13 @@ Controls **2 role(s)** across **2 contract(s)**
 | CurveStrategy `0xb010...2bb5` | `REWARD_TOKEN()` | `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)`, `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)`, `harvest(address gauge, bytes memory extraData)`, `flush()` | — |
 | Accountant `0x93b4...1Ce0` | `REWARD_TOKEN()` | `harvest(address[] calldata _gauges, bytes[] calldata _harvestData, address _receiver)`, `claim(address[] calldata _gauges, bytes[] calldata harvestData, address receiver)`, `claim(address[] calldata _gauges, address account, bytes[] calldata harvestData, address receiver)` | — |
 
-### 🟠 `0xd061D61a4d941c39E5453435B6345Dc261C2fcE0` — Contract
+### 🟢 `0xb27afc7844988948FBd6210AeF4E1362bC2d8E6a` — TimelockController (2d)
 Controls **2 role(s)** across **2 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| CurveStrategy `0xb010...2bb5` | `MINTER()` | `deposit(IAllocator.Allocation calldata allocation, HarvestPolicy policy)`, `withdraw(IAllocator.Allocation calldata allocation, IStrategy.HarvestPolicy policy, address receiver)`, `harvest(address gauge, bytes memory extraData)` | — |
-| CRV [Vyper_contract] `0xD533...cd52` | `minter()` | `mint(address _to, uint256 _value)` | — |
+| ProtocolController `0x2d8B...d4fb` | `owner()` | `setRegistrar(address registrar_, bool allowed)`, `setPermissionSetter(address setter, bool allowed)`, `setPermission(address target, address caller, bytes4 selector, bool allowed)`, `setStrategy(bytes4 protocolId, address strategy)` +16 more | — |
+| ProtocolTimelock `0xb27a...8E6a` | `DEFAULT_ADMIN_ROLE` | `initialize()`, `addGuardian(address guardian)`, `removeGuardian(address guardian)` | 2025-10-09 |
 
 
 ---
@@ -1377,9 +1385,9 @@ Controls **2 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
-| **Result** | 31 addresses screened · ✅ 0 flagged |
+| **Result** | 34 addresses screened · ✅ 0 flagged |
 
 ---
 ## EOA Exposure Summary

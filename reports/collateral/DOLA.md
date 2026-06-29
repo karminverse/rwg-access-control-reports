@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ✅ Fully on-chain |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:08 UTC |
+| Report Date | 2026-06-29 21:59 UTC |
 
 ### Surface Summary
 
@@ -27,14 +27,12 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-02T22:14:37Z** (block 25232601) → **2026-06-25T23:07:45Z** (block 25397795).
+> Comparing **2026-06-22T15:38:48Z** (block 25374023) → **2026-06-29T21:58:54Z** (block 25426133).
 
 ### Parameters
 - 🔄 `ceilings` on **Fed** (`0x2b3454…90fd`)
     - current_value: `DAI market: 500000000000000000000 (500.000000e18) · PT-sUSDE-27MAR2025 market: 0 · st-yETH market: 0 · PT-sUSDE-27NOV2025 market: 50000000000000000000000000 (50,000,000.000000e18) · yvyCRV market: 400000000000000000000000 (400,000.000000e18) · yvCurve-DOLA-wstUSR-f market: 5000000000000000000000000 (5,000,000.000000e18) · COMP market: 0 · cbBTC market: 10000000000000000000000000 (10,000,000.000000e18) · PT-sUSDE-29MAY2025 market: 0 · dola-save market: 50000000000000000000000000 (50,000,000.000000e18) · cvxCRV market: 3000000000000000000000000 (3,000,000.000000e18) · DOLA/USR market: 0 · wstETH market: 50000000000000000000000000 (50,000,000.000000e18) · crvDOLA market: 0 · WBTC market: 10000000000000000000000000 (10,000,000.000000e18) · yvCurve-DOLA-sUSDS-f market: 50000000000000000000000000 (50,000,000.000000e18) · yvCurve-DOLA-sUSDe-f market: 20000000000000000000000000 (20,000,000.000000e18) · yvCurve-DOLA-deUSD-f market: 0 · yvCurve-DOLA-scrvUSD-f market: 50000000000000000000000000 (50,000,000.000000e18) · PT-sUSDE-25SEP2025 market: 0 · savedola market: 0 · WETH market: 10000000000000000000000000 (10,000,000.000000e18) · CRV market: 3000000000000000000000000 (3,000,000.000000e18) · crvUSDDOLA-f market: 60000000000000000000000 (60,000.000000e18) · stETH market: 0 · sUSDe market: 5000000000000000000000000 (5,000,000.000000e18) · gOHM market: 0 · yvCurve-DOLA-FRXBP-f market: 0 · DOLAFRAXBP3CRV-f market: 0 · cvxFXS market: 0 · deUSD/DOLA market: 0 · yvCurve-DOLA-USR-f market: 0 · DOLA-sUSDS market: 50000000000000000000000000 (50,000,000.000000e18) · PT-USDe-27NOV2025 market: 50000000000000000000000000 (50,000,000.000000e18) · sFRAX market: 0 · DOLA-sUSDe market: 80000000000000000000000000 (80,000,000.000000e18) · INV market: 500000000000000000000000 (500,000.000000e18) · PT-USDe-25SEP2025 market: 0 · yvCurve-sDOLA-scrvUSD-f market: 0 · CVX market: 3000000000000000000000000 (3,000,000.000000e18) · DOLAwstUSR market: 25000000000000000000000000 (25,000,000.000000e18) · yvCurve-DOLA-crvUSD-f market: 0 · yvCurve-DOLA-FRAXPYUSD-f market: 0 · PT-sUSDE-31JUL2025 market: 0` → `DAI market: 500000000000000000000 (500.000000e18) · PT-sUSDE-27MAR2025 market: 0 · st-yETH market: 0 · PT-sUSDE-27NOV2025 market: 50000000000000000000000000 (50,000,000.000000e18) · yvyCRV market: 400000000000000000000000 (400,000.000000e18) · yvCurve-DOLA-wstUSR-f market: 5000000000000000000000000 (5,000,000.000000e18) · COMP market: 0 · cbBTC market: 10000000000000000000000000 (10,000,000.000000e18) · PT-sUSDE-29MAY2025 market: 0 · dola-save market: 50000000000000000000000000 (50,000,000.000000e18) · cvxCRV market: 3000000000000000000000000 (3,000,000.000000e18) · DOLA/USR market: 0 · wstETH market: 50000000000000000000000000 (50,000,000.000000e18) · crvDOLA market: 0 · WBTC market: 10000000000000000000000000 (10,000,000.000000e18) · yvCurve-DOLA-sUSDS-f market: 50000000000000000000000000 (50,000,000.000000e18) · yvCurve-DOLA-sUSDe-f market: 20000000000000000000000000 (20,000,000.000000e18) · yvCurve-DOLA-deUSD-f market: 0 · yvCurve-DOLA-scrvUSD-f market: 50000000000000000000000000 (50,000,000.000000e18) · PT-sUSDE-25SEP2025 market: 0 · savedola market: 0 · WETH market: 10000000000000000000000000 (10,000,000.000000e18) · CRV market: 3000000000000000000000000 (3,000,000.000000e18) · crvUSDDOLA-f market: 60000000000000000000000 (60,000.000000e18) · stETH market: 0 · sUSDe market: 5000000000000000000000000 (5,000,000.000000e18) · gOHM market: 0 · yvCurve-DOLA-FRXBP-f market: 0 · DOLAFRAXBP3CRV-f market: 0 · cvxFXS market: 0 · deUSD/DOLA market: 0 · yvCurve-DOLA-USR-f market: 0 · DOLA-sUSDS market: 50000000000000000000000000 (50,000,000.000000e18) · PT-USDe-27NOV2025 market: 50000000000000000000000000 (50,000,000.000000e18) · sFRAX market: 0 · DOLA-sUSDe market: 80000000000000000000000000 (80,000,000.000000e18) · INV market: 0 · PT-USDe-25SEP2025 market: 0 · yvCurve-sDOLA-scrvUSD-f market: 0 · CVX market: 3000000000000000000000000 (3,000,000.000000e18) · DOLAwstUSR market: 25000000000000000000000000 (25,000,000.000000e18) · yvCurve-DOLA-crvUSD-f market: 0 · yvCurve-DOLA-FRAXPYUSD-f market: 0 · PT-sUSDE-31JUL2025 market: 0`
     - set_at_block: `24731863` → `25386485`
-- 🔄 `contraction` on **Fed** (`0x2b3454…90fd`)
-    - set_at_block: `24937210` → `25295073`
 
 
 ## 📋 Protocol Context
@@ -159,12 +157,12 @@ The 2025-11-21 raise (200M → 100B) is the largest single-tx supply ceiling adj
 1. [Analyst Focus Areas](#analyst-focus-areas)
 2. Contracts
    - [DOLA ★](#c-0x865377367054516e17014ccded1e7d814edc9ce4)
+   - [Timelock](#c-0x926df14a23be491164dcf93f4c468a50ef659d5b)
    - [Fed (0x5E07...7EF7)](#c-0x5e075e40d01c82b6bf0b0ecdb4eb1d6984357ef7)
    - [Fed (0x2b34...90fd)](#c-0x2b34548b865ad66a2b046cb82e59ee43f75b90fd)
    - [PSMFed](#c-0x67fc21332d24fc5250a3b7fc988191ad7f38f9cc)
    - [MainnetDolaFlashMinter](#c-0x6c5fdc0c53b122ae0f15a863c349f3a481de8f1f)
    - [VaultFed](#c-0xe082eb109fad53ea8db9827ce6b8ef74882734fc)
-   - [Timelock](#c-0x926df14a23be491164dcf93f4c468a50ef659d5b)
    - [GovernorMills](#c-0xbeccb6bb0aa4ab551966a7e4b97cec74bb359bf6)
    - [Guardian](#c-0x941c2699ec7e55a50bde030d8e1e70649839259d)
 3. [⚡ Authority Concentration](#-authority-concentration)
@@ -181,7 +179,7 @@ The 2025-11-21 raise (200M → 100B) is the largest single-tx supply ceiling adj
 
 ### 🔴 CRITICAL (2)
 
-- 🔴 [**Observed: EOA holds `deployer()` on Guardian**](#c-0x941c2699ec7e55a50bde030d8e1e70649839259d) — `0x3FcB35a1CbFB6007f9BC638D388958Bc4550cB28` (EOA) — single key controls a role whose functions (`allowCancel`, `setPendingDeployer`) may reach inherited [SUPPLY] authority via DOLA [ERC20]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `deployer()` on Guardian**](#c-0x941c2699ec7e55a50bde030d8e1e70649839259d) — `0x3FcB35a1CbFB6007f9BC638D388958Bc4550cB28` (EOA) — single key controls a role whose config functions (e.g. peer/delegate/bridge setters) reach inherited [SUPPLY] authority via DOLA [ERC20]. Assess custody and intent.
 - 🎚️ [**Observed: 4 critical parameter levers (CRITICAL: 1, HIGH: 2, MEDIUM: 1)**](#sec-critical-params) — Asset has 4 on-chain parameter levers curated as high-impact for lender-side risk. See the 🎚️ Critical Parameter Levers section for the role gate, current value, threshold, and impact of each. These are singular setters / function calls that flip risk surface in one tx — direct dilution, safety-mechanism closure, authority transfer, or oracle repointing. Verify role-gate identities and threshold distance-to-trigger against current operating posture.
 
 ### 🟠 HIGH (23)
@@ -192,7 +190,7 @@ The 2025-11-21 raise (200M → 100B) is the largest single-tx supply ceiling adj
 - ⚠️ [**No Timelock in admin chain: `minter()` on DOLA [ERC20]**](#c-0x865377367054516e17014ccded1e7d814edc9ce4) — `minter()` has SUPPLY capability and is held by: `0x5E07...7EF7` (Contract), `0x2b34...90fd` (Contract), `0x67FC...f9cC` (Contract) +2 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `chair()` on Fed**](#c-0x926df14a23be491164dcf93f4c468a50ef659d5b) — `chair()` has SUPPLY capability and is held by: `0x8F97...DfC8` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `chair()` on PSMFed**](#c-0x926df14a23be491164dcf93f4c468a50ef659d5b) — `chair()` has SUPPLY capability and is held by: `0x8F97...DfC8` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- ⚠️ [**No Timelock in admin chain: `chair()` on VaultFed**](#c-0xe082eb109fad53ea8db9827ce6b8ef74882734fc) — `chair()` has SUPPLY capability and is held by: `0x8F97...DfC8` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `chair()` on VaultFed**](#c-0x926df14a23be491164dcf93f4c468a50ef659d5b) — `chair()` has SUPPLY capability and is held by: `0x8F97...DfC8` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 
 <details>
 <summary>🔄 **14 volatile parameter(s) observed across 6 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
@@ -353,7 +351,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | Field | Value |
 |---|---|
 | Setter | `mint(address to, uint amount)` |
-| Gated by | `minter(), operator()` |
+| Gated by | `operator(), minter()` |
 | Tags | `SUPPLY` |
 | Last called | 2021-03-21 |
 | Called by | `0x3FcB...cB28` (EOA) |
@@ -387,6 +385,47 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | 3 | PSMFed | `(Safe-mediated)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2025-12-20 |
 | 4 | PSMFed | `(Safe-mediated)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2025-12-20 |
 | 5 | PSMFed | `(Safe-mediated)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2025-12-20 |
+
+---
+<a id="c-0x926df14a23be491164dcf93f4c468a50ef659d5b"></a>
+## > Timelock `0x926dF14a23BE491164dCF93f4c468A50ef659D5B`
+
+> > 💰 **Inherited supply authority** — holds `operator()` on **DOLA [ERC20]**. Access controls on this contract gate root token supply.
+
+### > 🟢 `admin()`
+
+> **Privileged write functions:**
+> - `queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
+> - `cancelTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
+> - `executeTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xBeCCB6bb0aa4ab551966A7E4B97cec74bb359Bf6` | GovernorMills + Timelock (2d) | 🟢 LOW | — | Storage+Events | 2d delay |
+
+> #### 🔧 Permissioned Parameters
+
+> **`MAXIMUM_DELAY`** 🔒 **IMMUTABLE**
+
+> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
+
+> | Field | Value |
+> |---|---|
+> | Current Value | `2592000` |
+> | Mutability | 🔒 immutable (constant) |
+> | Tags | `IMMUTABLE` |
+
+> **`MINIMUM_DELAY`** 🔒 **IMMUTABLE**
+
+> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
+
+> | Field | Value |
+> |---|---|
+> | Current Value | `172800` |
+> | Mutability | 🔒 immutable (constant) |
+> | Tags | `IMMUTABLE` |
 
 ---
 <a id="c-0x5e075e40d01c82b6bf0b0ecdb4eb1d6984357ef7"></a>
@@ -536,7 +575,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **DOLA [ERC20]**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `dbr()` → DBR (DolaBorrowingRights), `dola()` → DOLA
+> 🔒 **Immutable References:** `dola()` → DOLA, `dbr()` → DBR (DolaBorrowingRights)
 
 ### > 🟢 `chair()` · 🏛️ governance
 
@@ -738,9 +777,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=120000000000000000000000 (120,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-06-11 |
-> | 2 | `120000000000000000000000 (120,000.000000e18)` | `0xb516...330B` | 2026-06-11 |
-> | 3 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=90000000000000000000000 (90,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-04-22 |
-> | 4 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=90000000000000000000000 (90,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-04-22 |
+> | 2 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=120000000000000000000000 (120,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-06-11 |
+> | 3 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=120000000000000000000000 (120,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-06-11 |
+> | 4 | `120000000000000000000000 (120,000.000000e18)` | `0xb516...330B` | 2026-06-11 |
 > | 5 | `market=0xb516247596Ca36bf32876199FBdCaD6B3322330B · amount=90000000000000000000000 (90,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2026-04-22 |
 
 > **`expansion`** 🔄 **ACTIVE** (292 changes)
@@ -772,7 +811,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **DOLA [ERC20]**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `DOLA()` → DOLA, `psm()` → PSM
+> 🔒 **Immutable References:** `psm()` → PSM, `DOLA()` → DOLA
 
 ### > 🟢 `chair()` · 🏛️ governance
 
@@ -1157,53 +1196,12 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 5 | `amount=1000000000000000000000000 (1,000,000.000000e18)` | `0x8F97...DfC8` (Gnosis Safe 2/6) | 2025-03-19 |
 
 ---
-<a id="c-0x926df14a23be491164dcf93f4c468a50ef659d5b"></a>
-## > Timelock `0x926dF14a23BE491164dCF93f4c468A50ef659D5B`
-
-> > 💰 **Inherited supply authority** — holds `operator()` on **DOLA [ERC20]**. Access controls on this contract gate root token supply.
-
-### > 🟢 `admin()`
-
-> **Privileged write functions:**
-> - `queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
-> - `cancelTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
-> - `executeTransaction(address target, uint value, string memory signature, bytes memory data, uint eta)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xBeCCB6bb0aa4ab551966A7E4B97cec74bb359Bf6` | GovernorMills + Timelock (2d) | 🟢 LOW | — | Storage+Events | 2d delay |
-
-> #### 🔧 Permissioned Parameters
-
-> **`MAXIMUM_DELAY`** 🔒 **IMMUTABLE**
-
-> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
-
-> | Field | Value |
-> |---|---|
-> | Current Value | `2592000` |
-> | Mutability | 🔒 immutable (constant) |
-> | Tags | `IMMUTABLE` |
-
-> **`MINIMUM_DELAY`** 🔒 **IMMUTABLE**
-
-> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
-
-> | Field | Value |
-> |---|---|
-> | Current Value | `172800` |
-> | Mutability | 🔒 immutable (constant) |
-> | Tags | `IMMUTABLE` |
-
----
 <a id="c-0xbeccb6bb0aa4ab551966a7e4b97cec74bb359bf6"></a>
 ## > GovernorMills `0xBeCCB6bb0aa4ab551966A7E4B97cec74bb359Bf6`
 
 > > 💰 **Inherited supply authority** — holds `operator()` on **DOLA [ERC20]**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `xinv()` → XINV (XINV), `inv()` → INV (INV)
+> 🔒 **Immutable References:** `inv()` → INV (INV), `xinv()` → XINV (XINV)
 
 ### > 🟠 `guardian()` · 🏛️ governance
 
@@ -1392,7 +1390,7 @@ Controls **4 role(s)** across **4 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 25 addresses screened · ✅ 0 flagged |
 

@@ -13,7 +13,7 @@
 | ERC-4626 Vault | ✅ Underlying: `0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29` |
 | Control Surface | — |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:04 UTC |
+| Report Date | 2026-06-29 21:55 UTC |
 
 ### Surface Summary
 
@@ -27,27 +27,11 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-02T22:27:33Z** (block 25232671) → **2026-06-25T23:04:31Z** (block 25397796).
-
-### Contracts in scan
-- ➕ `0xb898ad…e503` entered the scan
-- ➕ `0xffffff…3937` entered the scan
-
-### Roles
-- ➕ New role `admin()` (`0xb898ad…e503`)
-- ➕ New role `Safe Owners (4/7 required)` (`0xffffff…3937`)
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FraxOFTMintableAdapterUpgradeable** (`0x7311ce…e126`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-
-### Parameters
-- ➕ New tracked parameter `MAXIMUM_DELAY` (`0xb898ad…e503`)
-- ➕ New tracked parameter `MINIMUM_DELAY` (`0xb898ad…e503`)
-- ➕ New tracked parameter `changeThreshold(uint256)` (`0xffffff…3937`)
+> Comparing **2026-06-22T15:43:54Z** (block 25374098) → **2026-06-29T21:54:57Z** (block 25426135).
 
 ### Analyst Focus Areas
-- ➕ New: HIGH::Observed: supply authority chain on GnosisSafeL2
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FraxOFTMintableAdapterUpgradeable
+- ➕ New: HIGH::Observed: supply authority chain on Timelock
+- ➖ Resolved (no longer surfaced): HIGH::Observed: supply authority chain on Safe
 
 
 ## 📋 Protocol Context
@@ -142,7 +126,7 @@
 - 🚦 **Observed: no observable pause mechanism for supply** — Supply-altering surface detected on `SfrxUSD` but no PAUSE-capable role or pause()/unpause() ABI declaration was found across any in-scope contract. In an incident, there is no on-chain path to halt new issuance. Verify whether this is intentional (e.g. supply gated at a higher-level Fed or Custodian contract) or an oversight.
 - 🔗 [**Observed: supply authority chain on FraxOFTMintableAdapterUpgradeable**](#c-0x7311cea93ccf5f4f7b789ee31eba5d9b9290e126) — Chain: SfrxUSD → `minter()` → FraxOFTMintableAdapterUpgradeable. Controlled by: `endpoint()`, `owner()`, `upgradeability (TransparentUpgradeable)`. Assess custody — compromise of this chain could affect root token supply.
 - 🔗 [**Observed: supply authority chain on GnosisSafeL2**](#c-0xb898ad2976b4d8f2e21521c9db16b7497825e503) — Chain: SfrxUSD → `minter()` → GnosisSafeL2. Controlled by: `Safe Owners (4/7 required)`. Assess custody — compromise of this chain could affect root token supply.
-- 🔗 [**Observed: supply authority chain on Safe**](#c-0xcf62f905562626cfcdd2261162a51fd02fc9c5b6) — Chain: SfrxUSD → `minter()` → Safe. Controlled by: `Safe Owners (3/6 required)`. Assess custody — compromise of this chain could affect root token supply.
+- 🔗 [**Observed: supply authority chain on Timelock**](#c-0xb898ad2976b4d8f2e21521c9db16b7497825e503) — Chain: SfrxUSD → `minter()` → Timelock. Controlled by: `admin()`. Assess custody — compromise of this chain could affect root token supply.
 - ⚠️ [**No Timelock in admin chain: `timelockAddress()` on SfrxUSD**](#c-0xb898ad2976b4d8f2e21521c9db16b7497825e503) — `timelockAddress()` has SUPPLY capability and is held by: `0x4b45...1Bc1` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 
 <details>
@@ -2834,7 +2818,7 @@
 | 2 | `_newPricePerShareIncPerSecond=1197911451` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2026-05-28 |
 | 3 | `_newPricePerShareIncPerSecond=1197911451` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2026-05-28 |
 | 4 | `_newPricePerShareIncPerSecond=1197911451` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2026-05-28 |
-| 5 | `1197911451` | `0x6933...A4F2` (EOA) | 2026-05-28 |
+| 5 | `_newPricePerShareIncPerSecond=1197911451` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2026-05-28 |
 
 **`pricePerShareStored`** 🔧 **INIT-ONLY** *(set in code/init; setter unused)*
 
@@ -2875,7 +2859,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | 2 | TransparentUpgradeableProxy | `(Safe-mediated)` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2025-10-16 |
 | 3 | TransparentUpgradeableProxy | `(Safe-mediated)` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2025-10-16 |
 | 4 | TransparentUpgradeableProxy | `(Safe-mediated)` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2025-10-16 |
-| 5 | TransparentUpgradeableProxy | `—` | `0x17e0...c96e` (EOA) | 2025-10-16 |
+| 5 | TransparentUpgradeableProxy | `(Safe-mediated)` | `0x4b45...1Bc1` (Gnosis Safe 3/6) | 2025-10-16 |
 
 **`minter_burn_from`** *(per-asset)*
 
@@ -3398,8 +3382,8 @@ Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| SfrxUSD `0xcf62...c5b6` | `minter()` | `minter_burn_from(address b_address, uint256 b_amount)`, `minter_mint(address m_address, uint256 m_amount)` | — |
 | SfrxUSD `0xcf62...c5b6` | `timelockAddress()` | `addMinter(address minter_address)`, `removeMinter(address minter_address)`, `setAllPricingParams(uint256 _newPricePerShareStored, uint256 _newPricePerShareIncPerSecond, uint256 _newLastSync)`, `setPricePerShareIncPerSecond(uint256 _newPricePerShareIncPerSecond)` +3 more | — |
+| SfrxUSD `0xcf62...c5b6` | `minter()` | `minter_burn_from(address b_address, uint256 b_amount)`, `minter_mint(address m_address, uint256 m_amount)` | — |
 
 
 ---
@@ -3407,7 +3391,7 @@ Controls **2 role(s)** across **1 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 17 addresses screened · ✅ 0 flagged |
 

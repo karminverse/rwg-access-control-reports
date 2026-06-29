@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | — |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:06 UTC |
+| Report Date | 2026-06-29 21:57 UTC |
 
 ### Surface Summary
 
@@ -27,117 +27,13 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-02T22:25:07Z** (block 25232656) → **2026-06-25T23:05:52Z** (block 25397795).
-
-### Contracts in scan
-- ➕ `0xb898ad…e503` entered the scan
-- ➕ `0xffffff…3937` entered the scan
-- ➖ `0xb1748c…3f27` left the scan
-
-### Roles
-- ➕ New role `pendingOwner()` (`0x4f95c5…d87c`)
-- ➕ New role `pendingOwner()` (`0x5fbaa3…4f33`)
-- ➕ New role `pendingOwner()` (`0x860cc7…7857`)
-- ➕ New role `admin()` (`0xb898ad…e503`)
-- ➕ New role `pendingOwner()` (`0xcacd6f…6e29`)
-- ➕ New role `pendingOwner()` (`0xe827ab…4e9c`)
-- ➕ New role `pendingOwner()` (`0xfe2ea8…0a29`)
-- ➕ New role `Safe Owners (4/7 required)` (`0xffffff…3937`)
-- ➖ Role `Safe Owners (3/5 required)` no longer surfaced (`0xb1748c…3f27`)
-- ➖ Role `freezer()` no longer surfaced (`0xcacd6f…6e29`)
-- 🔄 `owner()` on **FraxOFTMintableAdapterUpgradeable** (`0x566a64…e4b0`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSDCustodianWithReceiver** (`0x860cc7…7857`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSDCustodian** (`0xe827ab…4e9c`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSDCustodian** (`0xe827ab…4e9c`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSDCustodian** (`0xfe2ea8…0a29`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSDCustodianUsdc** (`0x4f95c5…d87c`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSDCustodian** (`0xfe2ea8…0a29`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FraxOFTMintableAdapterUpgradeable** (`0x566a64…e4b0`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSDCustodianWithReceiver** (`0x860cc7…7857`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSD** (`0xcacd6f…6e29`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSDCustodianUsdc** (`0x4f95c5…d87c`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **ProxyAdmin** (`0x0b2c3d…4ed6`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSD** (`0xcacd6f…6e29`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `upgradeability (TransparentUpgradeable)` on **FrxUSDCustodianWithOracle** (`0x5fbaa3…4f33`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `minter()` on **FrxUSD** (`0xcacd6f…6e29`)
-    - member ➕ `0xb898ad…e503`
-    - member ➖ `0xb1748c…3f27`
-- 🔄 `owner()` on **FrxUSDCustodianWithOracle** (`0x5fbaa3…4f33`)
-    - member ➕ `0xffffff…3937`
-    - member ➖ `0xb1748c…3f27`
+> Comparing **2026-06-22T15:30:40Z** (block 25374023) → **2026-06-29T21:57:13Z** (block 25426134).
 
 ### Parameters
-- ➕ New tracked parameter `MAXIMUM_DELAY` (`0xb898ad…e503`)
-- ➕ New tracked parameter `MINIMUM_DELAY` (`0xb898ad…e503`)
-- ➕ New tracked parameter `changeThreshold(uint256)` (`0xffffff…3937`)
-- ➖ Parameter `changeThreshold(uint256)` no longer surfaced (`0xb1748c…3f27`)
-- 🔄 `addMinter` on **FrxUSD** (`0xcacd6f…6e29`)
-    - set_at_block: `23592684` → `25238508`
+- 🔄 `deposit` on **FrxUSDCustodian** (`0xfe2ea8…0a29`)
+    - set_at_block: `24519996` → `25400134`
 - 🔄 `deposit` on **FrxUSDCustodianUsdc** (`0x4f95c5…d87c`)
-    - set_at_block: `25232659` → `25397722`
-- 🔄 `removeMinter` on **FrxUSD** (`0xcacd6f…6e29`)
-    - set_at_block: `22433283` → `25238508`
-- 🔄 `mint` on **FrxUSDCustodianWithOracle** (`0x5fbaa3…4f33`)
-    - set_at_block: `24750741` → `22297074`
-    - silent_setter: `False` → `True`
-- 🔄 `isApprovedOperator` on **FrxUSDCustodianUsdc** (`0x4f95c5…d87c`)
-    - current_value: `EOA: True · EOA: True` → `EOA: False · EOA: True`
-    - set_at_block: `24027941` → `25319375`
-- 🔄 `mintFee` on **FrxUSDCustodian** (`0xfe2ea8…0a29`)
-    - silent_setter: `False` → `True`
-- 🔄 `isApprovedOperator` on **FrxUSDCustodianWithReceiver** (`0x860cc7…7857`)
-    - current_value: `EOA: True · EOA: True` → `EOA: False · EOA: True`
-    - set_at_block: `23992023` → `25319375`
-- 🔄 `mint` on **FrxUSDCustodianUsdc** (`0x4f95c5…d87c`)
-    - set_at_block: `25195093` → `24748745`
-    - silent_setter: `False` → `True`
-- 🔄 `owner` on **FrxUSD** (`0xcacd6f…6e29`)
-    - current_value: `0xB1748C79709f4Ba2Dd82834B8c82D4a505003f27` → `0xfFFffF4F3baC444b2C0ecf2A1840d018bE783937`
-- 🔄 `minter_mint` on **FrxUSD** (`0xcacd6f…6e29`)
-    - silent_setter: `False` → `True`
-- 🔄 `mintCap` on **FrxUSDCustodianWithReceiver** (`0x860cc7…7857`)
-    - current_value: `100000000000000000000000 (100,000.000000e18)` → `25000000000000000000000000 (25,000,000.000000e18)`
-    - set_at_block: `0` → `25290175`
-
-### Analyst Focus Areas
-- ➕ New: HIGH::Observed: Compound Timelock (1d) controls both admin and upgrades
-- ➕ New: HIGH::Observed: volatile parameter `mint` on FrxUSDCustodianUsdc
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FraxOFTMintableAdapterUpgradeable
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FrxUSD
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FrxUSDCustodian
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FrxUSDCustodianUsdc
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FrxUSDCustodianWithOracle
-- ➖ Resolved (no longer surfaced): CRITICAL::Observed: upgrade path has no timelock on FrxUSDCustodianWithReceiver
-- ➖ Resolved (no longer surfaced): HIGH::Observed: Gnosis Safe 3/5 controls both admin and upgrades
-- ➖ Resolved (no longer surfaced): HIGH::Observed: volatile parameter `minter_mint` on FrxUSD
+    - set_at_block: `25374006` → `25425958`
 
 
 ## 📋 Protocol Context
@@ -4929,7 +4825,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **FrxUSD**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `WTGXX_MAINNET()` → WTGXX, `ON_RECEIPT_PRIMARY_ORDER_ADDRESS()` → EOA, `custodianTkn()` → USDC (FiatTokenProxy)
+> 🔒 **Immutable References:** `WTGXX_MAINNET()` → WTGXX, `custodianTkn()` → USDC (FiatTokenProxy), `ON_RECEIPT_PRIMARY_ORDER_ADDRESS()` → EOA
 
 > ✅ **Two-step admin transfer:** `OZ Ownable2Step` — prevents accidental hand-off (request → accept flow).
 
@@ -5112,28 +5008,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (1807 changes)
+> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (4017 changes)
 
-> > ⚠️ This parameter has been changed **1807 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **4017 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `deposit(uint256 _assetsIn, address _receiver)` |
 > | Gated by | `frxUSD()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-06-25 |
-> | Called by | `0x1D48...11f6` |
-> | Total calls | ≥1807 🔄 |
+> | Last called | 2026-06-29 |
+> | Called by | `0xfd12...217c` |
+> | Total calls | ≥4017 🔄 |
 
-> **Recent changes (showing last 5 of 1807):**
+> **Recent changes (showing last 5 of 4017):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | 0x9640...c426 | `510865859000000000000 (510.865859e18)` | `0x1D48...11f6` | 2026-06-25 |
-> | 2 | 0x8F10...f996 | `481547673000000000000 (481.547673e18)` | `0xBf16...5D94` | 2026-06-25 |
-> | 3 | 0x950f...A86F | `215075276000000000000 (215.075276e18)` | `0xA66F...43bF` | 2026-06-25 |
-> | 4 | 0x8F10...f996 | `66000000000000000000000 (66,000.000000e18)` | `0xA784...d46C` | 2026-06-25 |
-> | 5 | 0x3650...B5b8 | `891929415000000000000 (891.929415e18)` | `0xAa20...5F2d` | 2026-06-25 |
+> | 1 | 0x950f...A86F | `508664029000000000000 (508.664029e18)` | `0xfd12...217c` | 2026-06-29 |
+> | 2 | 0x8F10...f996 | `81349686000000000000 (81.349686e18)` | `0xc845...b83a` | 2026-06-29 |
+> | 3 | MainnetSettler | `12512000000000000000000 (12,512.000000e18)` | `0xc766...6c54` | 2026-06-29 |
+> | 4 | 0x8F10...f996 | `2420669859000000000000 (2,420.669859e18)` | `0xBee1...CCCC` | 2026-06-29 |
+> | 5 | BeaconProxy | `5000000000000000000 (5.000000e18)` | `0x17dd...5ee7` | 2026-06-29 |
 
 > **`mint`** *(per-asset)* 🔄 **ACTIVE** (6 changes) 🔴 **SILENT** *(no event)*
 
@@ -5452,7 +5348,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **FrxUSD**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `composeMsgSender()` → TransparentUpgradeableProxy, `oApp()` → TransparentUpgradeableProxy
+> 🔒 **Immutable References:** `oApp()` → TransparentUpgradeableProxy, `composeMsgSender()` → TransparentUpgradeableProxy
 
 > #### 🌉 LayerZero v2 — Cross-chain Verifier (DVN) Config
 
@@ -8510,14 +8406,16 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | `SUPPLY` |
 > | Last changed | 2026-06-10 |
 > | Changed by | `0xfFFf...3937` (Gnosis Safe 4/7) |
-> | Total changes | 2 |
+> | Total changes | 4 |
 
 > **Recent changes:**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `_mintCap=25000000000000000000000000 (25,000,000.000000e18)` | `0xfFFf...3937` (Gnosis Safe 4/7) | 2026-06-10 |
-> | 2 | `25000000000000000000000000 (25,000,000.000000e18)` | `0xc8dE...2228` (EOA) | 2026-06-10 |
+> | 2 | `_mintCap=25000000000000000000000000 (25,000,000.000000e18)` | `0xfFFf...3937` (Gnosis Safe 4/7) | 2026-06-10 |
+> | 3 | `_mintCap=25000000000000000000000000 (25,000,000.000000e18)` | `0xfFFf...3937` (Gnosis Safe 4/7) | 2026-06-10 |
+> | 4 | `25000000000000000000000000 (25,000,000.000000e18)` | `0xc8dE...2228` (EOA) | 2026-06-10 |
 
 > **`mintFee`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
 
@@ -8871,28 +8769,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (15 changes)
+> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (16 changes)
 
-> > ⚠️ This parameter has been changed **15 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **16 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `deposit(uint256 _assetsIn, address _receiver)` |
 > | Gated by | `frxUSD()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-02-23 |
-> | Called by | `0xC6EF...3419` (EOA) |
-> | Total calls | 15 🔄 |
+> | Last called | 2026-06-26 |
+> | Called by | `0x63EA...ABC9` |
+> | Total calls | 16 🔄 |
 
-> **Recent changes (showing last 5 of 15):**
+> **Recent changes (showing last 5 of 16):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | RWARouter | `11000725000000000000 (11.000725e18)` | `0xC6EF...3419` (EOA) | 2026-02-23 |
-> | 2 | RWARouter | `10000000000000000000 (10.000000e18)` | `0xC6EF...3419` (EOA) | 2026-02-21 |
-> | 3 | EOA | `20000000000000000000 (20.000000e18)` | `0x9BD5...063b` | 2026-01-30 |
-> | 4 | EOA | `20000000000000000000 (20.000000e18)` | `0x0071...7585` | 2026-01-30 |
-> | 5 | EOA | `5000000000000000000 (5.000000e18)` | `0x0071...7585` | 2026-01-30 |
+> | 1 | 0xF72B...8CCb | `3296613000000000000 (3.296613e18)` | `0x63EA...ABC9` | 2026-06-26 |
+> | 2 | RWARouter | `11000725000000000000 (11.000725e18)` | `0xC6EF...3419` (EOA) | 2026-02-23 |
+> | 3 | RWARouter | `10000000000000000000 (10.000000e18)` | `0xC6EF...3419` (EOA) | 2026-02-21 |
+> | 4 | EOA | `20000000000000000000 (20.000000e18)` | `0x9BD5...063b` | 2026-01-30 |
+> | 5 | EOA | `20000000000000000000 (20.000000e18)` | `0x0071...7585` | 2026-01-30 |
 
 > **`mint`** *(per-asset)* ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
 
@@ -9031,7 +8929,7 @@ Controls **2 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 31 addresses screened · ✅ 0 flagged |
 

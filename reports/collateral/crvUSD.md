@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ✅ Fully on-chain |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:05 UTC |
+| Report Date | 2026-06-29 21:54 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-03T00:03:52Z** (block 25233152) → **2026-06-25T23:04:54Z** (block 25397794).
+> Comparing **2026-06-22T16:00:29Z** (block 25374168) → **2026-06-29T21:53:57Z** (block 25426132).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -334,7 +334,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **crvUSD Stablecoin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `feeReceiver()` → FeeSplitter, `fee_receiver()` → FeeSplitter, `implementations()` → LLAMMA - crvUSD AMM, `amm_implementation()` → LLAMMA - crvUSD AMM, `controller_implementation()` → crvUSD Controller
+> 🔒 **Immutable References:** `amm_implementation()` → LLAMMA - crvUSD AMM, `fee_receiver()` → FeeSplitter, `feeReceiver()` → FeeSplitter, `implementations()` → LLAMMA - crvUSD AMM, `controller_implementation()` → crvUSD Controller
 
 ### > 🟠 `admin()`
 
@@ -662,7 +662,7 @@ Controls **2 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 27 addresses screened · ✅ 0 flagged |
 

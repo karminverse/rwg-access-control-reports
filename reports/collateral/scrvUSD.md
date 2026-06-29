@@ -13,7 +13,7 @@
 | ERC-4626 Vault | ✅ Underlying: `0xf939E0A03FB07F59A73314E73794Be0E57ac1b4E` |
 | Control Surface | ✅ Fully on-chain |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:04 UTC |
+| Report Date | 2026-06-29 21:55 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-03T19:04:42Z** (block 25238828) → **2026-06-25T23:04:12Z** (block 25397800).
+> Comparing **2026-06-22T15:49:38Z** (block 25374132) → **2026-06-29T21:55:12Z** (block 25426138).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -376,7 +376,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > ✅ **Proxy — immutable** (Proxy (ERC-1967), impl exposes no upgrade function) — impl: `0x3A93C17FC82CC33420d1809dDA9Fb715cc89dd37`
 
-> 🔒 **Immutable References:** `kernel()` → KernelProxy, `getEVMScriptRegistry()` → AppProxyPinned
+> 🔒 **Immutable References:** `getEVMScriptRegistry()` → AppProxyPinned, `kernel()` → KernelProxy
 
 ### > 🟢 `upgradeability (Proxy (ERC-1967))`
 
@@ -411,7 +411,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `REPORTING_MANAGER` on **Yearn V3 Vault**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `vault()` → scrvUSD (Yearn V3 Vault), `stablecoin_lens()` → StablecoinLens, `stablecoinLens()` → StablecoinLens
+> 🔒 **Immutable References:** `stablecoinLens()` → StablecoinLens, `vault()` → scrvUSD (Yearn V3 Vault), `stablecoin_lens()` → StablecoinLens
 
 ### > 🟢 `DEFAULT_ADMIN_ROLE`
 
@@ -498,7 +498,7 @@ Controls **2 role(s)** across **1 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 12 addresses screened · ✅ 0 flagged |
 

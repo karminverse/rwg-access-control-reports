@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | — |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-06-25 23:06 UTC |
+| Report Date | 2026-06-29 21:57 UTC |
 
 ### Surface Summary
 
@@ -27,32 +27,23 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-06-02T22:22:11Z** (block 25232638) → **2026-06-25T23:06:28Z** (block 25397798).
+> Comparing **2026-06-22T15:44:29Z** (block 25374105) → **2026-06-29T21:56:50Z** (block 25426136).
 
 ### Roles
 - 🔄 `benefactor()` on **EthenaMinting** (`0xe34902…62d3`)
-    - member ➕ `0x2e3dc2…90e5`
-    - member ➕ `0x3b6aee…5644`
-    - member ➕ `0x70ac34…4033`
-    - member ➕ `0x8d1b96…d95c`
-    - member ➕ `0x999935…8ae2`
-    - member ➕ `0x9d2e39…59b6`
-    - member ➕ `0xab79ad…e45e`
-    - member ➕ `0xae5156…7200`
-    - member ➕ `0xc31bbd…2a83`
-    - member ➕ `0xcb9240…f941`
-    - member ➕ `0xddcd0d…cdd1`
-    - member ➕ `0xe0a672…da9c`
+    - member ➕ `0x5fdcd2…2ca4`
+    - member ➕ `0x887fd3…5d67`
+    - member ➕ `0xe28660…79e8`
     - member ➕ `0xe9a8e0…3e33`
-    - member ➖ `0x673ba7…c11d`
-    - member ➖ `0x995e5c…6cbf`
-    - member ➖ `0xc23d30…4aaa`
+    - member ➖ `0x3d3827…5bfa`
+    - member ➖ `0x90165f…3014`
+    - member ➖ `0x9e0bf0…64c2`
 
 ### Parameters
 - 🔄 `redeem` on **EthenaMinting** (`0xe34902…62d3`)
-    - set_at_block: `25231402` → `25396143`
+    - set_at_block: `25368260` → `25424253`
 - 🔄 `mint` on **EthenaMinting** (`0xe34902…62d3`)
-    - set_at_block: `25231906` → `25397796`
+    - set_at_block: `25373540` → `25424251`
 
 
 ## 📋 Protocol Context
@@ -144,8 +135,8 @@
 ### 🔴 CRITICAL (3)
 
 - 🔴 [**Observed: EOA holds `GATEKEEPER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `0x0F566cC38677239Bed459047065925654b6d5BD9` (EOA) — single key controls [PAUSE, SUPPLY] capability. Assess custody and intent.
-- 🔴 [**Observed: EOA holds `MINTER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `REDEEMER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `MINTER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
 
 ### 🟠 HIGH (18)
 
@@ -153,13 +144,13 @@
 - ⏸️ **Observed: 1 role(s) with pause capability** — Pause surface detected: `GATEKEEPER_ROLE` on EthenaMinting. Assess pause authority governance.
 - 🔗 [**Observed: supply authority chain on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — Chain: USDe → `minter()` → EthenaMinting. Controlled by: `COLLATERAL_MANAGER_ROLE`, `DEFAULT_ADMIN_ROLE`, `GATEKEEPER_ROLE`. Assess custody — compromise of this chain could affect root token supply.
 - 🔗 [**Observed: supply authority chain on GnosisSafe**](#c-0x4c9edd5852cd905f086c759e8383e09bff1e68b3) — Chain: USDe → `owner()` → GnosisSafe. Controlled by: `Safe Owners (5/10 required)`. Assess custody — compromise of this chain could affect root token supply.
-- ⚠️ [**No Timelock in admin chain: `minter()` on USDe**](#c-0x4c9edd5852cd905f086c759e8383e09bff1e68b3) — `minter()` has SUPPLY capability and is held by: `0xe349...62D3` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `owner()` on USDe**](#c-0x4c9edd5852cd905f086c759e8383e09bff1e68b3) — `owner()` has SUPPLY capability and is held by: `0x3B0A...1862` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `minter()` on USDe**](#c-0x4c9edd5852cd905f086c759e8383e09bff1e68b3) — `minter()` has SUPPLY capability and is held by: `0xe349...62D3` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `GATEKEEPER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `GATEKEEPER_ROLE` has SUPPLY capability and is held by: `0x0F56...5BD9` (EOA), `0x4960...8996` (EOA), `0xAB91...A7dC` (EOA) +1 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- ⚠️ [**No Timelock in admin chain: `COLLATERAL_MANAGER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `COLLATERAL_MANAGER_ROLE` has SUPPLY capability and is held by: `0x3B0A...1862` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `REDEEMER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `REDEEMER_ROLE` has SUPPLY capability and is held by: `0x0398...6Ae4` (EOA), `0x0B23...5c7d` (EOA), `0x24bE...b962` (EOA) +17 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `MINTER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `MINTER_ROLE` has SUPPLY capability and is held by: `0x0398...6Ae4` (EOA), `0x0B23...5c7d` (EOA), `0x24bE...b962` (EOA) +17 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `DEFAULT_ADMIN_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `DEFAULT_ADMIN_ROLE` has SUPPLY capability and is held by: `0x3B0A...1862` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- ⚠️ [**No Timelock in admin chain: `REDEEMER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `REDEEMER_ROLE` has SUPPLY capability and is held by: `0x0398...6Ae4` (EOA), `0x0B23...5c7d` (EOA), `0x24bE...b962` (EOA) +17 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `COLLATERAL_MANAGER_ROLE` on EthenaMinting**](#c-0xe3490297a08d6fc8da46edb7b6142e4f461b62d3) — `COLLATERAL_MANAGER_ROLE` has SUPPLY capability and is held by: `0x3B0A...1862` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 
 <details>
 <summary>🔄 **6 volatile parameter(s) observed across 2 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
@@ -291,7 +282,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **USDe**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `uSDe()` → USDe (USDe), `usde()` → USDe (USDe)
+> 🔒 **Immutable References:** `usde()` → USDe (USDe), `uSDe()` → USDe (USDe)
 
 > ✅ **Two-step admin transfer:** `transferAdmin + acceptAdmin` — prevents accidental hand-off (request → accept flow).
 
@@ -785,28 +776,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 4 | USDG (ERC1967Proxy) | `_tokenConfig={tokenType: 0, isActive: True, maxMintPerBlock: 200000000000000000000000000 (200,000,000.000000e18), maxRedeemPerBlock: 10000000000000000000000000 (10,000,000.000000e18)}` | `0x3B0A...1862` (GnosisSafeProxy) | 2026-05-10 |
 > | 5 | USDG (ERC1967Proxy) | `_tokenConfig={tokenType: 0, isActive: True, maxMintPerBlock: 200000000000000000000000000 (200,000,000.000000e18), maxRedeemPerBlock: 10000000000000000000000000 (10,000,000.000000e18)}` | `0x3B0A...1862` (GnosisSafeProxy) | 2026-05-10 |
 
-> **`mint`** 🔄 **ACTIVE** (16763 changes)
+> **`mint`** 🔄 **ACTIVE** (16913 changes)
 
-> > ⚠️ This parameter has been changed **16763 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **16913 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `mint(Order calldata order, Route calldata route, Signature calldata signature)` |
 > | Gated by | `MINTER_ROLE` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-06-25 |
-> | Called by | `0xf2fa...b439` (StakingRewardsDistributor) |
-> | Total calls | ≥16763 🔄 |
+> | Last called | 2026-06-29 |
+> | Called by | `0x2ee7...8587` (EOA) |
+> | Total calls | ≥16913 🔄 |
 
-> **Recent changes (showing last 5 of 16763):**
+> **Recent changes (showing last 5 of 16913):**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x950c886CC6B9d420455985c3D31090AA060e96C8` | `0xf2fa...b439` (StakingRewardsDistributor) | 2026-06-25 |
-> | 2 | `0x57FefB75863cc64fECF11ac99d7A5b60EBE0080f` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
-> | 3 | `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
-> | 4 | `0xc3309fDDFC8297c39A38d5D872a37222f98DAd37` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
-> | 5 | `0x6FD5ffEe1220b0458c2114d6ce7fB4dE2BC8fEE6` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
+> | 1 | `0x7d69817Ea29244504c1A97B66E2C990F25DF7599` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 2 | `0x950c886CC6B9d420455985c3D31090AA060e96C8` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 3 | `0x9b6889199627f78470EA230cC7Df974239e0a5e5` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 4 | `0x661Ca83074b8Ec630825D4604455325499F951a1` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 5 | `0xcD992cFB025014C01EBc2f2311c3F87aA8411d9c` | `0x2ee7...8587` (EOA) | 2026-06-29 |
 
 > **`mintWETH`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
 
@@ -823,28 +814,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Called by | — |
 > | Total calls | 0 ❄️ |
 
-> **`redeem`** 🔄 **ACTIVE** (13974 changes)
+> **`redeem`** 🔄 **ACTIVE** (14197 changes)
 
-> > ⚠️ This parameter has been changed **13974 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **14197 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `redeem(Order calldata order, Signature calldata signature)` |
 > | Gated by | `REDEEMER_ROLE` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-06-25 |
-> | Called by | `0xcb92...f941` (EOA) |
-> | Total calls | ≥13974 🔄 |
+> | Last called | 2026-06-29 |
+> | Called by | `0x2ee7...8587` (EOA) |
+> | Total calls | ≥14197 🔄 |
 
-> **Recent changes (showing last 5 of 13974):**
+> **Recent changes (showing last 5 of 14197):**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0xD0899998CCEB5B3df5cdcFaAdd43e53B8e1d553e` | `0xcb92...f941` (EOA) | 2026-06-25 |
-> | 2 | `0x661Ca83074b8Ec630825D4604455325499F951a1` | `0xcb92...f941` (EOA) | 2026-06-25 |
-> | 3 | `0xA22C29b20f9Be2C809979Ed606b24Fe5286AC8F2` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
-> | 4 | `0x4d394F45dFaDef5522759c511702Db97690A5C12` | `0x8D3e...A8Bc` (EOA) | 2026-06-25 |
-> | 5 | `0xc3309fDDFC8297c39A38d5D872a37222f98DAd37` | `0x3B6A...5644` (EOA) | 2026-06-25 |
+> | 1 | `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 2 | `0x9b6889199627f78470EA230cC7Df974239e0a5e5` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 3 | `0x64004ae464f49C30a188C34E01B0dC66c8bEb21E` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 4 | `0x0B23d23939A1731289EAA04f62BA1dd4Ecdd5c7d` | `0x2ee7...8587` (EOA) | 2026-06-29 |
+> | 5 | `0x4d394F45dFaDef5522759c511702Db97690A5C12` | `0x2ee7...8587` (EOA) | 2026-06-29 |
 
 > **`removeCollateralManagerRole`** *(per-asset)* ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
 
@@ -982,10 +973,16 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > **Active count: 526** _(individual addresses omitted — user role)_
 
-> **Change history (showing last 15 of 534):**
+> **Change history (showing last 15 of 540):**
 
 > | Action | Address | Set By | Date |
 > |---|---|---|---|
+> | ➖ Removed | `0x9E0b...64c2` (EOA) | `0x3520...0E8f` | 2026-06-26 |
+> | ➖ Removed | `0x3D38...5Bfa` (EOA) | `0x3520...0E8f` | 2026-06-26 |
+> | ➖ Removed | `0x9016...3014` (EOA) | `0x3520...0E8f` | 2026-06-26 |
+> | ➕ Added | `0x887f...5d67` (EOA) | `0x3520...0E8f` | 2026-06-26 |
+> | ➕ Added | `0xe286...79e8` (EOA) | `0x3520...0E8f` | 2026-06-26 |
+> | ➕ Added | `0x5FDC...2Ca4` (EOA) | `0x3520...0E8f` | 2026-06-26 |
 > | ➕ Added | `0xE9A8...3e33` (EOA) | `0x3520...0E8f` | 2026-06-24 |
 > | ➕ Added | `0xc31B...2A83` (EOA) | `0x3520...0E8f` | 2026-06-22 |
 > | ➕ Added | `0x2E3d...90e5` (EOA) | `0x3520...0E8f` | 2026-06-12 |
@@ -995,12 +992,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | ➕ Added | `0xe0a6...DA9C` (EOA) | `0x3520...0E8f` | 2026-06-08 |
 > | ➖ Removed | `0x673B...C11D` (EOA (EIP-7702 → 0x63c0c19a…)) | `0x3520...0E8f` | 2026-06-03 |
 > | ➕ Added | `0x9d2e...59b6` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➕ Added | `0xab79...e45E` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➕ Added | `0xcb92...f941` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➖ Removed | `0xC23D...4AAa` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➖ Removed | `0x995e...6Cbf` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➕ Added | `0x9999...8Ae2` (EOA) | `0x3520...0E8f` | 2026-06-03 |
-> | ➕ Added | `0x8d1B...d95C` (EOA) | `0x3520...0E8f` | 2026-06-03 |
 
 ---
 ## ⚡ Authority Concentration
@@ -1013,168 +1004,168 @@ Controls **3 role(s)** across **2 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | USDe `0x4c9E...68B3` | `owner()` | `setMinter(address newMinter)`, `transferOwnership(address newOwner)`, `acceptOwnership()` | — |
-| EthenaMinting `0xe349...62D3` | `COLLATERAL_MANAGER_ROLE` | `transferToCustody(address wallet, address asset, uint128 amount)` | 2025-02-04 |
 | EthenaMinting `0xe349...62D3` | `DEFAULT_ADMIN_ROLE` | `setGlobalMaxMintPerBlock(uint128 _globalMaxMintPerBlock)`, `setGlobalMaxRedeemPerBlock(uint128 _globalMaxRedeemPerBlock)`, `removeSupportedAsset(address asset)`, `removeCustodianAddress(address custodian)` +12 more | 2024-06-21 |
+| EthenaMinting `0xe349...62D3` | `COLLATERAL_MANAGER_ROLE` | `transferToCustody(address wallet, address asset, uint128 amount)` | 2025-02-04 |
 
 ### 🔴 `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x0B23d23939A1731289EAA04f62BA1dd4Ecdd5c7d` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x24bE9948466FEcEB22A9B77b19e404F2119fb962` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x4d394F45dFaDef5522759c511702Db97690A5C12` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x57093ffEdC2F49Eb3a5A11b63C0f4Ca1B75C5CB7` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x57FefB75863cc64fECF11ac99d7A5b60EBE0080f` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x64004ae464f49C30a188C34E01B0dC66c8bEb21E` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x655a1B0124b39B2d7C7F62a99627a891faD93B7B` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x661Ca83074b8Ec630825D4604455325499F951a1` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x6F1d2df2ACc5f2dA3167Ad1967b648207cfC63DB` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x6FD5ffEe1220b0458c2114d6ce7fB4dE2BC8fEE6` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x71C95AAA22696d745E378486b769eE47cA23797c` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x7d69817Ea29244504c1A97B66E2C990F25DF7599` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x950c886CC6B9d420455985c3D31090AA060e96C8` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0x9b6889199627f78470EA230cC7Df974239e0a5e5` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0xA22C29b20f9Be2C809979Ed606b24Fe5286AC8F2` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0xD0899998CCEB5B3df5cdcFaAdd43e53B8e1d553e` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0xb229D6dB056750E22499191156Bf4c3654DF3826` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0xc3309fDDFC8297c39A38d5D872a37222f98DAd37` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 ### 🔴 `0xcD992cFB025014C01EBc2f2311c3F87aA8411d9c` — EOA
 Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 | EthenaMinting `0xe349...62D3` | `REDEEMER_ROLE` | `redeem(Order calldata order, Signature calldata signature)` | 2024-07-08 |
+| EthenaMinting `0xe349...62D3` | `MINTER_ROLE` | `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)` | 2024-07-04 |
 
 
 ---
@@ -1182,7 +1173,7 @@ Controls **2 role(s)** across **1 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-25) |
+| OFAC SDN | ✅ OFAC SDN screened (97 ETH addresses, cache: 2026-06-29) |
 | Chainalysis | ✅ Chainalysis screened |
 | **Result** | 604 addresses screened · ✅ 0 flagged |
 
@@ -1199,46 +1190,6 @@ The following roles are held by EOAs:
   Functions: `disableMintRedeem()`, `removeMinterRole(address minter)`, `removeRedeemerRole(address redeemer)`
 - **EthenaMinting** → `GATEKEEPER_ROLE` held by EOA `0xb6ECaE7413A3E78a3e10f15aFE3066e79566CCA3`
   Functions: `disableMintRedeem()`, `removeMinterRole(address minter)`, `removeRedeemerRole(address redeemer)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x0B23d23939A1731289EAA04f62BA1dd4Ecdd5c7d`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x24bE9948466FEcEB22A9B77b19e404F2119fb962`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x4d394F45dFaDef5522759c511702Db97690A5C12`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x57093ffEdC2F49Eb3a5A11b63C0f4Ca1B75C5CB7`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x57FefB75863cc64fECF11ac99d7A5b60EBE0080f`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x64004ae464f49C30a188C34E01B0dC66c8bEb21E`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x655a1B0124b39B2d7C7F62a99627a891faD93B7B`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x661Ca83074b8Ec630825D4604455325499F951a1`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x6F1d2df2ACc5f2dA3167Ad1967b648207cfC63DB`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x6FD5ffEe1220b0458c2114d6ce7fB4dE2BC8fEE6`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x71C95AAA22696d745E378486b769eE47cA23797c`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x7d69817Ea29244504c1A97B66E2C990F25DF7599`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x950c886CC6B9d420455985c3D31090AA060e96C8`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x9b6889199627f78470EA230cC7Df974239e0a5e5`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xA22C29b20f9Be2C809979Ed606b24Fe5286AC8F2`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xD0899998CCEB5B3df5cdcFaAdd43e53B8e1d553e`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xb229D6dB056750E22499191156Bf4c3654DF3826`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xc3309fDDFC8297c39A38d5D872a37222f98DAd37`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
-- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xcD992cFB025014C01EBc2f2311c3F87aA8411d9c`
-  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
 - **EthenaMinting** → `REDEEMER_ROLE` held by EOA `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4`
   Functions: `redeem(Order calldata order, Signature calldata signature)`
 - **EthenaMinting** → `REDEEMER_ROLE` held by EOA `0x0B23d23939A1731289EAA04f62BA1dd4Ecdd5c7d`
@@ -1279,6 +1230,46 @@ The following roles are held by EOAs:
   Functions: `redeem(Order calldata order, Signature calldata signature)`
 - **EthenaMinting** → `REDEEMER_ROLE` held by EOA `0xcD992cFB025014C01EBc2f2311c3F87aA8411d9c`
   Functions: `redeem(Order calldata order, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x03984DDEF40850bB9862Ec09037853630d7b6Ae4`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x0B23d23939A1731289EAA04f62BA1dd4Ecdd5c7d`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x24bE9948466FEcEB22A9B77b19e404F2119fb962`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x4d394F45dFaDef5522759c511702Db97690A5C12`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x57093ffEdC2F49Eb3a5A11b63C0f4Ca1B75C5CB7`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x57FefB75863cc64fECF11ac99d7A5b60EBE0080f`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x64004ae464f49C30a188C34E01B0dC66c8bEb21E`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x655a1B0124b39B2d7C7F62a99627a891faD93B7B`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x661Ca83074b8Ec630825D4604455325499F951a1`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x6F1d2df2ACc5f2dA3167Ad1967b648207cfC63DB`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x6FD5ffEe1220b0458c2114d6ce7fB4dE2BC8fEE6`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x71C95AAA22696d745E378486b769eE47cA23797c`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x7d69817Ea29244504c1A97B66E2C990F25DF7599`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x950c886CC6B9d420455985c3D31090AA060e96C8`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0x9b6889199627f78470EA230cC7Df974239e0a5e5`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xA22C29b20f9Be2C809979Ed606b24Fe5286AC8F2`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xD0899998CCEB5B3df5cdcFaAdd43e53B8e1d553e`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xb229D6dB056750E22499191156Bf4c3654DF3826`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xc3309fDDFC8297c39A38d5D872a37222f98DAd37`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
+- **EthenaMinting** → `MINTER_ROLE` held by EOA `0xcD992cFB025014C01EBc2f2311c3F87aA8411d9c`
+  Functions: `mint(Order calldata order, Route calldata route, Signature calldata signature)`, `mintWETH(Order calldata order, Route calldata route, Signature calldata signature)`
 
 ---
 ## ✅ Scan Integrity
