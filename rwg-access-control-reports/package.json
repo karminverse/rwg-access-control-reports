@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "rwg-access-control-reports",
+  "description": "Inverse Finance Risk Working Group — access control report directory",
+  "engines": {
+    "node": "22.x"
+  }
+}

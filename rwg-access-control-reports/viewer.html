@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report Viewer — RWG Access Control</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <style>
+    :root{
+      --bg:#050816; --panel:#0b1220; --border:#1b2b42; --text:#e5f0ff;
+      --soft:#b9c8de; --muted:#7f93b2; --cyan:#67e8f9; --lime:#a3e635; --amber:#fbbf24;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Bahnschrift','Trebuchet MS','Segoe UI',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top, rgba(103,232,249,.10), transparent 32%),
+        linear-gradient(180deg, rgba(5,8,22,.94), rgba(5,8,22,1)),
+        var(--bg);
+      line-height:1.7;font-size:15px;
+    }
+    a{color:var(--cyan);text-decoration:none}
+    a:hover{text-decoration:underline}
+    a:focus-visible,.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:9px}
+    .wrap{max-width:920px;margin:0 auto;padding:24px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      flex-wrap:wrap;padding:12px 0 18px;border-bottom:1px solid var(--border);margin-bottom:22px;
+    }
+    .crumb{font-family:'Consolas','Courier New',monospace;font-size:.85rem;color:var(--soft)}
+    .crumb code{color:var(--cyan)}
+    .actions{display:flex;gap:10px;align-items:center}
+    .btn{
+      display:inline-flex;align-items:center;gap:6px;padding:.45rem .8rem;border-radius:9px;
+      font-weight:700;font-size:.85rem;border:1px solid rgba(103,232,249,.24);
+      background:linear-gradient(90deg, rgba(103,232,249,.16), rgba(163,230,53,.10));color:#dffcff;
+    }
+    .btn:hover{text-decoration:none;border-color:rgba(103,232,249,.5)}
+    .doc{line-height:1.75}
+    .doc h1{font-size:1.7rem;margin:1.6rem 0 .8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);font-family:'Consolas','Courier New',monospace}
+    .doc h2{font-size:1.3rem;margin:1.8rem 0 .6rem;padding-bottom:.3rem;border-bottom:1px solid var(--border);color:var(--cyan);font-family:'Consolas','Courier New',monospace}
+    .doc h3{font-size:1.08rem;margin:1.4rem 0 .5rem;color:var(--lime);font-family:'Consolas','Courier New',monospace}
+    .doc h4{font-size:.96rem;margin:1.1rem 0 .4rem;color:var(--soft)}
+    .doc p{color:var(--soft);margin:.6rem 0}
+    .doc strong{color:var(--text)}
+    .doc em{color:var(--soft)}
+    .doc hr{border:none;border-top:1px solid var(--border);margin:1.6rem 0}
+    .doc ul,.doc ol{margin:.5rem 0 .5rem 1.4rem;color:var(--soft)}
+    .doc li{margin:.28rem 0}
+    .doc li strong{color:var(--text)}
+    .doc blockquote{border-left:3px solid var(--cyan);background:rgba(103,232,249,.06);padding:.6rem 1rem;margin:.8rem 0;border-radius:0 8px 8px 0;color:var(--soft)}
+    .doc code{font-family:'SF Mono','Consolas','Courier New',monospace;font-size:.85em;background:#0d1728;border:1px solid rgba(103,232,249,.12);border-radius:4px;padding:.12em .4em;word-break:break-word}
+    .doc pre{background:#0a1220;border:1px solid rgba(103,232,249,.12);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:.8rem 0;font-size:.85rem;line-height:1.5}
+    .doc pre code{background:none;border:none;padding:0;word-break:normal}
+    .doc table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.88rem}
+    .doc th{text-align:left;padding:8px 12px;background:rgba(103,232,249,.08);border:1px solid var(--border);color:var(--cyan);font-weight:700;font-family:'Consolas','Courier New',monospace;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+    .doc td{padding:8px 12px;border:1px solid var(--border);color:var(--soft)}
+    .doc tr:nth-child(even){background:rgba(11,18,32,.5)}
+    .doc details{background:rgba(11,18,32,.65);border:1px solid var(--border);border-radius:10px;margin:.8rem 0;overflow:hidden}
+    .doc summary{padding:10px 14px;cursor:pointer;color:var(--text);font-weight:600;background:rgba(103,232,249,.05)}
+    .doc details>*:not(summary){padding:0 14px}
+    .state{margin-top:30px;padding:16px;border-radius:10px;border:1px dashed rgba(103,232,249,.25);background:rgba(11,18,32,.6);color:var(--soft)}
+    .err{border:1px solid #fb7185;background:rgba(127,29,29,.28);color:#fecaca}
+    .footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;text-align:center}
+    .footer p{margin:0}
+    .footer .disclaimer{max-width:760px;margin:10px auto 0;font-size:.72rem;line-height:1.5;color:#647a99}
+    @media (max-width:768px){.wrap{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb"><a href="/">RWG Reports</a> &nbsp;/&nbsp; <code id="crumb-file">…</code></div>
+      <div class="actions">
+        <a class="btn" id="raw-link" href="#" target="_blank" rel="noopener">Raw Markdown</a>
+        <a class="btn" href="/">← Directory</a>
+      </div>
+    </div>
+    <main id="main"><article id="doc" class="doc"></article></main>
+    <footer class="footer">
+      <p>Inverse Finance, Risk Working Group · rendered Markdown</p>
+      <p class="disclaimer">For informational purposes only. Not an audit, endorsement, recommendation, or
+        financial advice. Findings reflect on-chain state at scan time, may be incomplete, and are provided
+        without warranty.</p>
+    </footer>
+  </div>
+
+  <script src="marked.min.js"></script>
+  <script src="purify.min.js"></script>
+  <script>
+    const docEl = document.getElementById("doc");
+    const crumbEl = document.getElementById("crumb-file");
+    const rawEl = document.getElementById("raw-link");
+
+    // Only allow same-origin report paths — never an arbitrary URL. Validate the
+    // DECODED path so percent-encoded traversal (%2e%2e) and odd segments are
+    // caught, and legitimate names with spaces/parens are accepted.
+    function safeFile(raw) {
+      if (!raw) return null;
+      let f = raw.trim();
+      if (!f.startsWith("/")) f = "/" + f;
+      let dec;
+      try { dec = decodeURIComponent(f); } catch (_) { return null; } // malformed %XX
+      if (!/^\/reports\/.+\.md$/i.test(dec)) return null;             // under reports/, ends .md
+      if (dec.includes("\0") || dec.includes("\\")) return null;      // null / backslash
+      for (const seg of dec.split("/").slice(1)) {
+        if (seg === "" || seg === "." || seg === "..") return null;   // empty / dot / traversal
+      }
+      return dec; // decoded path; the browser re-encodes on fetch/navigation
+    }
+
+    (async function () {
+      const params = new URLSearchParams(location.search);
+      const file = safeFile(params.get("file"));
+      if (!file) {
+        docEl.innerHTML = '<div class="state err">No valid report specified. Return to the <a href="/">directory</a>.</div>';
+        crumbEl.textContent = "—";
+        return;
+      }
+      crumbEl.textContent = file.replace(/^\//, "");
+      rawEl.href = file;
+      const title = file.split("/").pop();
+      document.title = title + " — RWG Access Control";
+
+      try {
+        const resp = await fetch(file, { cache: "no-store" });
+        if (!resp.ok) throw new Error("not found");
+        const text = await resp.text();
+        if (typeof marked !== "undefined") {
+          marked.setOptions({ gfm: true, breaks: false });
+          const rawHtml = marked.parse(text);
+          // Sanitize the rendered HTML (defense-in-depth, even though reports are first-party).
+          // The report Markdown only uses <a>/<details>/<summary>/<code>/<strong> + tables, all
+          // covered by DOMPurify's default allowlist; ADD_ATTR keeps <details open> expanded.
+          docEl.innerHTML = (typeof DOMPurify !== "undefined")
+            ? DOMPurify.sanitize(rawHtml, { ADD_TAGS: ["details", "summary"], ADD_ATTR: ["open"] })
+            : rawHtml;
+        } else {
+          const pre = document.createElement("pre");
+          pre.textContent = text;
+          docEl.appendChild(pre);
+        }
+      } catch (e) {
+        docEl.innerHTML = '<div class="state err">Could not load <code>' +
+          title.replace(/[<>&]/g, "") + '</code>. It may have been moved or removed.</div>';
+      }
+    })();
+  </script>
+</body>
+</html>
