@@ -34,6 +34,13 @@
       "status": "reviewed",
       "order": 5
     },
+    "reUSD": {
+      "subtitle": "Re Protocol deposit token",
+      "protocol": "Re Protocol",
+      "summary": "Yield-bearing deposit token backed by off-chain reinsurance and a delta-neutral basis, priced by a daily NAV feed.",
+      "status": "reviewed",
+      "order": 6
+    },
     "frxUSD": {
       "protocol": "Frax Finance",
       "summary": "Frax USD stablecoin backed by off-chain RWA custodians plus on-chain reserves.",
