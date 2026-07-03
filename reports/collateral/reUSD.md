@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 7 off-chain dependencies (custody, oracle, attestation, compliance, backing, redemption, governance) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-07-03 01:38 UTC |
+| Report Date | 2026-07-03 02:46 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-07-03T00:12:49Z** (block 25448252) → **2026-07-03T01:37:54Z** (block 25448683).
+> Comparing **2026-07-03T01:37:54Z** (block 25448683) → **2026-07-03T02:45:57Z** (block 25449030).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -48,42 +48,42 @@
 - **Backing and tranche structure:** total backing equals reUSD supply times NAV (a recent scan: ~140.3M reUSD x 1.0869 = about $152.5M). Only a minority of that (~26% in that scan) sits on-chain as deposited collateral, spread across the ICL, the RedemptionVault, a Reserves account (0x7E499842E7634cce793FFD5D44383BB4a2F086e0), the FeeVault (0x2DF87810fCF9b8e6a42adC5923Bc2EE0ca0467CA) and the custodian address. The majority is off-chain, deployed into a fully-collateralized quota-share reinsurance treaty (sole reinsurer Cover Re SPC Ltd, Cayman-licensed), short-dated US T-bills, an NY Regulation-114 trust, and an Ethena sUSDe/USDe basis trade on undeployed capital. The loss waterfall (senior absorbs last) runs reinsurer equity (~$77M as of 2026-06) then the reUSDe junior tranche then reUSD.
 - **Custody sweep and daily attestation:** deposited collateral does not idle on-chain. withdrawToCustodian(custodian, token, amount) on the ICL moves the free (unlocked) balance out to a whitelisted custodian, today the Fireblocks-managed address 0x295F67Fdb21255A3Db82964445628a706FBe689E (docs cite 3-of-5 / 5-of-8 MPC); depositFromCustodian is the return leg. The custodian whitelist itself is edited by addCustodian under CUSTODIAN_MANAGER_ROLE, held by the 2-day TimelockController. Because most backing is off-chain, its total is evidenced by a daily attestation from The Network Firm, published as a Chainlink Proof-of-Reserve feed on Avalanche ('Re Offchain Reserves', 0xc79a363a3f849d8b3F6A1932f748eA9d4fB2f607, covering reUSD + reUSDe). There is no Ethereum-side PoR feed and the reUSD NAVConsumer does not read the Avalanche feed; on Ethereum the attestation surfaces only indirectly, through the NAV value and its refresh cadence.
 - **Governance topology:** after a June-2026 re-architecture the redemption, payout, pricing and staking layer moved behind a single OpenZeppelin AccessManager (0x3f0DA1C363e34802C6f12F9C27276dC0e6696FD8), while the core token, oracle and registry contracts (ShareToken MINTER, SharePriceCalculator PRICE_SETTER, DepositTokenRegistry, NAVConsumer) remain direct OZ AccessControl administered by the Safe 3/5 — both replacing the earlier per-contract EOA-held roles. A Gnosis Safe 3-of-5 (0x8eec10616802Ef639CA55c98ac856553fAdEfBaD) is the AccessManager root admin and also owns the CCIP pool. A 2-day TimelockController (0x69dDEa332723cF5407151aAF68B9b076557FCA93) guards UUPS proxy upgrades and the custodian whitelist (CUSTODIAN_MANAGER_ROLE / addCustodian on the ICL); separately, the 2-day delay on the custody-sweep (AM role 17330) and oracle-repoint (AM role 13724) roles is the AccessManager's own per-role grant/exec delay, administered by the Safe as roleAdmin, not the Timelock. Privileged actions are invoked through AccessManager.execute by the members of each function's AM role; the custody-sweep role is held by two operator EOAs (0x6C15B25E9750Dccb698C1a4023f34015bFe57649 and 0x99177B4E1Ec3076BE0a91511aabB9cC9aFA61989) plus the Safe, at zero execution delay.
-- **Daily operations (how reUSD breathes):** the dominant on-chain signal is one heartbeat — the once-per-day setSharePrice write on the SharePriceCalculator, a small monotonic upward step of roughly +1.8 bps/day (421 recorded changes, latest ~1.086893e18), landed by the Chainlink Functions callback after keeper 0x3B018eA1105C5b2E14Df25e029a1C090cE54FC5b opens the ~23:45 UTC window. Around it, users deposit stablecoins into the ICL to mint (permissionless, KYC-gated), and operator EOA 0x6C15B25E9750Dccb698C1a4023f34015bFe57649 periodically sweeps deposited backing to the Fireblocks custodian via withdrawToCustodian. Less frequent, non-daily touches include the redemption-config operator 0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8 tuning InstantRedemption economics (fee, caps, range) and the Safe 3/5 (0x8eec10616802Ef639CA55c98ac856553fAdEfBaD) maintaining the DepositTokenRegistry via ADMIN_ROLE (per-collateral minimums and which stablecoins are admitted). The guard and cadence parameters (deviationCheckEnabled true, maxDeviationBps 1000, the 4-hour force-update floor, and the daily schedule) have not moved since deployment.
+- **Daily operations:** the dominant on-chain signal is one heartbeat — the once-per-day setSharePrice write on the SharePriceCalculator, a small monotonic upward step of roughly +1.8 bps/day (421 recorded changes, latest ~1.086893e18), landed by the Chainlink Functions callback after keeper 0x3B018eA1105C5b2E14Df25e029a1C090cE54FC5b opens the ~23:45 UTC window. Around it, users deposit stablecoins into the ICL to mint (permissionless, KYC-gated), and operator EOA 0x6C15B25E9750Dccb698C1a4023f34015bFe57649 periodically sweeps deposited backing to the Fireblocks custodian via withdrawToCustodian. Less frequent, non-daily touches include the redemption-config operator 0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8 tuning InstantRedemption economics (fee, caps, range) and the Safe 3/5 (0x8eec10616802Ef639CA55c98ac856553fAdEfBaD) maintaining the DepositTokenRegistry via ADMIN_ROLE (per-collateral minimums and which stablecoins are admitted). The guard and cadence parameters (deviationCheckEnabled true, maxDeviationBps 1000, the 4-hour force-update floor, and the daily schedule) have not moved since deployment.
 - **Scope and audit:** this profile's deep scope is reUSD core. The junior tranche reUSDe (token 0xdDC0f880…, served by a second ICL and the second NAVConsumer) and the RE/sRE staking tokens share the same AccessManager, Safe and Fireblocks custody provider (though the whitelisted custodian addresses differ per token) but are out of deep scope. The current audit of record is Certora's 'Re Core Security Assessment Report' (2025-09-26, 13 findings fixed), superseding an August-2024 Hacken review; its scope is Re Core (ICL, token, oracle-core, redemption). The Chainlink CCIP bridge layer added in June 2026 falls outside that audit's scope.
 
 </details>
 
 <a id="sec-off-chain-deps"></a>
 <details>
-<summary><strong>🌐 Off-Chain Dependencies</strong></summary>
+<summary><strong>🌐 Off-Chain Dependencies</strong> — risk that extends beyond the chain</summary>
 
 > *7 control surfaces extend beyond on-chain observability. Each entry shows what the analyst CAN observe (on-chain signal) alongside the off-chain dependency it relies on.*
 
-- **custody** 🟠 — Deposit assets are swept off-chain to Fireblocks-managed custody; backing is then off-chain.
+- **1. custody** 🟠 — Deposit assets are swept off-chain to Fireblocks-managed custody; backing is then off-chain.
     - *On-chain signal:* withdrawToCustodian [0x84b594dc] on both ICLs; AM role 17330 held by two single-key EOAs (0x6C15, 0x99177B4E) + Safe, all execDelay=0. Destination bounded by the validCustodian whitelist; addCustodian = CUSTODIAN_MANAGER_ROLE held ONLY by the 2-day Timelock 0x69dDEa. On-chain drainable is small (most backing off-chain at Fireblocks).
     - *Off-chain dependency:* Fireblocks-managed custody (docs: 3-of-5 / 5-of-8 MPC); Re Protocol treasury ops; daily attestation by The Network Firm via Chainlink.
     - *Recovery path:* No on-chain recovery once assets leave to a whitelisted custodian; mediated by the 2-day-timelock whitelist (destinations are pre-approved custodians) + daily Network Firm attestation + Fireblocks controls. RESIDUAL: deployer EOA 0x6C15 + 0x99177B4E retain a single-key, execDelay-0 hand on the sweep (bounded to whitelisted destinations).
-- **oracle** 🔴 — reUSD mint ratio is set from an off-chain NAV computed daily and pushed on-chain via Chainlink Functions → NAVConsumer → SharePriceCalculator.
+- **2. oracle** 🔴 — reUSD mint ratio is set from an off-chain NAV computed daily and pushed on-chain via Chainlink Functions → NAVConsumer → SharePriceCalculator.
     - *On-chain signal:* setSharePrice (PRICE_SETTER_ROLE = NAVConsumer CONTRACT only; 1.086529e18); NAVConsumer forceNAVUpdate (EMERGENCY_UPDATER = Safe) + performUpkeep/requestNAV (keeper 0x3B018eA1 + residual 0x6C15). Guard getters: deviationCheckEnabled + maxDeviationBps.
     - *Off-chain dependency:* Chainlink Functions DON + Re's NAV computation; The Network Firm attestation inputs.
     - *Recovery path:* A stale/manipulated NAV mis-prices mint/redeem. Bounded today: deviation guard ENABLED at 10% + MIN_FORCE_UPDATE_INTERVAL 4h floor cap per-step moves. BUT the guard is Safe+1d-toggleable AND setMaxDeviation is UNCAPPED — widening or disabling it un-bounds the feed. Monitor deviationCheckEnabled + maxDeviationBps.
-- **attestation** 🟠 — Off-chain reserve balances are attested daily by The Network Firm (proof-of-reserve style). The attestation informs the off-chain NAV computation; it is NOT posted to an on-chain PoR feed.
+- **3. attestation** 🟠 — Off-chain reserve balances are attested daily by The Network Firm (proof-of-reserve style). The attestation informs the off-chain NAV computation; it is NOT posted to an on-chain PoR feed.
     - *On-chain signal:* The attestation IS published on-chain — as a Chainlink Proof-of-Reserve feed on Avalanche (0xc79a363a3f849d8b3F6A1932f748eA9d4fB2f607, 'Re Offchain Reserves'), updated daily by The Network Firm — but there is NO Ethereum-side PoR feed and the reUSD NAVConsumer does not consume it. On Ethereum the attestation is observable only indirectly, via the NAV value + refresh cadence (getSharePrice; forceNAVUpdate / performUpkeep timing). Monitor the Avalanche PoR value + freshness, plus NAV staleness/deviation as the Ethereum proxy.
     - *Off-chain dependency:* The Network Firm (audit/attestation provider); the attestation-to-NAV computation is off-chain.
     - *Recovery path:* Attestation failure or manipulation flows into a wrong NAV; no on-chain PoR to cross-check against, so detection is indirect (NAV divergence from independent modeling). No direct on-chain recovery.
-- **compliance** 🟡 — reUSD is not available to U.S. persons; access gated by KYC + geographic restriction enforced off-chain and at the KYCRegistry.
+- **4. compliance** 🟡 — reUSD is not available to U.S. persons; access gated by KYC + geographic restriction enforced off-chain and at the KYCRegistry.
     - *On-chain signal:* KYCRegistry approveKYC/revokeKYC; KYC_PROVIDER_ROLE holders (EOAs).
     - *Off-chain dependency:* Re Protocol KYC/compliance operations; provider key custody.
     - *Recovery path:* A compromised provider key can approve sanctioned addresses; compliance-layer risk, not direct fund loss.
-- **backing** 🟠 — Ultimate backing is off-chain: fully-collateralized quota-share reinsurance (sole reinsurer Cover Re SPC Ltd, Cayman-licensed), short-dated US T-bills, and NY Regulation-114 trust accounts, plus an Ethena basis trade (sUSDe/USDe) on undeployed capital.
+- **5. backing** 🟠 — Ultimate backing is off-chain: fully-collateralized quota-share reinsurance (sole reinsurer Cover Re SPC Ltd, Cayman-licensed), short-dated US T-bills, and NY Regulation-114 trust accounts, plus an Ethena basis trade (sUSDe/USDe) on undeployed capital.
     - *On-chain signal:* Indirect only — reflected in the NAV/share price (and the aggregate off-chain reserve total on the Avalanche Chainlink PoR feed).
     - *Off-chain dependency:* Reinsurance treaty + reinsurer (Cover Re SPC) solvency; US T-bill + Reg-114 trust custody; Ethena (sUSDe/USDe) exposure on both deposit and redemption sides.
     - *Recovery path:* Treaty or basis-trade loss flows through to NAV. Loss waterfall: the reinsurer's own equity (~$77M, 2026-06) is first-loss, then the reUSDe junior/mezzanine tranche, then the reUSD senior tranche — so reUSD absorbs last.
-- **redemption** 🟠 — 3-tier redemption: only the INSTANT tier (InstantRedemption) is fully on-chain. The scheduled / window tiers (WindowRedemption + RedemptionVault refill) are off-chain-operated — a redeemer past the instant daily/per-user caps waits on off-chain processing.
+- **6. redemption** 🟠 — 3-tier redemption: only the INSTANT tier (InstantRedemption) is fully on-chain. The scheduled / window tiers (WindowRedemption + RedemptionVault refill) are off-chain-operated — a redeemer past the instant daily/per-user caps waits on off-chain processing.
     - *On-chain signal:* InstantRedemption caps (dailyLimitBps=2000 / userLimitBps=1000) + RefillNeeded event (the on-chain instant tier is drained and needs an off-chain->on-chain refill via depositFromCustodian); RedemptionGateway windowRedemption / windowId mechanics. Monitor RefillNeeded + window open/close + updateLimitPercentages (the instant-tier cap).
     - *Off-chain dependency:* Re Protocol redemption operations — off-chain processing of scheduled/window redemptions + the custody->on-chain refill of the instant tier.
     - *Recovery path:* If the instant tier is capped/closed or drained (RefillNeeded unserviced), the exit falls to the off-chain window/scheduled tiers at operations' pace — slowest exactly under stress. No on-chain forcing of an off-chain redemption. This is the STRAND surface; the on-chain lever is updateLimitPercentages.
-- **governance** 🟠 — The whole on-chain authority stack resolves to a Gnosis Safe 3-of-5 (0x8eec) whose signer key custody + signing coordination are off-chain; one signer (0x0AE4eeAF) is EIP-7702-delegated to MetaMask's standard EIP7702StatelessDeleGator (0x63c0c19a — a 4337/passkey smart account, not a bespoke governance contract).
+- **7. governance** 🟠 — The whole on-chain authority stack resolves to a Gnosis Safe 3-of-5 (0x8eec) whose signer key custody + signing coordination are off-chain; one signer (0x0AE4eeAF) is EIP-7702-delegated to MetaMask's standard EIP7702StatelessDeleGator (0x63c0c19a — a 4337/passkey smart account, not a bespoke governance contract).
     - *On-chain signal:* Safe 0x8eec getOwners() + owner-set changes (AddedOwner / RemovedOwner / ChangedThreshold); the EIP-7702 delegate pointer on signer 0x0AE4eeAF. Monitor owner-set, threshold, and delegate changes.
     - *Off-chain dependency:* Safe signer key custody + off-chain signing coordination; signer identities / jurisdiction / accountability; any session-key / delegation configured on the 0x0AE4eeAF MetaMask 7702 smart account.
     - *Recovery path:* Owner-set changes are on-chain visible, but signing-key compromise or signer collusion is off-chain and only observable post-hoc via the on-chain action it takes. This is the off-chain twin of the Safe's on-chain reach: the 3/5 Safe reaches all four CRITICAL axes with no timelock, so its off-chain key custody is the residual trust anchor.
@@ -92,15 +92,15 @@
 
 <a id="sec-critical-params"></a>
 <details>
-<summary><strong>🎚️ Critical Parameter Levers</strong></summary>
+<summary><strong>🎚️ Critical Parameter Levers</strong> — the one-tx risk levers to watch</summary>
 
 > *13 on-chain parameter levers that are curated as high-impact for lender-side risk (direct dilution / safety-mechanism closure / authority transfer / oracle repointing). Each entry shows current value, the threshold that triggers the impact, and the role-holder controlling the lever.*
 
-- **`withdrawToCustodian(address custodian, address token, uint256 amount)`** 🟠 on [**InsuranceCapitalLayer (0x4691C475bE804Fa85f91c2D6D0aDf03114de3093); same role on reUSDe ICL 0xE1886BE2**](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093)
+- **1. `withdrawToCustodian(address custodian, address token, uint256 amount)`** 🟠 on [**InsuranceCapitalLayer (0x4691C475bE804Fa85f91c2D6D0aDf03114de3093); same role on reUSDe ICL 0xE1886BE2**](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093)
     - *Role gate:* Gated by OZ OPERATOR_ROLE on the ICL — the ICL is NOT AccessManaged (authority() reverts). The SOLE holder of OPERATOR_ROLE is the AccessManager 0x3f0D itself, so the sweep is triggered via AM.execute(ICL, ...): members of AM role 17330594617245322166 (EOA 0x6C15B25E, EOA 0x99177B4E, Safe 0x8eec — all execDelay=0 = single-key/instant; role grantDelay=2d) call through the AM, which forwards as msg.sender and passes onlyRole. MONITOR BOTH AM RoleGranted(17330) AND ICL RoleGranted(OPERATOR_ROLE) — a second DIRECT OPERATOR_ROLE grant would bypass the AM path entirely.
     - *Impact:* A single delay-0 operator key can sweep unlocked backing out on-chain, but only to an already-whitelisted custodian (today 0x295F67Fd for reUSD, 0xd4374008 for reUSDe; DAI has none). It cannot touch the redemption reserve or locked collateral, only the free balance. The custodian whitelist is managed by CUSTODIAN_MANAGER (held by the 2-day Timelock) — but the Safe DEFAULT_ADMIN can self-grant CUSTODIAN_MANAGER instantly (plain-OZ, no delay), so a new sweep destination CAN be added without the timelock; MONITOR addCustodian events. Realistic bad case is not theft but one key forcing backing into off-chain custody early or at a bad moment, after which recovery depends on the off-chain custody relationship (Fireblocks / Network Firm), not anything on-chain. HIGH operational-integrity (single-key, no multisig), not direct-loss CRITICAL; the arbitrary instant drain (Safe self-grants OPERATOR / CUSTODIAN_MANAGER) is captured in the DEFAULT_ADMIN self-grant CRITICAL, and the compromised-custodian loss path lives in the off-chain custody dependency.
 
-**📊 reUSD backing composition (live)** — *live @ block 25,448,752; refreshes each scan*
+**📊 reUSD backing composition (live)** — *live @ block 25,449,091; refreshes each scan*
 
 | Location | USDC | USDT | USDe | sUSDe | USD value | % backing |
 |---|---:|---:|---:|---:|---:|---:|
@@ -117,57 +117,57 @@
 > *Coverage: the attested off-chain reserves ($177.66M) cover this asset's implied off-chain backing ($112.86M) with ~$64.81M headroom.*
 > *reUSD is backed at NAV; as the senior tranche it is loss-protected by the reUSDe junior tranche and the reinsurer's ~$77M first-loss equity beneath it — over-collateralized in the credit sense.*
 
-- **`setSharePrice(uint256)`** 🔴 on [**SharePriceCalculator (0xd1D104a7515989ac82F1AFDa15a23650411b05B8)**](#c-0xd1d104a7515989ac82f1afda15a23650411b05b8)
+- **2. `setSharePrice(uint256)`** 🔴 on [**SharePriceCalculator (0xd1D104a7515989ac82F1AFDa15a23650411b05B8)**](#c-0xd1d104a7515989ac82f1afda15a23650411b05b8)
     - *Role gate:* PRICE_SETTER_ROLE — contract-held (NAVConsumer); no EOA leg.
     - *Live current value (as of block 25,448,209):* `1086893160111686144 (1.086893e18)`
     - *Recorded changes:* 421 historical event(s); last setter `0xeA47A1374f4892cdFc2307016a463AbCc0C66852`
     - *Impact:* Direct write of the reUSD mint ratio. Off-1:1 setting dilutes every holder / mis-prices deposits.
-- **`forceNAVUpdate(uint256,string)`** 🔴 on [**NAVConsumer (0x84d4eaeb10f9E57b67622f667C6c13E22fA4b2B6) + reUSDe NAVConsumer 0x105f7f11**](#c-0x84d4eaeb10f9e57b67622f667c6c13e22fa4b2b6)
+- **3. `forceNAVUpdate(uint256,string)`** 🔴 on [**NAVConsumer (0x84d4eaeb10f9E57b67622f667C6c13E22fA4b2B6) + reUSDe NAVConsumer 0x105f7f11**](#c-0x84d4eaeb10f9e57b67622f667c6c13e22fa4b2b6)
     - *Role gate:* EMERGENCY_UPDATER_ROLE — net LIVE holder = ONLY Safe 3/5 0x8eec (deployer-EOA leg removed). OZ role, no delay (instant).
     - *Threshold:* Pushes a chosen NAV bypassing the Chainlink feed. Bounded per-step to 10% every 4h WHILE the guard holds — but the guard is Safe+1d-toggleable AND setMaxDeviation is UNCAPPED, so the same governance can un-bound it. No external (non-Safe) buffer on the collateral's value.
     - *Impact:* The direct feed-bypass write on the oracle that values reUSD AS collateral. The only on-chain bound (the deviation guard) is self-referential Safe governance (toggleable + uncapped per §11c), so a 3/5 Safe can un-bound then re-value reUSD within ~1 day, with no external oracle recourse. Mis-valuation -> FiRM over-lends (bad debt) or force-liquidates — CRITICAL on the FiRM lens (oracle integrity is the core of a share-price collateral). NAV plumbing: the 10% deviation guard (setDeviationCheckEnabled / setMaxDeviation, Safe+1d) bounds ONLY the automated Chainlink feed — this forceNAVUpdate and a direct setSharePrice bypass it (unbounded). Disabling or widening the guard removes the automated feed's mint-safety check (unfair-mint exposure if the off-chain NAV is faulty or compromised); setNAVReceiver repoints the NAV sink but cannot inject a price. MONITOR setDeviationCheckEnabled->false / setMaxDeviation->large.
-- **`updateLimitPercentages(uint256,uint256)`** 🟠 on [**InstantRedemption (0xa31deEbb3680A3007120e74bCbDf4df36F042A40)**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40)
+- **4. `updateLimitPercentages(uint256,uint256)`** 🟠 on [**InstantRedemption (0xa31deEbb3680A3007120e74bCbDf4df36F042A40)**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40)
     - *Role gate:* AM role 11723228863651074278 — SOLE holder EOA 0xEE16bE03, execDelay=0 (single-key, live). Same role gates the full redemption-config surface: updateRedemptionRange, updateFee (capped 10% MAX_FEE_BPS), updateHighWatermark, setFeeVault (Instant + Window), PayoutTokenRegistry setTokenConfig + emergencySwitch, WindowRedemption updateMinimumRequest.
     - *Threshold:* (0,0) reverts, so updateLimitPercentages(1,1) = 0.01%/day is the effective close of the on-chain instant redemption tier — single key, one tx, no delay.
     - *Impact:* On-chain redemption is reUSD's depeg defense — it lets reUSD flow off DEX pools back to backing. A single delay-0 key (0xEE16) can close the instant tier (caps->~0) in one tx at the moment of stress, when the off-chain window tiers are slowest, leaving the peg to thin DEX liquidity -> depeg -> impairment as FiRM collateral (mark-down / liquidation cascade). Mitigant: off-chain scheduled/window tiers remain, so not a total exit loss — this is a STRAND (reversible liquidity impairment, backing intact, market-mediated), HIGH not CRITICAL on the premise that FiRM market-prices reUSD (if it were ever priced at NAV/par this snaps back to CRITICAL). Related: setFeeVault repoints the redemption-fee recipient — recordFee has no try/catch, so a reverting feeVault DoS's redemption while fee>0 (bounded, fees <=10% of volume).
-- **`updateFee(uint16)`** 🟠 on **InstantRedemption (0xa31deEbb…2A40) [redemption cluster, role 11723]**
+- **5. `updateFee(uint16)`** 🟠 on **InstantRedemption (0xa31deEbb…2A40) [redemption cluster, role 11723]**
     - *Role gate:* AM role 11723228863651074278 — SOLE holder EOA 0xEE16bE03, execDelay=0 (single-key). HARD-CAPPED by immutable MAX_FEE_BPS=1000 (10%, §11c) — cannot exceed 10% without a contract upgrade.
     - *Threshold:* A single-key hike to the 10% cap = a 10% haircut on every on-chain redemption → redemption floor = NAV − 10%.
     - *Impact:* Sets reUSD's on-chain REDEMPTION HAIRCUT (0–10%, hard-capped). At the cap a redeemer receives 90% of gross, so the redemption floor that anchors the peg = NAV − fee. FiRM SIZING INPUT: value reUSD collateral against NAV − (up to 10%) — the exit value is the fee-reduced payout, and a single delay-0 key (0xEE16) can move the fee to the cap in one tx. Bounded (10% ceiling) + reversible → HIGH, the bounded-haircut twin inside the CRITICAL 0xEE16 redemption cluster (updateLimitPercentages caps→0 is the unbounded CLOSE twin).
-- **`owner-bundle: transferOwnership / applyChainUpdates / addRemotePool / setDynamicConfig`** 🔴 on [**CCIP BurnWithFromMintTokenPool (0xF00B3b06690bC7E2bC6A9ccae55d17b7CD818465) — holds MINTER on reUSD**](#c-0xf00b3b06690bc7e2bc6a9ccae55d17b7cd818465)
+- **6. `owner-bundle: transferOwnership / applyChainUpdates / addRemotePool / setDynamicConfig`** 🔴 on [**CCIP BurnWithFromMintTokenPool (0xF00B3b06690bC7E2bC6A9ccae55d17b7CD818465) — holds MINTER on reUSD**](#c-0xf00b3b06690bc7e2bc6a9ccae55d17b7cd818465)
     - *Role gate:* owner() = Safe 3/5 (0x8eec…fBaD), delay 0 (NOT AccessManaged — no AM buffer; transferOwnership is 2-step but no timelock).
     - *Threshold:* The Safe owner can, delay-0, self-authorize the pool to mint UNBACKED reUSD in one tx (repoint s_router + a remote pool, then releaseOrMint) — no ownership transfer or real CCIP infra required. DILUTE axis, cross-chain.
     - *Impact:* Cross-chain unbacked-mint surface: the pool holds reUSD MINTER and its owner (Safe 3/5, delay 0) controls every releaseOrMint gate, so it can self-authorize an unbacked mint in one tx (setDynamicConfig repoints the router past the offRamp check; addRemotePool/applyChainUpdates defeat the remote-pool check). Strictly worse than the ShareToken DEFAULT_ADMIN->MINTER path, which has a 2-day Timelock co-holder — this owner leg has delay 0. CRITICAL (dilute), Safe-quorum-tempered; only backstop is the immutable RMN curse. Absent an owner reconfiguration, inbound cross-chain mint is itself rate-limited: 11 live lanes each carry a standard-finality inbound cap of ~1M reUSD (refill ~300/s), an aggregate ~12M reUSD burst ceiling (~8% of supply) before the brake engages; the fast-finality limiters are unset but fast finality is not an allowed path (allowedFinalityConfig=0x0), so there is no un-braked inbound leg today. MONITOR CCIP OwnershipTransferRequested / setDynamicConfig / RemotePoolAdded / ChainAdded / setRateLimitConfig / setAllowedFinalityConfig (enabling fast finality while its per-lane limiters stay disabled would open an un-braked inbound-mint path).
-- **`DEFAULT_ADMIN_ROLE grant path -> grantRole(bytes32 MINTER_ROLE, address)`** 🔴 on **reUSD ShareToken (proxy 0x5086bf35…0c72, impl 0xb5276c) — PLAIN OZ AccessControl, NOT AM-governed**
+- **7. `DEFAULT_ADMIN_ROLE grant path -> grantRole(bytes32 MINTER_ROLE, address)`** 🔴 on **reUSD ShareToken (proxy 0x5086bf35…0c72, impl 0xb5276c) — PLAIN OZ AccessControl, NOT AM-governed**
     - *Role gate:* getRoleAdmin(MINTER)=DEFAULT_ADMIN_ROLE. DEFAULT_ADMIN held by Safe 3/5 0x8eec + 2-day Timelock 0x69dDEa ONLY (both CONTRACTS; deployer EOA 0x6C15 REVOKED, historical grantees 0xf044/0xf682 = contracts, both revoked). NO EOA holds DEFAULT_ADMIN or MINTER.
     - *Profile-declared value (verified at block 25,448,252):* `MINTER currently held ONLY by contracts — ICL 0x4691, InstantRedemption 0xa31d, CCIP pool 0xF00B (legacy LZ 0x0dfb42 revoked); no EOA.`
     - *Threshold:* A DEFAULT_ADMIN holder can grantRole(MINTER, attacker) in ONE tx → attacker mints reUSD directly (unbounded dilution). This is the DILUTE-axis meta-lever for the ShareToken supply role.
     - *Impact:* THE mint-authority meta-lever (dilute axis): getRoleAdmin(MINTER)=DEFAULT_ADMIN, so a DEFAULT_ADMIN holder can confer direct reUSD mint. DEFAULT_ADMIN = Safe 3/5 + 2-day Timelock only, no EOA, so no single key can grant MINTER. CRITICAL because the Safe leg is INSTANT — unlike the AM custody/oracle grants (2-day delay), this plain-OZ grant lets a 3/5 quorum confer mint + mint in one atomic tx with zero buffer (the Timelock co-holder leg IS 2-day-buffered). Tempered by the 3/5 quorum, not total. MONITOR ShareToken RoleGranted(MINTER) + RoleGranted(DEFAULT_ADMIN).
-- **`DEFAULT_ADMIN self-grant on the PLAIN-OZ (non-AM) contracts -> grantRole(<terminal CRITICAL role>, x)`** 🔴 on **SharePriceCalculator 0xd1D104 / DepositTokenRegistry 0x73d37A / NAVConsumer 0x84d4ea / InsuranceCapitalLayer 0x4691 (+ ShareToken 0x5086 = the MINTER entry above)**
+- **8. `DEFAULT_ADMIN self-grant on the PLAIN-OZ (non-AM) contracts -> grantRole(<terminal CRITICAL role>, x)`** 🔴 on **SharePriceCalculator 0xd1D104 / DepositTokenRegistry 0x73d37A / NAVConsumer 0x84d4ea / InsuranceCapitalLayer 0x4691 (+ ShareToken 0x5086 = the MINTER entry above)**
     - *Role gate:* DEFAULT_ADMIN = Safe 3/5 0x8eec on all four (ICL DEFAULT_ADMIN co-held by 2d-Timelock 0x69dDEa; BOTH are DIRECT members). PLAIN OZ AccessControl => grantRole is INSTANT (no grant delay — unlike the AM's 2-day buffer).
     - *Profile-declared value (verified at block 25,448,252):* `Safe does NOT hold the ICL terminal roles directly today (2d-Timelock holds UPGRADER/CUSTODIAN_MANAGER) but as DEFAULT_ADMIN can self-grant them instantly; roleAdmin of each terminal role = DEFAULT_ADMIN.`
     - *Threshold:* Safe DEFAULT_ADMIN -> grant terminal role -> act, INSTANTLY: SharePriceCalculator PRICE_SETTER -> setSharePrice arbitrary (DILUTE/MIS-VALUE); DTR ORACLE_MANAGER/ADMIN -> updateTokenOracle/addToken (MIS-VALUE collateral side); NAVConsumer EMERGENCY_UPDATER -> forceNAVUpdate arbitrary (MIS-VALUE); ICL OPERATOR -> withdrawToCustodian (DRAIN, bounded to whitelisted custodian) OR ICL/ShareToken UPGRADER -> upgradeToAndCall (UNBOUNDED drain / all four axes).
     - *Impact:* The AM 2-day grant delay credited on several HIGH levers does NOT protect the plain-OZ half of the stack: the Safe holds DEFAULT_ADMIN directly and grantRole has no delay, so it can confer + exercise a terminal CRITICAL role (mint-ratio / collateral-oracle / NAV / custody-operator + UPGRADER) in one atomic tx with zero timelock. Each terminal lever is already CRITICAL, so the instant self-grant inherits CRITICAL (confer-worst-role). Safe-quorum-tempered. The ICL/ShareToken UPGRADER->upgrade paths are the unbounded all-axes ones. MONITOR RoleGranted(<terminal role>) on each contract.
-- **`AM meta-admin: grantRole(uint64,address,uint32) / setTargetFunctionRole(address,bytes4[],uint64) / updateAuthority / setTargetClosed`** 🟠 on [**AccessManager (0x3f0DA1C363e34802C6f12F9C27276dC0e6696FD8)**](#c-0x3f0da1c363e34802c6f12f9c27276dc0e6696fd8)
+- **9. `AM meta-admin: grantRole(uint64,address,uint32) / setTargetFunctionRole(address,bytes4[],uint64) / updateAuthority / setTargetClosed`** 🟠 on [**AccessManager (0x3f0DA1C363e34802C6f12F9C27276dC0e6696FD8)**](#c-0x3f0da1c363e34802c6f12f9c27276dc0e6696fd8)
     - *Role gate:* ADMIN_ROLE id=0 = Safe 3/5 (0x8eec…fBaD), execDelay=0 (no EOA).
     - *Profile-declared value (verified at block 25,448,252):* `Grant delays are asymmetric: custody-sweep role 17330 and oracle role 13724 = 2-day; redemption role 11723 and ADMIN id=0 = 0 (instant). Every role's roleAdmin is the Safe. targetAdminDelay = 0 (instant) for the redemption/payout/pricing targets (InstantRedemption, RedemptionGateway, PayoutTokenRegistry, PriceRouter), 2-day for ICL + NAVConsumer, 7-day for KYCRegistry/staking.`
     - *Threshold:* grantRole confers the custody-sweep (17330, usable +2d) / oracle-repoint (13724, +2d) / redemption-close (11723, instant) role; setTargetFunctionRole / updateAuthority / setTargetClosed re-point a selector to a Safe-held role, re-point a target's authority(), or close a target instantly on the delay-0 targets.
     - *Impact:* The AccessManager root meta-admin. A single Safe 3/5 tx can grant three of the four CRITICAL-axis roles, or instantly re-point / close the delay-0 redemption / payout / pricing targets. HIGH not CRITICAL: the custody and oracle grants carry a 2-day buffer, and the instant reach is STRAND plus a bounded redemption-reserve drain (the redemption vault is ~6% of supply). The truly instant unbacked-mint and total-drain paths live on the plain-OZ DEFAULT_ADMIN levers, not here, and the AM cannot grant reUSD MINTER (that is the ShareToken's separate plain-OZ AccessControl). Safe-quorum-tempered (no single key). MONITOR AM RoleGranted / TargetFunctionRoleUpdated / AuthorityUpdated / TargetClosed.
-- **`setSharePriceCalculator(address)`** 🟠 on **InsuranceCapitalLayer (0x4691C475…3093) + reUSDe ICL 0xE1886BE2 [selector 0x635b6a3a]**
+- **10. `setSharePriceCalculator(address)`** 🟠 on **InsuranceCapitalLayer (0x4691C475…3093) + reUSDe ICL 0xE1886BE2 [selector 0x635b6a3a]**
     - *Role gate:* AM role 13724107344495470129 — sole holder Safe 3/5 0x8eec, execDelay 172800s (2d).
     - *Threshold:* Repoint to a calculator that returns an off-1:1 / manipulable ratio. Bounded by the 2-day AM delay + Safe 3/5 quorum.
     - *Impact:* Repoints the mint-ratio oracle the ICL reads = SUPPLY-equivalent (mis-price every deposit/redeem). Safe + 2-day delay = analyst-observable buffer; not single-key.
-- **`setPriceFeed(address,address) / removePriceFeed(address)`** 🟠 on **PriceRouter 0xFe76cF5e…Fab66 [selectors 0x76e11286 / 0xfceb0024]**
+- **11. `setPriceFeed(address,address) / removePriceFeed(address)`** 🟠 on **PriceRouter 0xFe76cF5e…Fab66 [selectors 0x76e11286 / 0xfceb0024]**
     - *Role gate:* AM role 16768900588957885613 — SOLE holder EOA 0x49BC5A88…A0ee, execDelay=0 (single-key).
     - *Profile-declared value (verified at block 25,448,252):* `Live redemption feeds: shareToken 0x0764BFa8 (1.086529 WAD), sUSDe 0xb6aD3633 (1.234679 WAD; same feed as the sUSDe collateral oracle).`
     - *Threshold:* Point a redemption-priced token at a manipulated feed → mis-priced redemption payout. Single-key, delay 0.
     - *Impact:* Single-key control of the redemption-pricing feeds. Not a reUSD mint lever, but mis-pricing redemptions is a value-leak / peg-discipline surface. Single delay-0 EOA — flag for key-custody hardening.
-- **`updateTokenOracle(address,address)`** 🔴 on **DepositTokenRegistry (0x73d37A98…c0F6) — PER-COLLATERAL ORACLE**
+- **12. `updateTokenOracle(address,address)`** 🔴 on **DepositTokenRegistry (0x73d37A98…c0F6) — PER-COLLATERAL ORACLE**
     - *Role gate:* OZ ORACLE_MANAGER_ROLE = Safe 3/5 0x8eec (instant, NO delay; prior EOA 0x6C15 REVOKED). DTR is NOT AM-managed (direct OZ AccessControl).
     - *Threshold:* Repoints the priceOracle valuing a DEPOSIT collateral → a manipulated/permissive oracle mints reUSD at a wrong (inflated) rate = direct dilution (the Resolv-USR permissive-oracle class).
     - *Impact:* updateTokenOracle sets the feed that values a collateral at mint — the mint path converts the deposit to reUSD at that price. A Safe repoint to an over-valuing or manipulable feed mints far more reUSD than backing: the Resolv USR class (~millions minted against ~100k USDC via a permissive oracle, then dumped -> depeg). For FiRM that is direct loss: unbacked reUSD -> bad debt on reUSD-collateralized loans. Today the four live oracles are robust status-guarded wrappers (mint reverts on STALE/INVALID/VOLATILE, sUSDe capped), so the residual is the GOVERNANCE repoint: a no-timelock 3/5 Safe can swap in a VALID-but-inflated feed (the status check misses that) in one tx. Collateral-side twin of setSharePrice. MONITOR TokenOracleUpdated.
 
-**📊 Collateral oracle registry** — *live @ block 25,448,752; refreshes each scan*
+**📊 Collateral oracle registry** — *live @ block 25,449,091; refreshes each scan*
 
 | Collateral | Live oracle | Status | Price (USD) | Paused |
 |---|---|---|---:|:---:|
@@ -176,7 +176,7 @@
 | [USDe](https://etherscan.io/address/0x4c9EDD5852cd905f086C759E8383e09bff1E68B3) | [`0x0649...084b`](https://etherscan.io/address/0x0649a6AD66f145E1907401ae3db6418fe42E084b) | VALID | $0.9982 | no |
 | [sUSDe](https://etherscan.io/address/0x9D39A5DE30e57443BfF2A8307A4256c8797A3497) | [`0xb6aD...fB4D`](https://etherscan.io/address/0xb6aD3633cB3FAfed3D375d8c64240f122E19fB4D) | VALID | $1.2355 | no |
 
-- **`addToken(address,uint256,uint256,address,bool,uint256,uint256)`** 🔴 on **DepositTokenRegistry (0x73d37A98…c0F6) — MINT-asset whitelist**
+- **13. `addToken(address,uint256,uint256,address,bool,uint256,uint256)`** 🔴 on **DepositTokenRegistry (0x73d37A98…c0F6) — MINT-asset whitelist**
     - *Role gate:* OZ ADMIN_ROLE = Safe 3/5 0x8eec (instant, no delay). NOT AM-managed.
     - *Threshold:* Adds a new DEPOSITABLE collateral WITH its priceOracle + eligibility + fees. A malicious token + oracle → deposit inflated collateral → mint excess reUSD = dilution.
     - *Impact:* The whitelist-add for the assets that MINT reUSD. Curates which collateral is accepted and at what oracle — the mint-value basis. A bad add dilutes every holder. Safe 3/5 (multisig buffer, no timelock). CRITICAL on the FiRM-collateral lens. Pairs with updateTokenOracle (the oracle leg).
@@ -188,15 +188,15 @@
 1. [Analyst Focus Areas](#analyst-focus-areas)
 2. Contracts
    - [reUSD ★](#c-0x5086bf358635b81d8c47c66d1c8b9e567db70c72)
+   - [TimelockController](#c-0x69ddea332723cf5407151aaf68b9b076557fca93)
    - [InsuranceCapitalLayer](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093)
    - [BurnWithFromMintTokenPool](#c-0xf00b3b06690bc7e2bc6a9ccae55d17b7cd818465)
    - [InstantRedemption](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40)
-   - [TimelockController](#c-0x69ddea332723cf5407151aaf68b9b076557fca93)
    - [AccessManager](#c-0x3f0da1c363e34802c6f12f9c27276dc0e6696fd8)
    - [DepositTokenRegistry](#c-0x73d37a98c0fcbd049bffffe67bf9af36d603c0f6)
    - [SharePriceCalculator](#c-0xd1d104a7515989ac82f1afda15a23650411b05b8)
-   - [PayoutTokenRegistry](#c-0xf788624278dc0d5b4e494f834932e6938aa2bdc3)
    - [KYCRegistry](#c-0x82f1806aeab5ecb9a485eb041d5ed4940b123995)
+   - [PayoutTokenRegistry](#c-0xf788624278dc0d5b4e494f834932e6938aa2bdc3)
    - [RedemptionGateway](#c-0x8aeb9453ef22cb38abc7a3af9c208f65c1bfe31e)
    - [ReProtocolStaking](#c-0x2eafa5bd2c477e21c8edd4c9781a2fa54c623900)
    - [NAVConsumer](#c-0x84d4eaeb10f9e57b67622f667c6c13e22fa4b2b6)
@@ -207,7 +207,7 @@
 5. [EOA Exposure Summary](#eoa-exposure-summary)
 6. [✅ Scan Integrity](#scan-integrity)
 
-## Analyst Focus Areas
+## Analyst Focus Areas &nbsp;&nbsp;☑ Profile reviewed
 
 > **Observational findings — not risk determinations.** Each item below is a focus point for the Risk Analyst to interpret against collateralization context and the protocol's stated intent. Attention levels (CRITICAL / HIGH / LOW) reflect the scanner's heuristic weight — not a realized risk to FiRM. These observations support future risk assessments; they do not constitute one.
 
@@ -225,8 +225,8 @@
     - ↳ 🔴 [**Observed: EOA holds `AM Operator (role 13697439394725303084; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` on ReProtocolStaking**](#c-0x2eafa5bd2c477e21c8edd4c9781a2fa54c623900) — `0x07e5faC51aD770e23F5399d51070647E16e75F4F` (EOA) — single key controls [PAUSE] capability. Assess custody and intent.
     - ↳ 🟠 [**Observed: EOA holds `CANCELLER_ROLE` on TimelockController**](#c-0x69ddea332723cf5407151aaf68b9b076557fca93) — `0x07e5faC51aD770e23F5399d51070647E16e75F4F` (EOA) — single key controls privileged functions. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` on InstantRedemption**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40) — `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8` (EOA) — single key controls a role whose functions (`setFeeVault`, `updateFee`, `updateHighWatermark` +2 more) may reach inherited [SUPPLY] authority via reUSD (ERC1967Proxy) [ShareToken]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
-- 🔴 [**Observed: EOA holds `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` on PayoutTokenRegistry**](#c-0xf788624278dc0d5b4e494f834932e6938aa2bdc3) — `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8` (EOA) — single key controls a role whose functions (`emergencySwitch`, `setTokenConfig`) may reach inherited [SUPPLY] authority via InstantRedemption, reUSD (ERC1967Proxy) [ShareToken]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `KYC_PROVIDER_ROLE` on KYCRegistry**](#c-0x82f1806aeab5ecb9a485eb041d5ed4940b123995) — `0x67dD3914A3c8FD627824153773117276a5E4f3A5` (EOA) — single key controls a role whose functions (`approveKYC`, `revokeKYC`) may reach inherited [SUPPLY] authority via InstantRedemption, reUSD (ERC1967Proxy) [ShareToken]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` on PayoutTokenRegistry**](#c-0xf788624278dc0d5b4e494f834932e6938aa2bdc3) — `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8` (EOA) — single key controls a role whose functions (`emergencySwitch`, `setTokenConfig`) may reach inherited [SUPPLY] authority via InstantRedemption, reUSD (ERC1967Proxy) [ShareToken]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 [**Observed: unknown upgrade controller on ReProtocolStaking**](#c-0x2eafa5bd2c477e21c8edd4c9781a2fa54c623900) — `upgradeability (UUPS)` has no resolved controller — verify upgradeability origin.
 - 🔴 [**Observed: EOA holds `AM Operator (role 13027108596976310255; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` on ReProtocolStaking**](#c-0x2eafa5bd2c477e21c8edd4c9781a2fa54c623900) — `0xf31d8E94928147cCb30C698ddD81C6791861C4a9` (EOA) — single key controls a role whose functions (`syncBatch`) may reach inherited [SUPPLY] authority via InsuranceCapitalLayer, reUSD (ERC1967Proxy) [ShareToken]. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 [**Observed: upgrade path has no timelock on ReProtocolStaking**](#c-0x2eafa5bd2c477e21c8edd4c9781a2fa54c623900) — Proxy can be upgraded without a timelock delay — no observation window for users. Verify governance design.
@@ -288,8 +288,8 @@
 - ⚠️ [**No Timelock in admin chain: `OPERATOR_ROLE` on InsuranceCapitalLayer**](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093) — `OPERATOR_ROLE` has SUPPLY capability and is held by: `0x3f0D...6FD8` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `depositTokenRegistry()` on InsuranceCapitalLayer**](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093) — `depositTokenRegistry()` has SUPPLY capability and is held by: `0x73d3...c0F6` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `sharePriceCalculator()` on InsuranceCapitalLayer**](#c-0x4691c475be804fa85f91c2d6d0adf03114de3093) — `sharePriceCalculator()` has SUPPLY capability and is held by: `0xd1D1...05B8` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- ⚠️ [**No Timelock in admin chain: `payoutTokenRegistry()` on InstantRedemption**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40) — `payoutTokenRegistry()` has SUPPLY capability and is held by: `0xf788...Bdc3` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `kyc()` on InstantRedemption**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40) — `kyc()` has SUPPLY capability and is held by: `0x82F1...3995` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `payoutTokenRegistry()` on InstantRedemption**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40) — `payoutTokenRegistry()` has SUPPLY capability and is held by: `0xf788...Bdc3` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` on InstantRedemption**](#c-0xa31deebb3680a3007120e74bcbdf4df36f042a40) — `AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` has SUPPLY capability and is held by: `0x8aEb...E31e` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `ORACLE_MANAGER_ROLE` on DepositTokenRegistry**](#c-0x73d37a98c0fcbd049bffffe67bf9af36d603c0f6) — `ORACLE_MANAGER_ROLE` has SUPPLY capability and is held by: `0x8eec...fBaD` (Safe). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `PRICE_SETTER_ROLE` on SharePriceCalculator**](#c-0xd1d104a7515989ac82f1afda15a23650411b05b8) — `PRICE_SETTER_ROLE` has SUPPLY capability and is held by: `0x84d4...b2B6` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
@@ -483,6 +483,104 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | Last called | — |
 | Called by | — |
 | Total calls | 0 ❄️ |
+
+---
+<a id="c-0x69ddea332723cf5407151aaf68b9b076557fca93"></a>
+## > TimelockController `0x69dDEa332723cF5407151aAF68B9b076557FCA93`
+
+### > 🟢 `DEFAULT_ADMIN_ROLE`
+
+> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x69dDEa332723cF5407151aAF68B9b076557FCA93` | TimelockController (2d) | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 2d delay (⚠ changed 1x) |
+
+> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
+
+> | Address | Name / Type | Granted | Status |
+> |---|---|---|---|
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 2026-02-23 | 🕘 HISTORICAL |
+
+
+> **Delay history for `TimelockController (2d)` (0x69dD...CA93):** 2d → 2d
+
+### > 🔴 `CANCELLER_ROLE`
+
+> **Hash:** `0xfd643c72710c63c0180259aba6b2d05451e3591a24e58b62239378085726f783`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `cancel(bytes32 id)` — Cancel an operation. Requirements:
+
+> **Members (2):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x07e5faC51aD770e23F5399d51070647E16e75F4F` | EOA | 🔴 CRITICAL | 2026-02-23 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
+> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
+> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
+> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
+> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
+
+### > 🔴 `EXECUTOR_ROLE`
+
+> **Hash:** `0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`
+> - `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
+
+> **Members (3):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x4bFeA59B948A1A0fAC3C8C40BFd86E0E740738f3` | EOA | 🔴 CRITICAL | 2026-02-23 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0x629674e24ac87E3CD36C60FD4C2C026f146188a8` | EOA | 🔴 CRITICAL | 2026-06-15 🆕 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
+> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
+> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
+> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
+> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
+
+### > 🟢 `PROPOSER_ROLE`
+
+> **Hash:** `0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a single transaction. Emits {CallSalt} if salt is nonzero, and {CallScheduled}.
+> - `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a batch of transactions. Emits {CallSalt} if salt is nonzero, and one {CallScheduled} event per transaction in the batch.
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
+
+> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
+> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
+> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
+> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
+> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
 
 ---
 <a id="c-0x4691c475be804fa85f91c2d6d0adf03114de3093"></a>
@@ -875,7 +973,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `deposit(address token, uint amount, uint minShares)` |
-> | Gated by | `shareToken(), depositTokenRegistry(), sharePriceCalculator()` |
+> | Gated by | `depositTokenRegistry(), shareToken(), sharePriceCalculator()` |
 > | Tags | `SUPPLY` |
 > | Last called | 2026-07-02 |
 > | Called by | `0xAa34...5Dd5` |
@@ -900,7 +998,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `processPrestakedDeposit(address token, uint amount, uint minShares, address receiver)` |
-> | Gated by | `shareToken(), depositTokenRegistry(), sharePriceCalculator()` |
+> | Gated by | `depositTokenRegistry(), shareToken(), sharePriceCalculator()` |
 > | Tags | `SUPPLY` |
 > | Last called | — |
 > | Called by | — |
@@ -1011,7 +1109,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `MINTER_ROLE` on **reUSD (ERC1967Proxy) [ShareToken]**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `dayPayoutToken()` → sUSDe (StakedUSDeV2), `vault()` → RedemptionVault, `redemptionPriceRouter()` → PriceRouter, `redemptionReserves()` → RedemptionReserveCalculator, `custodialWallet()` → EOA
+> 🔒 **Immutable References:** `vault()` → RedemptionVault, `custodialWallet()` → EOA, `redemptionReserves()` → RedemptionReserveCalculator, `dayPayoutToken()` → sUSDe (StakedUSDeV2), `redemptionPriceRouter()` → PriceRouter
 
 ### > 🟠 `AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]`
 
@@ -1150,109 +1248,11 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `redeemFor(address user, uint256 shares, uint256 minPayout)` |
-> | Gated by | `shareToken(), payoutTokenRegistry(), kyc(), AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` |
+> | Gated by | `kyc(), shareToken(), payoutTokenRegistry(), AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` |
 > | Tags | `SUPPLY` |
 > | Last called | — |
 > | Called by | — |
 > | Total calls | 0 ❄️ |
-
----
-<a id="c-0x69ddea332723cf5407151aaf68b9b076557fca93"></a>
-## > TimelockController `0x69dDEa332723cF5407151aAF68B9b076557FCA93`
-
-### > 🟢 `DEFAULT_ADMIN_ROLE`
-
-> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x69dDEa332723cF5407151aAF68B9b076557FCA93` | TimelockController (2d) | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 2d delay (⚠ changed 1x) |
-
-> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
-
-> | Address | Name / Type | Granted | Status |
-> |---|---|---|---|
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 2026-02-23 | 🕘 HISTORICAL |
-
-
-> **Delay history for `TimelockController (2d)` (0x69dD...CA93):** 2d → 2d
-
-### > 🔴 `CANCELLER_ROLE`
-
-> **Hash:** `0xfd643c72710c63c0180259aba6b2d05451e3591a24e58b62239378085726f783`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `cancel(bytes32 id)` — Cancel an operation. Requirements:
-
-> **Members (2):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x07e5faC51aD770e23F5399d51070647E16e75F4F` | EOA | 🔴 CRITICAL | 2026-02-23 | Events only · hasRole ✓ | ⚠️ Single private key |
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
-> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
-> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
-> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
-> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
-
-### > 🔴 `EXECUTOR_ROLE`
-
-> **Hash:** `0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`
-> - `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
-
-> **Members (3):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x4bFeA59B948A1A0fAC3C8C40BFd86E0E740738f3` | EOA | 🔴 CRITICAL | 2026-02-23 | Events only · hasRole ✓ | ⚠️ Single private key |
-> | `0x629674e24ac87E3CD36C60FD4C2C026f146188a8` | EOA | 🔴 CRITICAL | 2026-06-15 🆕 | Events only · hasRole ✓ | ⚠️ Single private key |
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
-> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
-> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
-> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
-> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
-
-### > 🟢 `PROPOSER_ROLE`
-
-> **Hash:** `0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a single transaction. Emits {CallSalt} if salt is nonzero, and {CallScheduled}.
-> - `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` — Schedule an operation containing a batch of transactions. Emits {CallSalt} if salt is nonzero, and one {CallScheduled} event per transaction in the batch.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-02-23 | Events only · hasRole ✓ | 3/5 signers |
-
-> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
-> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
-> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
-> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
-> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
 
 ---
 <a id="c-0x3f0da1c363e34802c6f12f9c27276dc0e6696fd8"></a>
@@ -1756,7 +1756,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `MINTER_ROLE` on **reUSD (ERC1967Proxy) [ShareToken]**, `depositTokenRegistry()` on **InsuranceCapitalLayer**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `NATIVE_TOKEN()` → EOA, `tokenOracle()` → sUSDe (StakedUSDeV2)
+> 🔒 **Immutable References:** `tokenOracle()` → sUSDe (StakedUSDeV2), `NATIVE_TOKEN()` → EOA
 
 ### > 🟢 `DEFAULT_ADMIN_ROLE`
 
@@ -2205,6 +2205,76 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 5 | `1085989610471158912 (1.085990e18)` | `0x723d...8a69` | 2026-06-28 |
 
 ---
+<a id="c-0x82f1806aeab5ecb9a485eb041d5ed4940b123995"></a>
+## > KYCRegistry `0x82F1806AEab5Ecb9a485eb041d5Ed4940b123995`
+
+> > 💰 **Inherited supply authority** — holds `MINTER_ROLE` on **reUSD (ERC1967Proxy) [ShareToken]**, `kyc()` on **InstantRedemption**. Access controls on this contract gate root token supply.
+
+### > 🟢 `DEFAULT_ADMIN_ROLE`
+
+> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-03-18 | Events only · hasRole ✓ | 3/5 signers |
+
+> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
+
+> | Address | Name / Type | Granted | Status |
+> |---|---|---|---|
+> | `0x6C15B25E9750Dccb698C1a4023f34015bFe57649` | EOA | 2025-01-21 | 🕘 HISTORICAL |
+
+> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
+
+> | Signer | Type | Owner Since | Notes |
+> |---|---|---|---|
+> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
+> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
+> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
+> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
+> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
+
+### > 🟠 `KYC_ADMIN_ROLE` 🔄 5 changes
+
+> **Hash:** `0x811427a0fa4932aef534bba16bc34e9b7b2d7d2a79c475fca1765f6cc1faebea`  
+> **Managed by:** `DEFAULT_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `addKYCProvider(address provider)` — Adds a new KYC provider Only callable by addresses with KYC_ADMIN_ROLE
+> - `removeKYCProvider(address provider)` — Removes a KYC provider Only callable by addresses with KYC_ADMIN_ROLE
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x3f0DA1C363e34802C6f12F9C27276dC0e6696FD8` | AccessManager | 🟠 HIGH | 2026-05-13 | Events only · hasRole ✓ |  |
+
+> **🕘 Previous Holders (2)** _(verified inactive — `hasRole`/`is` returned false)_:
+
+> | Address | Name / Type | Granted | Status |
+> |---|---|---|---|
+> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 2026-03-18 | 🕘 HISTORICAL |
+> | `0x6C15B25E9750Dccb698C1a4023f34015bFe57649` | EOA | 2025-01-21 | 🕘 HISTORICAL |
+
+### > 🔴 `KYC_PROVIDER_ROLE`
+
+> **Hash:** `0x6c4079fcac94e7142d8c209744c998efe53a188aadb7e55958f7ad3ea8a1d652`  
+> **Managed by:** `KYC_ADMIN_ROLE`  
+> **Privileged write functions:**
+> - `approveKYC(address user)` — Approves KYC status for a user Only callable by addresses with KYC_PROVIDER_ROLE
+> - `revokeKYC(address user)` — Revokes KYC status for a user Only callable by addresses with KYC_PROVIDER_ROLE
+
+> **Members (3):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x67dD3914A3c8FD627824153773117276a5E4f3A5` | EOA | 🔴 CRITICAL | 2026-03-18 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0x97DD4581799796991E7479E178405506652f8Db6` | EOA | 🔴 CRITICAL | 2025-01-22 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0xDD18De3820187F728598C5786574865aF260d4C3` | EOA | 🔴 CRITICAL | 2026-06-19 🆕 | Events only · hasRole ✓ | ⚠️ Single private key |
+
+---
 <a id="c-0xf788624278dc0d5b4e494f834932e6938aa2bdc3"></a>
 ## > PayoutTokenRegistry `0xf788624278Dc0D5b4e494F834932e6938AA2Bdc3`
 
@@ -2284,76 +2354,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 2 | sUSDe (StakedUSDeV2) | `inValueSet=True · payoutEligible=True` | `0xEE16...47f8` (EOA) | 2025-09-30 |
 
 ---
-<a id="c-0x82f1806aeab5ecb9a485eb041d5ed4940b123995"></a>
-## > KYCRegistry `0x82F1806AEab5Ecb9a485eb041d5Ed4940b123995`
-
-> > 💰 **Inherited supply authority** — holds `MINTER_ROLE` on **reUSD (ERC1967Proxy) [ShareToken]**, `kyc()` on **InstantRedemption**. Access controls on this contract gate root token supply.
-
-### > 🟢 `DEFAULT_ADMIN_ROLE`
-
-> **Hash:** `0x0000000000000000000000000000000000000000000000000000000000000000`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 🟢 LOW | 2026-03-18 | Events only · hasRole ✓ | 3/5 signers |
-
-> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
-
-> | Address | Name / Type | Granted | Status |
-> |---|---|---|---|
-> | `0x6C15B25E9750Dccb698C1a4023f34015bFe57649` | EOA | 2025-01-21 | 🕘 HISTORICAL |
-
-> **Signers of `Gnosis Safe 3/5` (0x8eec...fBaD):**
-
-> | Signer | Type | Owner Since | Notes |
-> |---|---|---|---|
-> | `0x2a3Ef2FEd07D025b8B1f07d99C77471D11529db9` | EOA | — | EOA |
-> | `0x28d8af3CF7286Bdc34ae80cb90093dFA4dbb0020` | EOA | — | EOA |
-> | `0x7dd97C12abd41c53B4f2B3df6b872753F9DABCaa` | EOA | — | EOA |
-> | `0x1F76cC0eF4605f57478f3044e703AF6B0C57A297` | EOA | — | EOA |
-> | `0x0AE4eeAFfDA174F84c84c22f03a28F3AAB02FbDC` | EOA (EIP-7702 → `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B`) | — | EOA |
-
-### > 🟠 `KYC_ADMIN_ROLE` 🔄 5 changes
-
-> **Hash:** `0x811427a0fa4932aef534bba16bc34e9b7b2d7d2a79c475fca1765f6cc1faebea`  
-> **Managed by:** `DEFAULT_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `addKYCProvider(address provider)` — Adds a new KYC provider Only callable by addresses with KYC_ADMIN_ROLE
-> - `removeKYCProvider(address provider)` — Removes a KYC provider Only callable by addresses with KYC_ADMIN_ROLE
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x3f0DA1C363e34802C6f12F9C27276dC0e6696FD8` | AccessManager | 🟠 HIGH | 2026-05-13 | Events only · hasRole ✓ |  |
-
-> **🕘 Previous Holders (2)** _(verified inactive — `hasRole`/`is` returned false)_:
-
-> | Address | Name / Type | Granted | Status |
-> |---|---|---|---|
-> | `0x8eec10616802Ef639CA55c98ac856553fAdEfBaD` | Gnosis Safe 3/5 | 2026-03-18 | 🕘 HISTORICAL |
-> | `0x6C15B25E9750Dccb698C1a4023f34015bFe57649` | EOA | 2025-01-21 | 🕘 HISTORICAL |
-
-### > 🔴 `KYC_PROVIDER_ROLE`
-
-> **Hash:** `0x6c4079fcac94e7142d8c209744c998efe53a188aadb7e55958f7ad3ea8a1d652`  
-> **Managed by:** `KYC_ADMIN_ROLE`  
-> **Privileged write functions:**
-> - `approveKYC(address user)` — Approves KYC status for a user Only callable by addresses with KYC_PROVIDER_ROLE
-> - `revokeKYC(address user)` — Revokes KYC status for a user Only callable by addresses with KYC_PROVIDER_ROLE
-
-> **Members (3):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x67dD3914A3c8FD627824153773117276a5E4f3A5` | EOA | 🔴 CRITICAL | 2026-03-18 | Events only · hasRole ✓ | ⚠️ Single private key |
-> | `0x97DD4581799796991E7479E178405506652f8Db6` | EOA | 🔴 CRITICAL | 2025-01-22 | Events only · hasRole ✓ | ⚠️ Single private key |
-> | `0xDD18De3820187F728598C5786574865aF260d4C3` | EOA | 🔴 CRITICAL | 2026-06-19 🆕 | Events only · hasRole ✓ | ⚠️ Single private key |
-
----
 <a id="c-0x8aeb9453ef22cb38abc7a3af9c208f65c1bfe31e"></a>
 ## > RedemptionGateway `0x8aEb9453EF22Cb38abC7a3Af9c208F65C1BfE31e`
 
@@ -2361,7 +2361,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `MINTER_ROLE` on **reUSD (ERC1967Proxy) [ShareToken]**, `AM Operator (role 3678572998923334730; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` on **InstantRedemption**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `kyc()` → KYCRegistry, `instantRedemption()` → InstantRedemption, `windowRedemption()` → WindowRedemption
+> 🔒 **Immutable References:** `windowRedemption()` → WindowRedemption, `kyc()` → KYCRegistry, `instantRedemption()` → InstantRedemption
 
 ### > 🟠 `authority()`
 
@@ -3290,17 +3290,17 @@ Controls **21 role(s)** across **9 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | reUSD (ERC1967Proxy) [ShareToken] `0x5086...0c72` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| InsuranceCapitalLayer `0x4691...3093` | `PAUSER_ROLE` | `pause()`, `unpause()` | 2026-02-24 |
-| InsuranceCapitalLayer `0x4691...3093` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| BurnWithFromMintTokenPool `0xF00B...8465` | `owner()` | `setDynamicConfig(address router, address rateLimitAdmin, address feeAdmin)`, `setAllowedFinalityConfig(bytes4 allowedFinality)`, `updateAdvancedPoolHooks(IAdvancedPoolHooks newHook)`, `addRemotePool(uint64 remoteChainSelector, bytes calldata remotePoolAddress)` +7 more | — |
 | TimelockController `0x69dD...CA93` | `EXECUTOR_ROLE` | `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`, `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)` | 2026-02-23 |
 | TimelockController `0x69dD...CA93` | `CANCELLER_ROLE` | `cancel(bytes32 id)` | 2026-02-23 |
 | TimelockController `0x69dD...CA93` | `PROPOSER_ROLE` | `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)`, `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` | 2026-02-23 |
+| InsuranceCapitalLayer `0x4691...3093` | `PAUSER_ROLE` | `pause()`, `unpause()` | 2026-02-24 |
+| InsuranceCapitalLayer `0x4691...3093` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
+| BurnWithFromMintTokenPool `0xF00B...8465` | `owner()` | `setDynamicConfig(address router, address rateLimitAdmin, address feeAdmin)`, `setAllowedFinalityConfig(bytes4 allowedFinality)`, `updateAdvancedPoolHooks(IAdvancedPoolHooks newHook)`, `addRemotePool(uint64 remoteChainSelector, bytes calldata remotePoolAddress)` +7 more | — |
 | AccessManager `0x3f0D...6FD8` | `ADMIN_ROLE (AM root admin)` | `grantRole(uint64,address,uint32)`, `revokeRole(uint64,address)`, `setTargetFunctionRole(address,bytes4[],uint64)`, `setRoleAdmin(uint64,uint64)` +6 more | — |
-| DepositTokenRegistry `0x73d3...c0F6` | `ADMIN_ROLE` | `addToken(address token, uint256 fixedDepositFee_, uint256 percentageDepositFee_, address priceOracle_, bool eligibleAsCollateral_, uint256 defaultSlippageTolerance_, uint256 minDeposit_)`, `removeToken(address token)`, `updateSlippage(address token, uint256 newSlippage)`, `addNativeToken(uint256 fixedDepositFee_, uint256 percentageDepositFee_, address priceOracle_, bool eligibleAsCollateral_, address wrappedNativeToken_, uint256 slippage_, uint256 minDeposit_)` +2 more | 2026-05-13 |
 | DepositTokenRegistry `0x73d3...c0F6` | `PAUSER_ROLE` | `pauseToken(address token)`, `unpauseToken(address token)` | 2026-05-13 |
-| DepositTokenRegistry `0x73d3...c0F6` | `ORACLE_MANAGER_ROLE` | `updateTokenOracle(address token, address priceOracle_)` | 2026-05-13 |
+| DepositTokenRegistry `0x73d3...c0F6` | `ADMIN_ROLE` | `addToken(address token, uint256 fixedDepositFee_, uint256 percentageDepositFee_, address priceOracle_, bool eligibleAsCollateral_, uint256 defaultSlippageTolerance_, uint256 minDeposit_)`, `removeToken(address token)`, `updateSlippage(address token, uint256 newSlippage)`, `addNativeToken(uint256 fixedDepositFee_, uint256 percentageDepositFee_, address priceOracle_, bool eligibleAsCollateral_, address wrappedNativeToken_, uint256 slippage_, uint256 minDeposit_)` +2 more | 2026-05-13 |
 | DepositTokenRegistry `0x73d3...c0F6` | `FEE_MANAGER_ROLE` | `updateTokenFees(address token, uint256 fixedDepositFee_, uint256 percentageDepositFee_)` | 2026-05-13 |
+| DepositTokenRegistry `0x73d3...c0F6` | `ORACLE_MANAGER_ROLE` | `updateTokenOracle(address token, address priceOracle_)` | 2026-05-13 |
 | ReProtocolStaking `0x2EAF...3900` | `AM Operator (role 211310302505071350; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` | `unpause()` | — |
 | ReProtocolStaking `0x2EAF...3900` | `AM Operator (role 8001233221072730583; gates 3 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` | `setMinimumStake(uint256)`, `setMaxActiveTranchesPerUser(uint16)`, `setMaxSyncBatchSize(uint16)` | — |
 | ReProtocolStaking `0x2EAF...3900` | `AM Operator (role 1696015379001973530; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` | `setKYCRegistry(address)` | — |
@@ -3318,8 +3318,8 @@ Controls **7 role(s)** across **3 contract(s)**
 |---|---|---|---|
 | reUSD (ERC1967Proxy) [ShareToken] `0x5086...0c72` | `UPGRADER_ROLE` | `upgradeToAndCall(address newImplementation, bytes memory data)` | 2026-02-23 |
 | reUSD (ERC1967Proxy) [ShareToken] `0x5086...0c72` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| InsuranceCapitalLayer `0x4691...3093` | `CUSTODIAN_MANAGER_ROLE` | `addCustodian(address token, address custodian)`, `removeCustodian(address token, address custodian)` | 2026-03-19 |
 | InsuranceCapitalLayer `0x4691...3093` | `UPGRADER_ROLE` | `upgradeToAndCall(address newImplementation, bytes memory data)` | 2026-02-23 |
+| InsuranceCapitalLayer `0x4691...3093` | `CUSTODIAN_MANAGER_ROLE` | `addCustodian(address token, address custodian)`, `removeCustodian(address token, address custodian)` | 2026-03-19 |
 | InsuranceCapitalLayer `0x4691...3093` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | ReProtocolToken `0x5265...8143` | `UPGRADER_ROLE` | `upgradeToAndCall(address newImplementation, bytes memory data)` | 2026-05-14 |
 | ReProtocolToken `0x5265...8143` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
@@ -3329,8 +3329,8 @@ Controls **4 role(s)** across **4 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| InsuranceCapitalLayer `0x4691...3093` | `PAUSER_ROLE` | `pause()`, `unpause()` | 2026-02-24 |
 | TimelockController `0x69dD...CA93` | `CANCELLER_ROLE` | `cancel(bytes32 id)` | 2026-02-23 |
+| InsuranceCapitalLayer `0x4691...3093` | `PAUSER_ROLE` | `pause()`, `unpause()` | 2026-02-24 |
 | DepositTokenRegistry `0x73d3...c0F6` | `PAUSER_ROLE` | `pauseToken(address token)`, `unpauseToken(address token)` | 2026-05-13 |
 | ReProtocolStaking `0x2EAF...3900` | `AM Operator (role 13697439394725303084; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` | `pause()` | — |
 
@@ -3406,26 +3406,26 @@ Controls **2 role(s)** across **1 contract(s)**
 
 The following roles are held by EOAs:
 
-- **InsuranceCapitalLayer** → `PAUSER_ROLE` held by EOA `0x07e5faC51aD770e23F5399d51070647E16e75F4F`
-  Functions: `pause()`, `unpause()`
-- **InstantRedemption** → `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8`
-  Functions: `setFeeVault(address)`, `updateFee(uint16)`, `updateLimitPercentages(uint256,uint256)`
 - **TimelockController** → `EXECUTOR_ROLE` held by EOA `0x4bFeA59B948A1A0fAC3C8C40BFd86E0E740738f3`
   Functions: `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`, `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
 - **TimelockController** → `EXECUTOR_ROLE` held by EOA `0x629674e24ac87E3CD36C60FD4C2C026f146188a8`
   Functions: `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`, `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)`
 - **TimelockController** → `CANCELLER_ROLE` held by EOA `0x07e5faC51aD770e23F5399d51070647E16e75F4F`
   Functions: `cancel(bytes32 id)`
+- **InsuranceCapitalLayer** → `PAUSER_ROLE` held by EOA `0x07e5faC51aD770e23F5399d51070647E16e75F4F`
+  Functions: `pause()`, `unpause()`
+- **InstantRedemption** → `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8`
+  Functions: `setFeeVault(address)`, `updateFee(uint16)`, `updateLimitPercentages(uint256,uint256)`
 - **DepositTokenRegistry** → `PAUSER_ROLE` held by EOA `0x07e5faC51aD770e23F5399d51070647E16e75F4F`
   Functions: `pauseToken(address token)`, `unpauseToken(address token)`
-- **PayoutTokenRegistry** → `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8`
-  Functions: `setTokenConfig(address,bool,bool)`, `emergencySwitch(address)`
 - **KYCRegistry** → `KYC_PROVIDER_ROLE` held by EOA `0x67dD3914A3c8FD627824153773117276a5E4f3A5`
   Functions: `approveKYC(address user)`, `revokeKYC(address user)`
 - **KYCRegistry** → `KYC_PROVIDER_ROLE` held by EOA `0x97DD4581799796991E7479E178405506652f8Db6`
   Functions: `approveKYC(address user)`, `revokeKYC(address user)`
 - **KYCRegistry** → `KYC_PROVIDER_ROLE` held by EOA `0xDD18De3820187F728598C5786574865aF260d4C3`
   Functions: `approveKYC(address user)`, `revokeKYC(address user)`
+- **PayoutTokenRegistry** → `AM Operator (role 11723228863651074278; gates 9 fn(s) across 3 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0xEE16bE0374f2eFb34218affC1a8EbEe9310c47f8`
+  Functions: `setTokenConfig(address,bool,bool)`, `emergencySwitch(address)`
 - **ReProtocolStaking** → `AM Operator (role 13697439394725303084; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0x07e5faC51aD770e23F5399d51070647E16e75F4F`
   Functions: `pause()`
 - **ReProtocolStaking** → `AM Operator (role 13027108596976310255; gates 1 fn(s) across 1 target(s)) [via AM 0x3f0D...6FD8]` held by EOA `0xf31d8E94928147cCb30C698ddD81C6791861C4a9`
