@@ -113,6 +113,13 @@
 
     /* ---------- Weekly list ---------- */
     .weekly-list{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+    details.wk-more{margin-top:2px}
+    details.wk-more>summary{list-style:none;cursor:pointer;color:var(--cyan);font-size:.82rem;font-weight:600;
+      padding:8px 2px;user-select:none;font-family:'Consolas','Courier New',monospace}
+    details.wk-more>summary::-webkit-details-marker{display:none}
+    details.wk-more>summary::before{content:"▸ ";color:var(--cyan)}
+    details.wk-more[open]>summary::before{content:"▾ "}
+    .wk-more-list{display:flex;flex-direction:column;gap:12px;margin-top:4px}
     .wk{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
       background:linear-gradient(180deg,var(--panel2) 0%, var(--panel3) 100%);border:1px solid #172840;
       border-radius:12px;padding:16px 18px}
@@ -181,7 +188,21 @@
     </header>
 
     <main id="main">
-      <!-- ============ SECTION 1: COLLATERAL ASSESSMENTS ============ -->
+      <!-- ============ SECTION 1: WEEKLY CHECKUPS ============ -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Change tracking</div>
+            <h2>Weekly Access Control Reports</h2>
+          </div>
+          <span class="count-pill" id="pill-weekly">—</span>
+        </div>
+        <p class="desc">Week-over-week Collateral Integrity Checkups: what changed across every asset since the
+          last accepted baseline, with an on-chain evidence stamp on each flagged item. Newest first.</p>
+        <div id="weekly-content"><div class="skeleton">Loading checkups…</div></div>
+      </section>
+
+      <!-- ============ SECTION 2: COLLATERAL ASSESSMENTS ============ -->
       <section class="section">
         <div class="section-head">
           <div>
@@ -201,20 +222,6 @@
           <span>Card stats are read from the report, not a risk grade.</span>
         </div>
         <div id="collateral-content"><div class="skeleton">Loading reports…</div></div>
-      </section>
-
-      <!-- ============ SECTION 2: WEEKLY CHECKUPS ============ -->
-      <section class="section">
-        <div class="section-head">
-          <div>
-            <div class="kicker">Change tracking</div>
-            <h2>Weekly Access Control Reports</h2>
-          </div>
-          <span class="count-pill" id="pill-weekly">—</span>
-        </div>
-        <p class="desc">Week-over-week Collateral Integrity Checkups: what changed across every asset since the
-          last accepted baseline, with an on-chain evidence stamp on each flagged item. Newest first.</p>
-        <div id="weekly-content"><div class="skeleton">Loading checkups…</div></div>
       </section>
 
       <!-- ============ SECTION 3: MARKDOWN SOURCES ============ -->
@@ -364,7 +371,20 @@
       els.pillW.textContent = items.length + (items.length===1?" checkup":" checkups");
       els.statWeekly.textContent = items.length || "0";
       if(!items.length){ els.weekly.innerHTML = '<div class="empty">No weekly checkups yet. Drop a dated <code>YYYY-MM-DD.md</code> into <code>reports/weekly/</code>.</div>'; return; }
-      els.weekly.innerHTML = '<div class="weekly-list">' + items.map(rowWeekly).join("") + '</div>';
+      // Show the 4 most recent checkups (~1 month at one per week); fold any
+      // older ones into a collapsible expander so the list never runs long.
+      // With exactly 4 there is nothing to fold and no expander renders.
+      const VISIBLE = 4;
+      const head = items.slice(0, VISIBLE);
+      const rest = items.slice(VISIBLE);
+      let html = '<div class="weekly-list">' + head.map(rowWeekly).join("");
+      if(rest.length){
+        html += '<details class="wk-more"><summary>Show ' + rest.length + ' earlier '
+              + (rest.length===1?"checkup":"checkups") + '</summary>'
+              + '<div class="wk-more-list">' + rest.map(rowWeekly).join("") + '</div></details>';
+      }
+      html += '</div>';
+      els.weekly.innerHTML = html;
     }
 
     function rowWeekly(item){
