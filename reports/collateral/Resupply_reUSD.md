@@ -13,21 +13,21 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 1 off-chain dependency (governance) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-07-29 00:08 UTC |
+| Report Date | 2026-08-06 17:48 UTC |
 
 ### Surface Summary
 
 | Field | Value |
 |---|---:|
 | Contracts | 26 |
-| Role slots | 138 |
+| Role slots | 140 |
 | Privileged Fns | 161 |
 | EOA Holders | 0 |
 | Critical Roles | 3 ⚠️ |
 
 ## Changes Since Last Scan
 
-> Comparing **2026-07-28T23:54:17Z** (block 25634718) → **2026-07-29T00:06:05Z** (block 25634777).
+> Comparing **2026-08-06T17:28:16Z** (block 25697381) → **2026-08-06T17:46:06Z** (block 25697466).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -91,29 +91,35 @@
 <details>
 <summary><strong>📊 Registered CDP Markets</strong> <span class="section-sub">per-market supply caps</span></summary>
 
-> *19 registered market(s), 10 active. Aggregate borrowlimit (reusd) = **634.9M** (max mint capacity); aggregate borrowed = **32.1M** (**5%** utilized) — live total reUSD exposure. Enumerated live each scan; newly-registered markets and ceiling changes appear automatically and are flagged in Changes-Since.*
+> *21 registered market(s), 12 active. Aggregate borrowlimit (reusd) = **645.6M** (max mint capacity); aggregate borrowed = **33.6M** (**5%** utilized) — live total reUSD exposure. Enumerated live each scan; newly-registered markets and ceiling changes appear automatically and are flagged in Changes-Since.*
 
-| # | Market | Name | Age | borrowLimit (reUSD) | Borrowed | Utilization |
-|---:|---|---|---:|---:|---:|---:|
-| 0 | [`0xC5184cccf85b81EDdc661330acB3E41bd89F34A1`](https://etherscan.io/address/0xC5184cccf85b81EDdc661330acB3E41bd89F34A1) | Resupply Pair (CurveLend: crvUSD/sfrxUSD) - 1 | 1.4y | 50.0M | 15.3M | 30.6% |
-| 1 | [`0x08064A8eEecf71203449228f3eaC65E462009fdF`](https://etherscan.io/address/0x08064A8eEecf71203449228f3eaC65E462009fdF) | Resupply Pair (CurveLend: crvUSD/sDOLA) - 1 *(inactive)* | 1.4y | 0 | 145 | — |
-| 2 | [`0x39Ea8e7f44E9303A7441b1E1a4F5731F1028505C`](https://etherscan.io/address/0x39Ea8e7f44E9303A7441b1E1a4F5731F1028505C) | Resupply Pair (CurveLend: crvUSD/sUSDe) - 1 | 1.4y | 45.0M | 1.8M | 4.1% |
-| 3 | [`0x3b037329Ff77B5863e6a3c844AD2a7506ABe5706`](https://etherscan.io/address/0x3b037329Ff77B5863e6a3c844AD2a7506ABe5706) | Resupply Pair (CurveLend: crvUSD/USDe) - 1 *(inactive)* | 1.4y | 0 | 429 | — |
-| 4 | [`0x22B12110f1479d5D6Fd53D0dA35482371fEB3c7e`](https://etherscan.io/address/0x22B12110f1479d5D6Fd53D0dA35482371fEB3c7e) | Resupply Pair (CurveLend: crvUSD/tBTC) - 1 *(inactive)* | 1.4y | 0 | 0 | — |
-| 5 | [`0x2d8ecd48b58e53972dBC54d8d0414002B41Abc9D`](https://etherscan.io/address/0x2d8ecd48b58e53972dBC54d8d0414002B41Abc9D) | Resupply Pair (CurveLend: crvUSD/WBTC) - 1 | 1.4y | 100.0M | 3.8M | 3.8% |
-| 6 | [`0xCF1deb0570c2f7dEe8C07A7e5FA2bd4b2B96520D`](https://etherscan.io/address/0xCF1deb0570c2f7dEe8C07A7e5FA2bd4b2B96520D) | Resupply Pair (CurveLend: crvUSD/WETH) - 1 | 1.4y | 100.0M | 422,720 | 0.4% |
-| 7 | [`0x4A7c64932d1ef0b4a2d430ea10184e3B87095E33`](https://etherscan.io/address/0x4A7c64932d1ef0b4a2d430ea10184e3B87095E33) | Resupply Pair (CurveLend: crvUSD/wstETH) - 1 | 1.4y | 100.0M | 1.1M | 1.1% |
-| 8 | [`0x3F2b20b8E8Ce30bb52239d3dFADf826eCFE6A5f7`](https://etherscan.io/address/0x3F2b20b8E8Ce30bb52239d3dFADf826eCFE6A5f7) | Resupply Pair (Fraxlend: frxUSD/sfrxETH) - 1 | 1.4y | 50.0M | 1.2M | 2.4% |
-| 9 | [`0x212589B06EBBA4d89d9deFcc8DDc58D80E141EA0`](https://etherscan.io/address/0x212589B06EBBA4d89d9deFcc8DDc58D80E141EA0) | Resupply Pair (Fraxlend: frxUSD/sUSDe) - 1 | 1.4y | 15.0M | 175,636 | 1.2% |
-| 10 | [`0x55c49c707aA0Ad254F34a389a8dFd0d103894aDb`](https://etherscan.io/address/0x55c49c707aA0Ad254F34a389a8dFd0d103894aDb) | Resupply Pair (Fraxlend: frxUSD/WBTC) - 1 *(inactive)* | 1.4y | 0 | 0 | — |
-| 11 | [`0x24CCBd9130ec24945916095eC54e9acC7382c864`](https://etherscan.io/address/0x24CCBd9130ec24945916095eC54e9acC7382c864) | Resupply Pair (Fraxlend: frxUSD/scrvUSD) - 1 | 1.4y | 50.0M | 101,080 | 0.2% |
-| 12 | [`0xb5575Fe3d3b7877415A166001F67C2Df94D4e6c1`](https://etherscan.io/address/0xb5575Fe3d3b7877415A166001F67C2Df94D4e6c1) | Resupply Pair (Fraxlend: frxUSD/WBTC) - 2 | 1.4y | 100.0M | 147,609 | 0.1% |
-| 13 | [`0x27AB448a75d548ECfF73f8b4F36fCc9496768797`](https://etherscan.io/address/0x27AB448a75d548ECfF73f8b4F36fCc9496768797) | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 *(inactive)* | 1.3y | 0 | 268,088 | — |
-| 14 | [`0x57E69699381a651Fb0BBDBB31888F5D655Bf3f06`](https://etherscan.io/address/0x57E69699381a651Fb0BBDBB31888F5D655Bf3f06) | Resupply Pair (CurveLend: crvUSD/sUSDS) - 1 *(inactive)* | 1.2y | 0 | 0 | — |
-| 15 | [`0xF4A6113FbD71Ac1825751A6fe844A156f60C83EF`](https://etherscan.io/address/0xF4A6113FbD71Ac1825751A6fe844A156f60C83EF) | Resupply Pair (CurveLend: crvUSD/tBTC) - 2 *(inactive)* | 1.2y | 0 | 5 | — |
-| 16 | [`0x6e90c85a495d54c6d7E1f3400FEF1f6e59f86bd6`](https://etherscan.io/address/0x6e90c85a495d54c6d7E1f3400FEF1f6e59f86bd6) | Resupply Pair (CurveLend: crvUSD/wstUSR) - 1 *(inactive)* | 1.1y | 0 | 0 | — |
-| 17 | [`0xD42535Cda82a4569BA7209857446222ABd14A82c`](https://etherscan.io/address/0xD42535Cda82a4569BA7209857446222ABd14A82c) | Resupply Pair (CurveLend: crvUSD/fxSAVE) - 1 *(inactive)* | 10mo | 0 | 96,310 | — |
-| 18 | [`0x2fdD3c0a682e5774205F0F6D3eD3c9D1b9Cb9413`](https://etherscan.io/address/0x2fdD3c0a682e5774205F0F6D3eD3c9D1b9Cb9413) | Resupply Pair (CurveLend: crvUSD/sreUSD) - 1 | 6mo | 24.9M | 7.6M | 30.6% |
+> 🟢 **Withdrawable backing liquidity: 14.1M** idle in the underlying CurveLend/Fraxlend venues across 12 active market(s) — **42.0%** of outstanding borrows could be realised as hard stables right now. Highest single-venue utilization **86.7%**. Floor 25%.
+
+> *Idle = venue `totalAssets() − total_debt()` (CurveLend) or `totalAsset() − totalBorrow()` (Fraxlend), read live per active market. This is venue-level capacity shared with all other borrowers of that venue, so it is an upper bound on what a reUSD redeemer could withdraw. Display-only: it moves every block and is deliberately excluded from Changes-Since.*
+
+| # | Market | Name | Age | borrowLimit (reUSD) | Borrowed | Utilization | Backing Liq | Venue Util |
+|---:|---|---|---:|---:|---:|---:|---:|---:|
+| 0 | [`0xC5184cccf85b81EDdc661330acB3E41bd89F34A1`](https://etherscan.io/address/0xC5184cccf85b81EDdc661330acB3E41bd89F34A1) | Resupply Pair (CurveLend: crvUSD/sfrxUSD) - 1 | 1.4y | 50.0M | 15.0M | 30.0% | 3.3M | 79.6% |
+| 1 | [`0x08064A8eEecf71203449228f3eaC65E462009fdF`](https://etherscan.io/address/0x08064A8eEecf71203449228f3eaC65E462009fdF) | Resupply Pair (CurveLend: crvUSD/sDOLA) - 1 *(inactive)* | 1.4y | 0 | 145 | — | — | — |
+| 2 | [`0x39Ea8e7f44E9303A7441b1E1a4F5731F1028505C`](https://etherscan.io/address/0x39Ea8e7f44E9303A7441b1E1a4F5731F1028505C) | Resupply Pair (CurveLend: crvUSD/sUSDe) - 1 | 1.4y | 45.0M | 1.8M | 3.9% | 1.4M | 53.7% |
+| 3 | [`0x3b037329Ff77B5863e6a3c844AD2a7506ABe5706`](https://etherscan.io/address/0x3b037329Ff77B5863e6a3c844AD2a7506ABe5706) | Resupply Pair (CurveLend: crvUSD/USDe) - 1 *(inactive)* | 1.4y | 0 | 429 | — | — | — |
+| 4 | [`0x22B12110f1479d5D6Fd53D0dA35482371fEB3c7e`](https://etherscan.io/address/0x22B12110f1479d5D6Fd53D0dA35482371fEB3c7e) | Resupply Pair (CurveLend: crvUSD/tBTC) - 1 *(inactive)* | 1.4y | 0 | 0 | — | — | — |
+| 5 | [`0x2d8ecd48b58e53972dBC54d8d0414002B41Abc9D`](https://etherscan.io/address/0x2d8ecd48b58e53972dBC54d8d0414002B41Abc9D) | Resupply Pair (CurveLend: crvUSD/WBTC) - 1 | 1.4y | 100.0M | 3.8M | 3.8% | 850,649 | 79.1% |
+| 6 | [`0xCF1deb0570c2f7dEe8C07A7e5FA2bd4b2B96520D`](https://etherscan.io/address/0xCF1deb0570c2f7dEe8C07A7e5FA2bd4b2B96520D) | Resupply Pair (CurveLend: crvUSD/WETH) - 1 | 1.4y | 100.0M | 423,085 | 0.4% | 275,087 | 60.2% |
+| 7 | [`0x4A7c64932d1ef0b4a2d430ea10184e3B87095E33`](https://etherscan.io/address/0x4A7c64932d1ef0b4a2d430ea10184e3B87095E33) | Resupply Pair (CurveLend: crvUSD/wstETH) - 1 | 1.4y | 100.0M | 1.1M | 1.1% | 401,785 | 71.2% |
+| 8 | [`0x3F2b20b8E8Ce30bb52239d3dFADf826eCFE6A5f7`](https://etherscan.io/address/0x3F2b20b8E8Ce30bb52239d3dFADf826eCFE6A5f7) | Resupply Pair (Fraxlend: frxUSD/sfrxETH) - 1 | 1.4y | 50.0M | 1.2M | 2.4% | 2.1M | 62.5% |
+| 9 | [`0x212589B06EBBA4d89d9deFcc8DDc58D80E141EA0`](https://etherscan.io/address/0x212589B06EBBA4d89d9deFcc8DDc58D80E141EA0) | Resupply Pair (Fraxlend: frxUSD/sUSDe) - 1 | 1.4y | 15.0M | 289,163 | 1.9% | 307,346 | 27.5% |
+| 10 | [`0x55c49c707aA0Ad254F34a389a8dFd0d103894aDb`](https://etherscan.io/address/0x55c49c707aA0Ad254F34a389a8dFd0d103894aDb) | Resupply Pair (Fraxlend: frxUSD/WBTC) - 1 *(inactive)* | 1.4y | 0 | 0 | — | — | — |
+| 11 | [`0x24CCBd9130ec24945916095eC54e9acC7382c864`](https://etherscan.io/address/0x24CCBd9130ec24945916095eC54e9acC7382c864) | Resupply Pair (Fraxlend: frxUSD/scrvUSD) - 1 | 1.4y | 50.0M | 213,455 | 0.4% | 230,867 | 0.0% |
+| 12 | [`0xb5575Fe3d3b7877415A166001F67C2Df94D4e6c1`](https://etherscan.io/address/0xb5575Fe3d3b7877415A166001F67C2Df94D4e6c1) | Resupply Pair (Fraxlend: frxUSD/WBTC) - 2 | 1.4y | 100.0M | 257,471 | 0.3% | 279,458 | 20.5% |
+| 13 | [`0x27AB448a75d548ECfF73f8b4F36fCc9496768797`](https://etherscan.io/address/0x27AB448a75d548ECfF73f8b4F36fCc9496768797) | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 *(inactive)* | 1.3y | 0 | 268,320 | — | — | — |
+| 14 | [`0x57E69699381a651Fb0BBDBB31888F5D655Bf3f06`](https://etherscan.io/address/0x57E69699381a651Fb0BBDBB31888F5D655Bf3f06) | Resupply Pair (CurveLend: crvUSD/sUSDS) - 1 *(inactive)* | 1.2y | 0 | 0 | — | — | — |
+| 15 | [`0xF4A6113FbD71Ac1825751A6fe844A156f60C83EF`](https://etherscan.io/address/0xF4A6113FbD71Ac1825751A6fe844A156f60C83EF) | Resupply Pair (CurveLend: crvUSD/tBTC) - 2 *(inactive)* | 1.2y | 0 | 5 | — | — | — |
+| 16 | [`0x6e90c85a495d54c6d7E1f3400FEF1f6e59f86bd6`](https://etherscan.io/address/0x6e90c85a495d54c6d7E1f3400FEF1f6e59f86bd6) | Resupply Pair (CurveLend: crvUSD/wstUSR) - 1 *(inactive)* | 1.1y | 0 | 0 | — | — | — |
+| 17 | [`0xD42535Cda82a4569BA7209857446222ABd14A82c`](https://etherscan.io/address/0xD42535Cda82a4569BA7209857446222ABd14A82c) | Resupply Pair (CurveLend: crvUSD/fxSAVE) - 1 *(inactive)* | 11mo | 0 | 96,393 | — | — | — |
+| 18 | [`0x2fdD3c0a682e5774205F0F6D3eD3c9D1b9Cb9413`](https://etherscan.io/address/0x2fdD3c0a682e5774205F0F6D3eD3c9D1b9Cb9413) | Resupply Pair (CurveLend: crvUSD/sreUSD) - 1 | 7mo | 30.0M | 6.1M | 20.4% | 2.9M | 86.7% |
+| 19 | [`0xEcceF525b3063705DA5075a1ce5De1892D24C25A`](https://etherscan.io/address/0xEcceF525b3063705DA5075a1ce5De1892D24C25A) | Resupply Pair (CurveLendV2: crvUSD/sDOLA) - 1 | 5d | 2.2M | 1.9M | 87.0% | 1.2M | 56.4% |
+| 20 | [`0x0837E20D15585B4cA5c1a3fCedCCF8f72855Cb56`](https://etherscan.io/address/0x0837E20D15585B4cA5c1a3fCedCCF8f72855Cb56) | Resupply Pair (CurveLendV2: crvUSD/sfrxUSD) - 1 | 5d | 3.5M | 1.2M | 34.6% | 796,939 | 76.2% |
 
 </details>
 
@@ -211,9 +217,9 @@
    - [ReusdOracle](#c-0x3a1e320f289eef2636b6d7aa5c0f9202ee9928e4)
    - [PriceWatcher](#c-0xaaaa0013e2ec451f76816d1e0a02aba596dd9251)
    - [GovStaker](#c-0x22222222e9fe38f6f1fc8c61b25228adb4d8b953)
-   - [CurveStableSwapNG (0xc522...4F50)](#c-0xc522a6606bba746d7960404f22a3db936b6f4f50)
    - [CurveStableSwapNG (0xed78...A441)](#c-0xed785af60bed688baa8990cd5c4166221599a441)
    - [crvUSD FlashLender](#c-0x26de7861e213a5351f6ed767d00e0839930e9ee1)
+   - [CurveStableSwapNG (0xc522...4F50)](#c-0xc522a6606bba746d7960404f22a3db936b6f4f50)
    - [GovToken](#c-0x419905009e4656fdc02418c7df35b1e61ed5f726)
    - [GovStakerEscrow](#c-0x9b44e63fc1a252861bf6d4150b58f2de84b5c135)
    - [EmissionsController](#c-0x33333333df05b0d52edd13d230461e5a0f5a4706)
@@ -306,8 +312,8 @@
 
 - 🔄 [**Observed: volatile parameter `voter` on Core**](#c-0xc07e000044f95655c11fda4cd37f70a94d7e0a7d) — `setVoter(address)` changed 7 times. Current value: `0x11111111063874cE8dC6232cb5C1C849359476E6`. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `redemptionHandler` on ResupplyRegistry**](#c-0x10101010e0c3171d894b71b3400668af311e7d94) — `setRedemptionHandler(address _newAddress)` changed 5 times. Current value: `0x5eeB063d0abefBBc78F576E28d762a16b637A025`. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `addPair` on ResupplyRegistry**](#c-0x10101010e0c3171d894b71b3400668af311e7d94) — `addPair(address _pairAddress)` changed 19 times. Current value: ``. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `pausePair` on GuardianUpgradeable**](#c-0xa4745e0b1f40ab3dcfd98f381835de591a8974e3) — `pausePair(address pair)` changed 8 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `addPair` on ResupplyRegistry**](#c-0x10101010e0c3171d894b71b3400668af311e7d94) — `addPair(address _pairAddress)` changed 21 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `pausePair` on GuardianUpgradeable**](#c-0xa4745e0b1f40ab3dcfd98f381835de591a8974e3) — `pausePair(address pair)` changed 6 times. Current value: ``. Assess change pattern.
 
 </details>
 
@@ -514,7 +520,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > >
 > > | Holder | May call | On target | AuthHook | Used |
 > > |---|---|---|---|---|
-> > | [VeCrvOperator](#c-0x03e1538d33778c3711a075af99fc75fcb31ed341) | `0x1cff79cd` | `0x490b...2F7e` | none | 11× |
+> > | [VeCrvOperator](#c-0x03e1538d33778c3711a075af99fc75fcb31ed341) | `0x1cff79cd` | `0x490b...2F7e` | none | 12× |
 > > | [PairAdder](#c-0x09500002956877b910acec25c4b4dd57950e1d27) | `0xc2b7bbb6` | [ResupplyRegistry](#c-0x10101010e0c3171d894b71b3400668af311e7d94) | none | never |
 > > | [BorrowLimitController](#c-0x0950000465476f4470e74aed93e7dd414012bb7d) | `0xe7a33174` | *any* | none | never |
 > > | [TreasuryManagerUpgradeable](#c-0x4cf97a55d58aad14c493a46c8151a0bfffb10403) | `0x10a76fb1` | `0x4444...8324` | none | 30× |
@@ -615,7 +621,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > **Hash:** `core_operator_0x03e1538d33778c3711a075af99fc75fcb31ed341`  
 > **Privileged write functions:**
-> - `0x1cff79cd` — Core operator grant: may call `0x1cff79cd` on 0x490b...2F7e via Core.execute, used 11×.
+> - `0x1cff79cd` — Core operator grant: may call `0x1cff79cd` on 0x490b...2F7e via Core.execute, used 12×.
 
 > **Members (1):**
 
@@ -667,7 +673,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -770,7 +776,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `core()` → Core, `govToken()` → RSUP (GovToken)
+> 🔒 **Immutable References:** `govToken()` → RSUP (GovToken), `core()` → Core
 
 ### > 🟢 `insurancePool`
 
@@ -948,7 +954,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setFeeDeposit(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | `CONFIG` |
-> | Last changed | 2025-03-13 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 1 |
 
@@ -960,7 +966,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setInsurancePool(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2025-03-13 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 1 |
 
@@ -972,7 +978,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setLiquidationHandler(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2025-07-02 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 3 |
 
@@ -986,7 +992,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setRedemptionHandler(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2026-02-21 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 5 🔄 |
 
@@ -998,7 +1004,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setRewardHandler(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2025-08-30 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 2 |
 
@@ -1010,7 +1016,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setStaker(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2025-03-13 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 1 |
 
@@ -1022,7 +1028,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setTreasury(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | `CONFIG` |
-> | Last changed | 2025-03-18 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 2 |
 
@@ -1034,7 +1040,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setVestManager(address _newAddress)` |
 > | Gated by | `owner()` |
 > | Tags | — |
-> | Last changed | 2025-03-13 |
+> | Last changed | — |
 > | Changed by | — |
 > | Total changes | 1 |
 
@@ -1042,28 +1048,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`addPair`** *(per-asset)* 🔄 **ACTIVE** (19 changes)
+> **`addPair`** *(per-asset)* 🔄 **ACTIVE** (21 changes)
 
-> > ⚠️ This parameter has been changed **19 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **21 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `addPair(address _pairAddress)` |
 > | Gated by | `owner()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-01-08 |
-> | Called by | `0x005e...3235` |
-> | Total calls | 19 🔄 |
+> | Last called | 2026-07-31 |
+> | Called by | `0xe5Bc...419f` |
+> | Total calls | 21 🔄 |
 
-> **Recent changes (showing last 5 of 19):**
+> **Recent changes (showing last 5 of 21):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | Resupply Pair (CurveLend: crvUSD/sreUSD) - 1 | `—` | `0x005e...3235` | 2026-01-08 |
-> | 2 | Resupply Pair (CurveLend: crvUSD/fxSAVE) - 1 | `—` | `0x5C46...aF80` | 2025-09-09 |
-> | 3 | Resupply Pair (CurveLend: crvUSD/wstUSR) - 1 | `—` | `0xe5Bc...419f` | 2025-06-26 |
-> | 4 | Resupply Pair (CurveLend: crvUSD/tBTC) - 2 | `—` | `0xe5Bc...419f` | 2025-05-27 |
-> | 5 | Resupply Pair (CurveLend: crvUSD/sUSDS) - 1 | `—` | `0xe5Bc...419f` | 2025-05-27 |
+> | 1 | Resupply Pair (CurveLendV2: crvUSD/sfrxUSD) - 1 | `—` | `0xe5Bc...419f` | 2026-07-31 |
+> | 2 | Resupply Pair (CurveLendV2: crvUSD/sDOLA) - 1 | `—` | `0xe5Bc...419f` | 2026-07-31 |
+> | 3 | Resupply Pair (CurveLend: crvUSD/sreUSD) - 1 | `—` | `0x005e...3235` | 2026-01-08 |
+> | 4 | Resupply Pair (CurveLend: crvUSD/fxSAVE) - 1 | `—` | `0x5C46...aF80` | 2025-09-09 |
+> | 5 | Resupply Pair (CurveLend: crvUSD/wstUSR) - 1 | `—` | `0xe5Bc...419f` | 2025-06-26 |
 
 ---
 <a id="c-0x11111111063874ce8dc6232cb5c1c849359476e6"></a>
@@ -1218,7 +1224,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *12 roles · 11 members · 9 functions*
 
-> 🔒 **Immutable References:** `BOOST_DELEGATION()` → veBoost (Boost Delegation V3), `PRISMA_VOTER()` → CurveProxy, `CRVUSD()` → crvUSD (crvUSD Stablecoin), `CONVEX_VOTER()` → CurveVoterProxy, `SCRVUSD()` → scrvUSD (Yearn V3 Vault), `core()` → Core, `VE()` → veCRV, `FEE_DISTRIBUTOR()` → Curve Fee Distribution, `YEARN_VOTER()` → CurveYCRVVoter
+> 🔒 **Immutable References:** `CONVEX_VOTER()` → CurveVoterProxy, `SCRVUSD()` → scrvUSD (Yearn V3 Vault), `FEE_DISTRIBUTOR()` → Curve Fee Distribution, `PRISMA_VOTER()` → CurveProxy, `CRVUSD()` → crvUSD (crvUSD Stablecoin), `YEARN_VOTER()` → CurveYCRVVoter, `VE()` → veCRV, `core()` → Core, `BOOST_DELEGATION()` → veBoost (Boost Delegation V3)
 
 ### > 🟠 `owner()`
 
@@ -1265,7 +1271,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -1473,7 +1479,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -1542,7 +1548,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -1823,7 +1829,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -1890,9 +1896,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Called by | — |
 > | Total calls | 0 ❄️ |
 
-> **`pausePair`** *(per-asset)* 🔄 **ACTIVE** (8 changes)
+> **`pausePair`** *(per-asset)* 🔄 **ACTIVE** (6 changes)
 
-> > ⚠️ This parameter has been changed **8 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **6 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
@@ -1901,17 +1907,17 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | `PAUSE` |
 > | Last called | 2026-03-16 |
 > | Called by | `0xFE11...6af6` (Gnosis Safe 3/5) |
-> | Total calls | 8 🔄 |
+> | Total calls | 6 🔄 |
 
-> **Recent changes (showing last 5 of 8):**
+> **Recent changes (showing last 5 of 6):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
 > | 1 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-03-16 |
-> | 2 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-03-16 |
-> | 3 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-03-16 |
-> | 4 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-03-16 |
-> | 5 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-03-16 |
+> | 2 | Resupply Pair (CurveLend: crvUSD/sDOLA) - 2 | `—` | `0xAAc0...C78F` (EOA) | 2026-03-16 |
+> | 3 | Resupply Pair (CurveLend: crvUSD/sfrxUSD) - 1 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-02-04 |
+> | 4 | Resupply Pair (CurveLend: crvUSD/sfrxUSD) - 1 | `—` | `0x4D1b...EEe3` (EOA) | 2026-02-04 |
+> | 5 | Resupply Pair (CurveLend: crvUSD/fxSAVE) - 1 | `(Safe-mediated)` | `0xFE11...6af6` (Gnosis Safe 3/5) | 2026-02-01 |
 
 > **`updateRedemptionGuardSettings`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
 
@@ -1936,7 +1942,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `pairDeployer (Core operator grant)` on **Core**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `contractAddress1()` → Contract, `core()` → Core, `registry()` → ResupplyRegistry, `govToken()` → RSUP (GovToken), `contractAddress2()` → Contract
+> 🔒 **Immutable References:** `govToken()` → RSUP (GovToken), `contractAddress1()` → Contract, `contractAddress2()` → Contract, `core()` → Core, `registry()` → ResupplyRegistry
 
 ### > 🟠 `owner()`
 
@@ -2019,7 +2025,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > ⚡ **Inherited authority** [CONFIG] — via `redemptionOperator (Core-owned)` on **Core**
 
-> 🔒 **Immutable References:** `reusd()` → reUSD (Stablecoin), `frxusdSfrxusdPool()` → sfrxUSD2 (CurveStableSwapNG), `crvUsdFrxUsdPool()` → crvfrxUSD (CurveStableSwapNG), `treasury()` → Treasury, `registry()` → ResupplyRegistry
+> 🔒 **Immutable References:** `reusd()` → reUSD (Stablecoin), `crvUsdFrxUsdPool()` → crvfrxUSD (CurveStableSwapNG), `treasury()` → Treasury, `frxusdSfrxusdPool()` → sfrxUSD2 (CurveStableSwapNG), `registry()` → ResupplyRegistry
 
 ### > 🔴 `upgradeability (UUPS)`
 
@@ -2126,7 +2132,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | `0xBd0a74e51729a4D0B92742e67183C4cBc97bCA92` | EOA | 2026-04-20 | EOA |
 > | `0x1101c94c6001e4074Ad4dBAd5Ad08117979cA9D4` | EOA | — | EOA |
 > | `0x1B1D2806dE441eaaAc7f6677bd15DFa937A5b97c` | EOA | 2026-05-24 | EOA |
-> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,933 txs) | — | EOA |
+> | `0xAAc0aa431c237C2C0B5f041c8e59B3f1a43aC78F` | EOA ⚠️ Hot wallet (2,942 txs) | — | EOA |
 
 > **Quorum history:**
 >   - 2025-03-17: ⚪ unchanged 3 → 3
@@ -2202,7 +2208,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `0xFE11a5009f2121622271e7dd0FD470264e076af6` |
 > | Setter | `setManager(address _manager)` |
-> | Gated by | `CORE(), owner()` |
+> | Gated by | `owner(), CORE()` |
 > | Tags | — |
 > | Last changed | 2026-02-10 |
 > | Changed by | `0xFE11...6af6` (Gnosis Safe 3/5) |
@@ -2387,7 +2393,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**, `liquidationHandler` on **ResupplyRegistry**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `insurancePool()` → reIP (InsurancePool), `core()` → Core, `registry()` → ResupplyRegistry
+> 🔒 **Immutable References:** `core()` → Core, `insurancePool()` → reIP (InsurancePool), `registry()` → ResupplyRegistry
 
 ### > 🟠 `owner()`
 
@@ -2429,7 +2435,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**, `insurancePool` on **ResupplyRegistry**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `core()` → Core, `emissionsReceiver()` → SimpleReceiver, `registry()` → ResupplyRegistry
+> 🔒 **Immutable References:** `emissionsReceiver()` → SimpleReceiver, `core()` → Core, `registry()` → ResupplyRegistry
 
 ### > 🟠 `owner()`
 
@@ -2491,7 +2497,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `sfrxusd()` → sfrxUSD (TransparentUpgradeableProxy), `crvusd()` → crvUSD (crvUSD Stablecoin), `scrvusd()` → scrvUSD (Yearn V3 Vault), `crvusd_oracle()` → AggregatorStablePrice - aggregator of stablecoin prices for crvUSD, `reusd_sfrxusd_pool()` → reusdsfrx (CurveStableSwapNG), `reusd_scrvusd_pool()` → reusdscrv (CurveStableSwapNG), `registry()` → ResupplyRegistry
+> 🔒 **Immutable References:** `crvusd()` → crvUSD (crvUSD Stablecoin), `scrvusd()` → scrvUSD (Yearn V3 Vault), `registry()` → ResupplyRegistry, `crvusd_oracle()` → AggregatorStablePrice - aggregator of stablecoin prices for crvUSD, `sfrxusd()` → sfrxUSD (TransparentUpgradeableProxy), `reusd_scrvusd_pool()` → reusdscrv (CurveStableSwapNG), `reusd_sfrxusd_pool()` → reusdsfrx (CurveStableSwapNG)
 
 ---
 <a id="c-0xaaaa0013e2ec451f76816d1e0a02aba596dd9251"></a>
@@ -2561,9 +2567,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x22222222e9fe38f6f1fc8c61b25228adb4d8b953"></a>
 ## > GovStaker `0x22222222E9fE38F6f1FC8C61b25228adB4D8B953`
 
-> *7 roles · 6 members · 7 functions*
+> *8 roles · 6 members · 7 functions*
 
-> 🔒 **Immutable References:** `permaStaker()` → PermaStaker, `core()` → Core, `stakeToken()` → RSUP (GovToken), `registry()` → ResupplyRegistry
+> 🔒 **Immutable References:** `stakeToken()` → RSUP (GovToken), `permaStaker()` → PermaStaker, `core()` → Core, `registry()` → ResupplyRegistry
 
 ### > 🟠 `escrow()`
 
@@ -2593,6 +2599,15 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
 > | `0xc07e000044F95655c11fda4cD37F70A94d7e0a7d` | [↳ Core](#c-0xc07e000044f95655c11fda4cd37f70a94d7e0a7d) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `reward()` · 📋 operational
+
+
+> **Members (1):**
+
+> | Address | Name / Type | Granted | Source | Details |
+> |---|---|---|---|---|
+> | `0x57aB1E0003F623289CD798B1824Be09a793e4Bec` | [↳ reUSD (Stablecoin)](#c-0x57ab1e0003f623289cd798b1824be09a793e4bec) | — | Events only |  |
 
 ### > 🟠 `rewardsDistributor()` · 📋 operational
 
@@ -2667,16 +2682,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Total calls | 0 ❄️ |
 
 ---
-<a id="c-0xc522a6606bba746d7960404f22a3db936b6f4f50"></a>
-## > CurveStableSwapNG `0xc522A6606BBA746d7960404F22a3DB936B6F4F50`
-
-> *0 roles · 0 members · 0 functions*
-
-> > ⚡ **Inherited authority** [CONFIG] — via `reusdScrvPool()` on **RedemptionOperator**
-
-> _No roles detected._
-
----
 <a id="c-0xed785af60bed688baa8990cd5c4166221599a441"></a>
 ## > CurveStableSwapNG `0xed785Af60bEd688baa8990cD5c4166221599A441`
 
@@ -2697,6 +2702,16 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > _No roles detected._
 
 ---
+<a id="c-0xc522a6606bba746d7960404f22a3db936b6f4f50"></a>
+## > CurveStableSwapNG `0xc522A6606BBA746d7960404F22a3DB936B6F4F50`
+
+> *0 roles · 0 members · 0 functions*
+
+> > ⚡ **Inherited authority** [CONFIG] — via `reusdScrvPool()` on **RedemptionOperator**
+
+> _No roles detected._
+
+---
 <a id="c-0x419905009e4656fdc02418c7df35b1e61ed5f726"></a>
 ## > GovToken `0x419905009e4656fdC02418C7Df35B1E61Ed5F726`
 
@@ -2704,7 +2719,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**, `insurancePool` on **ResupplyRegistry**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `oApp()` → RSUP (GovToken), `token()` → RSUP (GovToken), `core()` → Core
+> 🔒 **Immutable References:** `oApp()` → RSUP (GovToken), `core()` → Core, `token()` → RSUP (GovToken)
 
 > #### 🌉 LayerZero v2 — Cross-chain Verifier (DVN) Config
 
@@ -2852,7 +2867,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x33333333df05b0d52edd13d230461e5a0f5a4706"></a>
 ## > EmissionsController `0x33333333df05b0D52edD13D230461E5A0f5a4706`
 
-> *3 roles · 2 members · 6 functions*
+> *4 roles · 6 members · 6 functions*
 
 > > 💰 **Inherited supply authority** — holds `operators` on **Stablecoin**, `insurancePool` on **ResupplyRegistry**, `minter()` on **GovToken**. Access controls on this contract gate root token supply.
 
@@ -2874,6 +2889,18 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
 > | `0xc07e000044F95655c11fda4cD37F70A94d7e0a7d` | [↳ Core](#c-0xc07e000044f95655c11fda4cd37f70a94d7e0a7d) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `receiver()` · 📋 operational
+
+
+> **Members (4):**
+
+> | Address | Name / Type | Granted | Source | Details |
+> |---|---|---|---|---|
+> | `0x6E7D5dade33f76F480EA38E3c47f870de74906F1` | RetentionReceiver | — | Events only |  |
+> | `0x70a1879aEeA28072E321d52427f0aC88603dF61b` | SimpleReceiver | — | Events only |  |
+> | `0x8b36aD6A6605745529908C90cCC90F05901155b4` | SimpleReceiver | — | Events only |  |
+> | `0xC9a9C21F8740684129d271Ad1007E87E24858c59` | SimpleReceiver | — | Events only |  |
 
 > #### 🔧 Permissioned Parameters
 
@@ -2936,16 +2963,17 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Setter | `setReceiverWeights(uint256[] memory _receiverIds, uint256[] memory _newWeights)` |
 > | Gated by | `owner()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2025-07-18 |
-> | Called by | `0x947B...0277` |
-> | Total calls | 2 |
+> | Last called | 2026-08-04 |
+> | Called by | `0xe5Bc...419f` |
+> | Total calls | 3 |
 
 > **Recent changes:**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `64` | `0x947B...0277` | 2025-07-18 |
-> | 2 | `64` | `0x1101...A9D4` (EOA) | 2025-03-13 |
+> | 1 | `64` | `0xe5Bc...419f` | 2026-08-04 |
+> | 2 | `64` | `0x947B...0277` | 2025-07-18 |
+> | 3 | `64` | `0x1101...A9D4` (EOA) | 2025-03-13 |
 
 ---
 ## ⚡ Authority Concentration
@@ -2971,8 +2999,8 @@ Controls **24 role(s)** across **18 contract(s)**
 | GuardianUpgradeable `0xA474...74E3` | `owner()` | `setGuardian(address _guardian)`, `setGuardedRegistryKey(string memory _key, bool _guarded)` | — |
 | GuardianUpgradeable `0xA474...74E3` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | ResupplyPairDeployer `0x5555...C2Ea` | `owner()` | `setCreationCode(bytes calldata _creationCode)`, `setDefaultConfigData(address _oracle, address _rateCalculator, uint256 _maxLTV, uint256 _initialBorrowLimit, uint256 _liquidationFee, uint256 _mintFee, uint256 _protocolRedemptionFee)`, `addSupportedProtocol(string memory _protocolName, uint256 _amountToBurn, uint256 _minShareBurnAmount, bytes4 _borrowTokenSig, bytes4 _collateralTokenSig)`, `setApprovedDeployer(address _deployer, bool _approved)` +3 more | — |
-| RedemptionOperator `0x3F7C...7E40` | `CORE()` | `setManager(address _manager)` | — |
 | RedemptionOperator `0x3F7C...7E40` | `owner()` | `setManager(address _manager)`, `setApprovedCaller(address _caller, bool _status)`, `sweep(address token, address to, uint256 amount)` | — |
+| RedemptionOperator `0x3F7C...7E40` | `CORE()` | `setManager(address _manager)` | — |
 | RedemptionOperator `0x3F7C...7E40` | `upgradeability (UUPS)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | RedemptionHandler `0x5eeB...A025` | `owner()` | `setBaseRedemptionFee(uint256 _fee)`, `setDiscountInfo(uint256 _rate, uint256 _maxUsage, uint256 _maxDiscount)`, `setOverusageInfo(uint256 _rate, uint256 _start, uint256 _end)`, `setWeightLimit(uint256 _weightLimit)` +2 more | — |
 | LiquidationHandler `0x8888...2634` | `owner()` | `setLiquidationIncentive(uint256 _incentive)`, `distributeCollateralAndClearDebt(address _collateral)` | — |
@@ -3064,9 +3092,9 @@ Controls **2 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (100 ETH addresses, cache: 2026-07-28) |
+| OFAC SDN | ✅ OFAC SDN screened (100 ETH addresses, cache: 2026-08-06) |
 | Chainalysis | ✅ Chainalysis screened |
-| **Result** | 56 addresses screened · ✅ 0 flagged |
+| **Result** | 59 addresses screened · ✅ 0 flagged |
 
 ---
 ## EOA Exposure Summary
