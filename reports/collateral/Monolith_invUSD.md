@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 1 off-chain dependency (governance) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-08-13 03:24 UTC |
+| Report Date | 2026-08-13 16:11 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-08-13T03:10:26Z** (block 25743307) → **2026-08-13T03:23:43Z** (block 25743374).
+> Comparing **2026-08-13T03:23:43Z** (block 25743374) → **2026-08-13T16:11:07Z** (block 25747200).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -124,8 +124,8 @@
 - **3. `setRedeemFeeBps(uint16 _redeemFeeBps)`** 🟢 on [**Lender (0xf8B349dA9244253288f6853835e6582955FD49c9)**](#c-0xf8b349da9244253288f6853835e6582955fd49c9)
     - *Role gate:* onlyOperatorOrManager, so the 3-of-6 manager Safe reaches it instantly with no vote and no queue. beforeDeadline-gated, so it stops at 2030-04-23.
     - *Live current value (as of block 25,581,233):* `200`
-    - *Recorded changes:* 2 historical event(s); last setter `0x9D5Df30F475CEA915b1ed4C0CCa59255C897b61B`
-    - *Profile-declared value (verified at block 25,742,473):* `200 bps. This is the asset's ONLY realised configuration change: 300 -> 200 bps at block 25,581,233 on 2026-07-21, via the manager Safe, confirmed three independent ways (one RedeemFeeBpsUpdated event on chain, a single shared tx_hash across every rendered history row, and the protocol team's own account of the change). ⚠️ THE REPORT OVER-COUNTS THIS PARAMETER. Its param card renders 2 changes on a cold scan and one more per warm rescan, because the Safe-correlation recovery path is not incremental and re-appends the same sub-call each run (TODOS SCAN-7a). The card now carries an "Over-counted history" disclosure. The true figure is ONE change.`
+    - *Recorded changes:* 1 historical event(s); last setter `0x9D5Df30F475CEA915b1ed4C0CCa59255C897b61B`
+    - *Profile-declared value (verified at block 25,742,473):* `200 bps. This is the asset's ONLY realised configuration change: 300 -> 200 bps at block 25,581,233 on 2026-07-21, via the manager Safe, confirmed three independent ways (one RedeemFeeBpsUpdated event on chain, a single shared tx_hash across every rendered history row, and the protocol team's own account of the change). The report over-counted this parameter until 2026-08-13, rendering 2 on a cold scan and one more per warm rescan. Two scanner defects caused it and both are now FIXED: the Safe-correlation path is not incremental and its re-append guard could never match (its entry omitted the inner_calldata the key is built from), and the event-decode row duplicated the same call with setter = tx.origin, which for a Safe-mediated call is the relayer rather than the authority. The Safe row now supersedes it, so the card renders ONE change attributed to the manager Safe, which is what the chain shows.`
     - *Threshold:* Capped at 500 bps in source by require(_redeemFeeBps <= 500). Any value up to that cap is reachable in one transaction from the fast path.
     - *Impact:* The redemption fee is the EXIT HAIRCUT on invUSD, so it is a direct input to what a lender should value the collateral at, not merely an economic parameter: value the asset at redemption value less the maximum reachable fee, which is 500 bps here rather than the live 200. Redemption against free debt is the mechanism that ties invUSD's price back to its collateral, so the fee sets how far the peg can drift before arbitrage becomes worthwhile. Raising it widens that band and makes exit more expensive for holders; the borrower keeps the fee as collateral, so a higher fee also shifts value from the redeemer to the borrower being redeemed against. Graded LOW, not higher, on three verified grounds: the 500 bps source cap bounds the worst case tightly, the setter emits RedeemFeeBpsUpdated so any change is visible in an event feed, and the single realised change moved the fee DOWN. The lever is listed because it is the exit-haircut input and because it is reachable instantly from the 3-of-6 Safe with no Timelock involvement.
 - **4. `setHeartbeat(uint256 newHeartbeat)`** 🟡 on [**ChainlinkBasePriceFeed (0x22390B88C53D1631f673b8Dcd91860267137b2c8)**](#c-0x22390b88c53d1631f673b8dcd91860267137b2c8)
@@ -277,7 +277,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **Coin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `feed()` → ERC4626Feed, `vault()` → sinvUSD (Vault), `coin()` → invUSD (Coin), `interestModel()` → InterestModel, `psmAsset()` → USDS (ERC1967Proxy), `psmVault()` → sUSDS (ERC1967Proxy), `collateral()` → sINV (sINV)
+> 🔒 **Immutable References:** `psmAsset()` → USDS (ERC1967Proxy), `vault()` → sinvUSD (Vault), `collateral()` → sINV (sINV), `coin()` → invUSD (Coin), `interestModel()` → InterestModel, `psmVault()` → sUSDS (ERC1967Proxy), `feed()` → ERC4626Feed
 
 ### > 🟠 `factory`
 
@@ -405,7 +405,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `1146076687433` |
 > | Setter | `setHalfLife(uint64 halfLife)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` `SUPPLY` |
 > | Last changed | — |
 > | Changed by | — |
@@ -451,7 +451,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `0x9D5Df30F475CEA915b1ed4C0CCa59255C897b61B` |
 > | Setter | `setManager(address _manager)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | — |
 > | Last changed | — |
 > | Changed by | — |
@@ -475,7 +475,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `100` |
 > | Setter | `setMaxBorrowDeltaBps(uint16 _maxBorrowDeltaBps)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` |
 > | Last changed | — |
 > | Changed by | — |
@@ -507,24 +507,21 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > **`redeemFeeBps`**
 
-> > ⚠️ **Over-counted history** — the 2 retained history rows resolve to only 1 distinct transaction(s), so some rows are duplicate records of the same call. Treat the change count as an upper bound.
-
 > | Field | Value |
 > |---|---|
 > | Current Value | `200` |
 > | Setter | `setRedeemFeeBps(uint16 _redeemFeeBps)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `SUPPLY` `CONFIG` |
 > | Last changed | 2026-07-21 |
 > | Changed by | `0x9D5D...b61B` (Gnosis Safe 3/6) |
-> | Total changes | 2 |
+> | Total changes | 1 |
 
 > **Recent changes:**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `_redeemFeeBps=200` | `0x9D5D...b61B` (Gnosis Safe 3/6) | 2026-07-21 |
-> | 2 | `200` | `0xEC09...471a` | 2026-07-21 |
 
 > **`targetFreeDebtRatioEndBps`** 🔧 **INIT-ONLY** *(set in code/init; setter unused)*
 
@@ -534,7 +531,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `7000` |
 > | Setter | `setTargetFreeDebtRatio(uint16 startBps, uint16 endBps)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` `SUPPLY` |
 > | Last changed | — |
 > | Changed by | — |
@@ -548,7 +545,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `3000` |
 > | Setter | `setTargetFreeDebtRatio(uint16 startBps, uint16 endBps)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` `SUPPLY` |
 > | Last changed | — |
 > | Changed by | — |
@@ -565,7 +562,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `setHalfLife(uint64 halfLife)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` `SUPPLY` |
 > | Last called | — |
 > | Called by | — |
@@ -578,7 +575,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `setTargetFreeDebtRatio(uint16 startBps, uint16 endBps)` |
-> | Gated by | `manager(), operator()` |
+> | Gated by | `operator(), manager()` |
 > | Tags | `CONFIG` `SUPPLY` |
 > | Last called | — |
 > | Called by | — |
@@ -856,7 +853,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **Coin**, `operator()` on **Lender**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `xinv()` → XINV (XINV), `inv()` → INV (INV)
+> 🔒 **Immutable References:** `inv()` → INV (INV), `xinv()` → XINV (XINV)
 
 ### > 🟠 `guardian()` · 🏛️ governance
 
@@ -908,8 +905,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > **`proposalThreshold`**
 
-> > ⚠️ **Over-counted history** — the 4 retained history rows resolve to only 2 distinct transaction(s), so some rows are duplicate records of the same call. Treat the change count as an upper bound.
-
 > | Field | Value |
 > |---|---|
 > | Current Value | `1900000000000000000000 (1,900.000000e18)` |
@@ -918,16 +913,14 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | — |
 > | Last changed | 2022-10-03 |
 > | Changed by | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) |
-> | Total changes | 4 |
+> | Total changes | 2 |
 
 > **Recent changes:**
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newThreshold=1900000000000000000000 (1,900.000000e18)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2022-10-03 |
-> | 2 | `1400000000000000000000 (1,400.000000e18)` | `0x1748...2e56` | 2022-10-03 |
-> | 3 | `newThreshold=1400000000000000000000 (1,400.000000e18)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2022-05-24 |
-> | 4 | `1000000000000000000000 (1,000.000000e18)` | `0x6535...89BB` (EOA) | 2022-05-24 |
+> | 2 | `newThreshold=1400000000000000000000 (1,400.000000e18)` | `0xBeCC...9Bf6` (GovernorMills + Timelock (2d)) | 2022-05-24 |
 
 ---
 <a id="c-0x941c2699ec7e55a50bde030d8e1e70649839259d"></a>
