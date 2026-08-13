@@ -60,6 +60,22 @@
       "summary": "OnlyBoost v2 reward vault wrapping the sd-DOLA/sUSDe Curve gauge position.",
       "status": "reviewed",
       "order": 9
+    },
+    "Resupply_reUSD": {
+      "asset": "reUSD",
+      "subtitle": "Resupply Finance CDP stablecoin",
+      "protocol": "Resupply Finance",
+      "summary": "CDP stablecoin minted against yield-bearing CurveLend and Fraxlend vault collateral.",
+      "status": "reviewed",
+      "order": 10
+    },
+    "Monolith_invUSD": {
+      "asset": "invUSD",
+      "subtitle": "Monolith deployment #0",
+      "protocol": "Monolith",
+      "summary": "CDP stablecoin minted against staked INV, with a USDS peg stability module.",
+      "status": "reviewed",
+      "order": 11
     }
   },
   "weekly": {}
