@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 1 off-chain dependency (governance) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-08-13 16:11 UTC |
+| Report Date | 2026-08-13 16:37 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-08-13T03:23:43Z** (block 25743374) → **2026-08-13T16:11:07Z** (block 25747200).
+> Comparing **2026-08-13T16:11:07Z** (block 25747200) → **2026-08-13T16:36:58Z** (block 25747331).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -79,7 +79,7 @@
 - **1. governance** 🟡 — invUSD is otherwise fully on-chain: collateral, oracle, redemption, PSM and supply accounting are all observable from a block explorer, and there is no custodian, no attestation and no compliance gate. The single off-chain dependency is key custody and signer independence behind the 3-of-6 manager Safe, which holds the ONLY authority path ever exercised on this asset. The dependency is sharpened by a verified structural fact: the manager Safe's six owners are a strict SUBSET of the seven owners of the sINV guardian Safe, so the same people control both the Lender fast path and the collateral token's deposit gate. There is no signer diversity between the two roles.
     - *On-chain signal:* Lender.manager() == 0x9D5Df30F475CEA915b1ed4C0CCa59255C897b61B (3-of-6, v1.3.0, getModulesPaginated == [], guard slot == 0x0). Monitor Safe ExecutionSuccess events plus Lender ManagerUpdated / RedeemFeeBpsUpdated / HalfLifeUpdated / TargetFreeDebtRatioUpdated / MaxBorrowDeltaBpsUpdated. Note setManager has NO two-step handshake and NO beforeDeadline gate, so a manager rotation is a single instant transaction from the fast path.
     - *Off-chain dependency:* The six EOA signers of Safe 0x9D5Df30F are 0x2723723F (rwg.eth), 0x962228a9 (bankerharry.eth), 0x6535020c (aliendev.eth), 0x52f63971, 0x9F3614af, 0x3FcB35a1. All six are plain EOAs with no EIP-7702 delegation. All six are also owners of the 4-of-7 sINV guardian Safe 0x4b6c63E6…, and the identical six-owner set additionally operates a 2-of-6 sibling Safe 0x8F97cCA3… (no invUSD authority found, but relevant to blast radius).
-    - *Recovery path:* The manager cannot mint DIRECTLY and cannot touch the oracle, but see the critical_parameters entry "setTargetFreeDebtRatio + setHalfLife": through the rate controller it holds an indirect, multi-day supply lever that the phrase "cannot mint" understated in cycle 1. The fast path covers economic tuning (halfLife, target free-debt ratio, redeem fee, max borrow delta) plus manager rotation. Recovery from a hostile manager runs through the operator (Timelock, 2-day delay plus a GovernorMills vote), which can call setManager to displace it. No emergency pause exists anywhere in the Lender; there is no pause() function in the codebase at all.
+    - *Recovery path:* The manager cannot mint directly and cannot touch the oracle. It does hold an indirect, multi-day supply lever through the rate controller, graded separately under the critical_parameters entry for setTargetFreeDebtRatio and setHalfLife. The fast path covers economic tuning (halfLife, target free-debt ratio, redeem fee, max borrow delta) plus manager rotation. Recovery from a hostile manager runs through the operator (Timelock, 2-day delay plus a GovernorMills vote), which can call setManager to displace it. No emergency pause exists anywhere in the Lender; there is no pause() function in the codebase at all.
 
 </details>
 
@@ -120,12 +120,12 @@
     - *Role gate:* onlyOperatorOrManager. The 3-of-6 manager Safe reaches BOTH instantly, with no vote and no queue; the operator reaches them only via a GovernorMills vote plus a 2-day queue. beforeDeadline-gated, so both die at 2030-04-23.
     - *Profile-declared value (verified at block 25,742,473):* `Band 3000/7000 bps, live getFreeDebtRatio 7413 bps (ABOVE the band, so the controller sits in its DECAY branch). expRate 1146076687433 = halfLife exactly 7 days. Neither setter has EVER fired: HalfLifeUpdated and TargetFreeDebtRatioUpdated are both 0 events.`
     - *Threshold:* startBps set ABOVE the live free-debt ratio (today 7413) flips the InterestModel from decay into its exponential GROWTH branch. halfLife at its 12-hour floor maxes the compounding speed.
-    - *Impact:* The correction to cycle 1, which asserted flatly that the manager cannot mint. Directly that is true, and it stays true. Indirectly the manager pair is the largest supply lever in the asset. Setting startBps to 9500 (above the live 7413) puts InterestModel into `currBorrowRate = lastRate * 1e18 / exp(-expRate * t)` and setHalfLife(12 hours) maximises expRate, so the borrow rate doubles every 12 hours and the accrued interest is minted as NEW invUSD to the sinvUSD vault. Simulated by eth_call against the live InterestModel at the current state: 1 day 68% APR / 26.4 invUSD, 3 days 1,089% APR / 554 invUSD, 7 days 278,899% APR / 144,092 invUSD. That last figure is minted against only 26,143.78 invUSD of paid debt, so it is unbacked supply exceeding the entire 100,345.83 float. Graded MEDIUM rather than HIGH, and every one of these bounds was verified, not assumed. It is multi-day, not single-block. It is LOUD: both setters emit events and both have fired zero times in the asset's life. It is self-limiting, because borrowers respond by flipping paid debt to free debt via setRedemptionStatus, which collapses totalPaidDebt, the very base the interest is charged on, and pushes the ratio past the 9500 cap where the controller reverses. Note the ASYMMETRY, which runs the safe way and is worth stating explicitly: setRedemptionStatus is a USER feature, `public` and gated only on `msg.sender == account || delegations[account][msg.sender]`, with NO beforeDeadline modifier, so the borrower's escape hatch survives 2030 PERMANENTLY. The lever itself is beforeDeadline-gated and therefore expires. The attack tool sunsets; the defence against it does not. The lever's own arguments are additionally hard-capped in source (startBps >= 500, endBps <= 9500, halfLife 12h to 30d). InterestModel's uint88 overflow guard returns zero interest by the 30-day mark. And the 2-day Timelock outruns it: queue setManager on day 0, execute on day 2, by which point cumulative damage is roughly 0.3% of supply. Monitoring signal: TargetFreeDebtRatioUpdated and HalfLifeUpdated, both at zero today, plus getFreeDebtRatio crossing below the band's startBps.
+    - *Impact:* The manager cannot mint directly, but this pair is the largest supply lever in the asset. Setting startBps above the live free-debt ratio (7413 bps) puts InterestModel into its growth branch, `currBorrowRate = lastRate * 1e18 / exp(-expRate * t)`, and setHalfLife at its 12-hour floor maximises expRate, so the borrow rate doubles every 12 hours and the accrued interest is minted as NEW invUSD to the sinvUSD vault. Simulated by eth_call against the live InterestModel at the current state: 1 day 68% APR / 26.4 invUSD, 3 days 1,089% APR / 554 invUSD, 7 days 278,899% APR / 144,092 invUSD. That last figure is minted against only 26,143.78 invUSD of paid debt, so it is unbacked supply exceeding the entire 100,345.83 float. Graded MEDIUM rather than HIGH on five bounds. It is multi-day, not single-block. It is LOUD: both setters emit events and both have fired zero times in the asset's life. It is self-limiting, because borrowers respond by flipping paid debt to free debt via setRedemptionStatus, which collapses totalPaidDebt, the very base the interest is charged on, and pushes the ratio past the 9500 cap where the controller reverses. Note the ASYMMETRY, which runs the safe way and is worth stating explicitly: setRedemptionStatus is a USER feature, `public` and gated only on `msg.sender == account || delegations[account][msg.sender]`, with NO beforeDeadline modifier, so the borrower's escape hatch survives 2030 PERMANENTLY. The lever itself is beforeDeadline-gated and therefore expires. The attack tool sunsets; the defence against it does not. The lever's own arguments are additionally hard-capped in source (startBps >= 500, endBps <= 9500, halfLife 12h to 30d). InterestModel's uint88 overflow guard returns zero interest by the 30-day mark. And the 2-day Timelock outruns it: queue setManager on day 0, execute on day 2, by which point cumulative damage is roughly 0.3% of supply. Monitoring signal: TargetFreeDebtRatioUpdated and HalfLifeUpdated, both at zero today, plus getFreeDebtRatio crossing below the band's startBps.
 - **3. `setRedeemFeeBps(uint16 _redeemFeeBps)`** 🟢 on [**Lender (0xf8B349dA9244253288f6853835e6582955FD49c9)**](#c-0xf8b349da9244253288f6853835e6582955fd49c9)
     - *Role gate:* onlyOperatorOrManager, so the 3-of-6 manager Safe reaches it instantly with no vote and no queue. beforeDeadline-gated, so it stops at 2030-04-23.
     - *Live current value (as of block 25,581,233):* `200`
     - *Recorded changes:* 1 historical event(s); last setter `0x9D5Df30F475CEA915b1ed4C0CCa59255C897b61B`
-    - *Profile-declared value (verified at block 25,742,473):* `200 bps. This is the asset's ONLY realised configuration change: 300 -> 200 bps at block 25,581,233 on 2026-07-21, via the manager Safe, confirmed three independent ways (one RedeemFeeBpsUpdated event on chain, a single shared tx_hash across every rendered history row, and the protocol team's own account of the change). The report over-counted this parameter until 2026-08-13, rendering 2 on a cold scan and one more per warm rescan. Two scanner defects caused it and both are now FIXED: the Safe-correlation path is not incremental and its re-append guard could never match (its entry omitted the inner_calldata the key is built from), and the event-decode row duplicated the same call with setter = tx.origin, which for a Safe-mediated call is the relayer rather than the authority. The Safe row now supersedes it, so the card renders ONE change attributed to the manager Safe, which is what the chain shows.`
+    - *Profile-declared value (verified at block 25,742,473):* `200 bps. This is the asset's ONLY realised configuration change: 300 -> 200 bps at block 25,581,233 on 2026-07-21, via the manager Safe, confirmed three independent ways (one RedeemFeeBpsUpdated event on chain, a single shared tx_hash across every rendered history row, and the protocol team's own account of the change). 200 bps, lowered from 300 in the asset's ONLY realised configuration change, at block 25,581,233 on 2026-07-21, executed through the manager Safe. That single change is corroborated three ways: one RedeemFeeBpsUpdated event on chain, one transaction hash, and the protocol team's own account of the 3% to 2% move.`
     - *Threshold:* Capped at 500 bps in source by require(_redeemFeeBps <= 500). Any value up to that cap is reachable in one transaction from the fast path.
     - *Impact:* The redemption fee is the EXIT HAIRCUT on invUSD, so it is a direct input to what a lender should value the collateral at, not merely an economic parameter: value the asset at redemption value less the maximum reachable fee, which is 500 bps here rather than the live 200. Redemption against free debt is the mechanism that ties invUSD's price back to its collateral, so the fee sets how far the peg can drift before arbitrage becomes worthwhile. Raising it widens that band and makes exit more expensive for holders; the borrower keeps the fee as collateral, so a higher fee also shifts value from the redeemer to the borrower being redeemed against. Graded LOW, not higher, on three verified grounds: the 500 bps source cap bounds the worst case tightly, the setter emits RedeemFeeBpsUpdated so any change is visible in an event feed, and the single realised change moved the fee DOWN. The lever is listed because it is the exit-haircut input and because it is reachable instantly from the 3-of-6 Safe with no Timelock involvement.
 - **4. `setHeartbeat(uint256 newHeartbeat)`** 🟡 on [**ChainlinkBasePriceFeed (0x22390B88C53D1631f673b8Dcd91860267137b2c8)**](#c-0x22390b88c53d1631f673b8dcd91860267137b2c8)
@@ -142,7 +142,7 @@
 - **6. `setLocalReserveFeeBps(uint _feeBps)`** 🟢 on [**Lender (0xf8B349dA9244253288f6853835e6582955FD49c9)**](#c-0xf8b349da9244253288f6853835e6582955fd49c9)
     - *Role gate:* onlyOperator == Inverse DAO Timelock. NOT beforeDeadline-gated, so it survives the 2030 immutability deadline permanently.
     - *Live current value:* `0`
-    - *Profile-declared value (verified at block 25,742,473):* `0 bps, and yet accruedLocalReserves stands at 716.55 invUSD, which is 73.4% of ALL interest the protocol has ever accrued (cumulative 976.58 invUSD across 104 InterestAccrued events; only 260.03 reached the sinvUSD vault). CORRECTED in cycle 2: an earlier note credited this to PSM profit plus the supply-rate cap branch, but PSM profit is only 1.38 USDS in total. The real driver is the supply-rate cap at Lender.sol:214-221, which fires because totalStaked (16,671.17) is BELOW totalPaidDebt (26,143.78) and diverts roughly 36% of each accrual to reserves regardless of feeBps.`
+    - *Profile-declared value (verified at block 25,742,473):* `0 bps, and yet accruedLocalReserves stands at 716.55 invUSD, which is 73.4% of ALL interest the protocol has ever accrued (cumulative 976.58 invUSD across 104 InterestAccrued events; only 260.03 reached the sinvUSD vault). The driver is the supply-rate cap at Lender.sol:214-221, not the fee: it fires because totalStaked (16,671.17) sits BELOW totalPaidDebt (26,143.78), diverting roughly 36% of each accrual to reserves regardless of feeBps. PSM profit contributes 1.38 USDS in total.`
     - *Threshold:* Capped at 1000 bps (10% of interest) by require in-source.
     - *Impact:* Diverts up to 10% of borrower interest into accruedLocalReserves, which pullLocalReserves then MINTS to the operator. The operator IS the Inverse DAO treasury, so this is the DAO setting its own revenue take on invUSD interest, and pullLocalReserves being permissionless means anyone may push accrued revenue into the treasury. That is protocol revenue, not a capture path. Two residual notes for a lender: (a) the destination follows the operator slot, and operator rotation is NOT deadline-gated, so a rotation redirects future reserve mints; (b) it is one of the six privileged paths the immutability deadline does NOT close, so the DAO retains this revenue lever permanently.
 - **7. `setManager(address _manager)`** 🟢 on [**Lender (0xf8B349dA9244253288f6853835e6582955FD49c9)**](#c-0xf8b349da9244253288f6853835e6582955fd49c9)
@@ -277,14 +277,14 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **Coin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `psmAsset()` → USDS (ERC1967Proxy), `vault()` → sinvUSD (Vault), `collateral()` → sINV (sINV), `coin()` → invUSD (Coin), `interestModel()` → InterestModel, `psmVault()` → sUSDS (ERC1967Proxy), `feed()` → ERC4626Feed
+> 🔒 **Immutable References:** `interestModel()` → InterestModel, `vault()` → sinvUSD (Vault), `collateral()` → sINV (sINV), `psmAsset()` → USDS (ERC1967Proxy), `psmVault()` → sUSDS (ERC1967Proxy), `feed()` → ERC4626Feed, `coin()` → invUSD (Coin)
 
 ### > 🟠 `factory`
 
 > **Hash:** `bfs_seed:factory`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG** 💰 **SUPPLY**
-> - `factory` — The Factory is a MINT AUTHORITY: Lender.pullGlobalReserves is gated `require(msg.sender == address(factory))` and calls coin.mint(_to, amount). The scanner will not reach it on its own because "factory" is on the IGNORABLE_VIEWS blacklist (scan_roles.py ~2497, added for DEX pair views). It also holds the global fee levers for every Monolith deployment and has NO immutability deadline. Verified 2026-08-12: Factory.operator = the Inverse Timelock, feeRecipient = 0x0 (never non-zero), feeBps = 0.
+> - `factory` — The Factory is a mint authority over invUSD: Lender.pullGlobalReserves is gated `require(msg.sender == address(factory))` and calls coin.mint. It also holds the global fee levers for every Monolith deployment and carries no immutability deadline, so its powers survive the 2030 sunset. Its own operator is the Inverse DAO Timelock behind a 2-day queue. The mint path is currently unreachable by any caller: feeRecipient is 0x0 and has never been set, and feeBps is 0.
  `[SUPPLY, CONFIG]`
 
 > **Members (1):**
@@ -344,7 +344,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:ETH/USD source (ChainlinkBasePriceFeed)`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `feed -> ... -> DynamicFeeCurveFeed.pairedTokenToUsd` — True edge: DynamicFeeCurveFeed.pairedTokenToUsd(). Fourth hop, Chainlink ETH/USD with a RedStone fallback. Carries TWO SILENT SETTERS (assetToUsdHeartbeat, live 3660s, and owner) that emit NO events at all, so its event log is worthless as evidence and only the scanner's silent-setter classification will flag them. owner = the Inverse Timelock, unchanged since deployment (established by historical eth_call, not by events).
+> - `feed -> ... -> DynamicFeeCurveFeed.pairedTokenToUsd` — Fourth hop in the price chain, supplying ETH/USD from Chainlink with a RedStone fallback. Carries two setters that emit NO event at all: `setHeartbeat` (live 3660s) and the owner rotation. The heartbeat selects between the two sources, since isPriceStale compares updatedAt plus the heartbeat against the current time, so a change to it is only observable by reading the value directly. Owner is the Inverse Timelock, unchanged since deployment.
  `[CONFIG]`
 
 > **Members (1):**
@@ -358,7 +358,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:INV price source (DynamicFeeCurveFeed)`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `feed -> ... -> SwitchFeed.feed` — True edge: SwitchFeed.feed(). Third hop. Holds a mutable `maxFee` (live 2e8 = 2%) and a `gov` role, both on the Inverse Timelock. Prices INV from a Curve WETH/INV pool EMA (ma_time 601s) times ETH/USD. ZERO logs since deployment.
+> - `feed -> ... -> SwitchFeed.feed` — Third hop in the price chain. Prices INV from a Curve WETH/INV pool EMA (ma_time 601s) multiplied by ETH/USD. Holds a mutable `maxFee` (live 2e8) and a `gov` role, both on the Inverse Timelock. maxFee caps a DISCOUNT rather than a price, so raising it can only lower the reported INV price; its curvePool and pairedTokenToUsd pointers are immutable. Zero logs since deployment.
  `[CONFIG]`
 
 > **Members (1):**
@@ -372,7 +372,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:INV/USD source (SwitchFeed)`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `feed -> ERC4626Feed.feed` — True edge: ERC4626Feed.feed(). SwitchFeed holds switchFeed(address), the ONLY mutable pointer in the collateral price chain and the highest-value lever in this asset. Gated on the Inverse Timelock (2-day queue). Its in-contract ±10% divergence guard is point-in-time only: it re-reads the current price per call so N calls in one tx compound to 1.10^N, and the new feed is unconstrained afterwards. Verified 2026-08-12: operator = Timelock, feed = DynamicFeeCurveFeed 0x4C871E95 (constructor value, never switched, ZERO logs since deployment).
+> - `feed -> ERC4626Feed.feed` — Holds `switchFeed(address)`, the only repointable link in invUSD's collateral price chain and the highest-value lever in the asset. Changing it requires a GovernorMills proposal plus the Timelock's 2-day queue, and three in-contract checks on the incoming feed: a positive price, a price within plus or minus 10% of the outgoing feed, and matching decimals. That divergence guard is point-in-time only. It re-reads the current price on each call, so N calls in one transaction compound to 1.10^N, and the incoming feed is unconstrained afterwards. Live: operator is the Timelock, feed is DynamicFeeCurveFeed 0x4C871E95, the constructor value, never switched, zero logs since deployment.
  `[CONFIG]`
 
 > **Members (1):**
@@ -386,7 +386,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:price feed (ERC4626Feed)`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `feed` — True edge: Lender.feed(), immutable. ERC4626Feed is itself ownerless with zero setters and all pointers immutable, so it holds no lever of its own, but it is the ENTRY POINT to the price chain and the report should show where the collateral price comes from. Classified "operational, not followed" on cycle 1.
+> - `feed` — Entry point to invUSD's collateral price chain, reached through the Lender's immutable `feed` pointer. ERC4626Feed multiplies an INV/USD price by the live sINV vault redemption rate. It has no owner and no setters, and both of its own pointers are immutable, so it holds no lever of its own.
  `[CONFIG]`
 
 > **Members (1):**
@@ -764,7 +764,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **Coin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `curvePool()` → INV/WETH (CurveTwocryptoOptimized), `pairedTokenToUsd()` → ChainlinkBasePriceFeed
+> 🔒 **Immutable References:** `pairedTokenToUsd()` → ChainlinkBasePriceFeed, `curvePool()` → INV/WETH (CurveTwocryptoOptimized)
 
 ### > 🟢 `gov()` · 🏛️ governance
 
@@ -815,7 +815,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `minter()` on **Coin**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `assetToUsd()` → EACAggregatorProxy, `assetToUsdFallback()` → TransparentUpgradeableProxy
+> 🔒 **Immutable References:** `assetToUsdFallback()` → TransparentUpgradeableProxy, `assetToUsd()` → EACAggregatorProxy
 
 ### > 🟢 `owner()`
 
