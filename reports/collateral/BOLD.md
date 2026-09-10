@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 3 off-chain dependencies (oracle) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-09-10 17:39 UTC |
+| Report Date | 2026-09-10 17:48 UTC |
 
 ### Surface Summary
 
@@ -27,7 +27,7 @@
 
 ## Changes Since Last Scan
 
-> Comparing **2026-09-10T17:34:08Z** (block 25948500) → **2026-09-10T17:37:41Z** (block 25948517).
+> Comparing **2026-09-10T17:37:41Z** (block 25948517) → **2026-09-10T17:46:09Z** (block 25948560).
 
 > ✅ No changes to roles, parameters, contracts, or findings.
 
@@ -51,7 +51,7 @@
 
 - **Redemption is what holds the peg:** anyone may hand BOLD to the CollateralRegistry and receive an equal dollar value of collateral, taken from the lowest-interest-rate Troves across branches in proportion to each branch's unbacked debt. This is the arbitrage that pulls BOLD back to a dollar from below, and it costs a fee that floors at 0.5 percent and rises with redemption volume before decaying again. The redeemed borrower is not liquidated or penalised: their debt falls by exactly the BOLD redeemed and their collateral falls by the same dollar value, so redemption is a forced partial repayment rather than a loss event.
 
-- **Liquidation and the Stability Pool:** a Trove that falls below its branch Minimum Collateral Ratio can be liquidated by anyone. The first stop is that branch's Stability Pool, where BOLD holders have deposited in advance. The pool burns BOLD equal to the bad debt and hands the seized collateral to depositors at a discount, which is how depositors are paid for standing first in line. Only if the pool is exhausted does the remaining debt and collateral redistribute onto the branch's other Troves. A detail worth knowing if you integrate: the pools move a depositor's BOLD without an ERC-20 allowance, because each pool is named directly in the token's frozen transfer set. As of block 25943559 the pools held roughly 6.9M, 7.0M and 4.7M BOLD against branch debts of about 11.3M, 18.9M and 4.1M.
+- **Liquidation and the Stability Pool:** a Trove that falls below its branch Minimum Collateral Ratio can be liquidated by anyone. The first stop is that branch's Stability Pool, where BOLD holders have deposited in advance. The pool burns BOLD equal to the bad debt and hands the seized collateral to depositors at a discount, which is how depositors are paid for standing first in line. Only if the pool is exhausted does the remaining debt and collateral redistribute onto the branch's other Troves. A detail worth knowing if you integrate: the pools move a depositor's BOLD without an ERC-20 allowance, because each pool is named directly in the token's frozen transfer set. The Collateral Branches section reads each pool's size and its branch's debt live on every scan, so the current figures are there rather than quoted here.
 
 - **How each branch is priced:** every branch reads a Chainlink push feed for the dollar price of its collateral, and the two liquid-staking branches additionally read a canonical exchange rate straight from the staking protocol itself, wstETH for the one and rETH for the other. The wstETH branch multiplies a stETH-USD price by that rate; the rETH branch takes the lower of its market price and its canonical price. Every oracle pointer is written once in a constructor with no setter anywhere in the inheritance chain, so the feeds a branch reads on its first day are the feeds it will read forever.
 
@@ -59,7 +59,7 @@
 
 - **Where the interest goes:** interest accrued by borrowers is minted as new BOLD and split at a fixed 75 percent to that branch's Stability Pool depositors, with the remainder sent to an InterestRouter at 0x807DEf5E7d057DF05C796F4bc75C3Fe82Bd6EeE1. That router is Liquity V2's Governance contract, which directs the protocol's own revenue to incentives; its ownership was renounced at block 22516144. Nothing in that path can reach a Trove, a price, or the mint and burn sets.
 
-- **Scope and provenance:** this report covers BOLD and the Liquity contracts that issue and back it. The asset actually proposed for FiRM is ysyBOLD, a Yearn vault that deposits into these Stability Pools; the Yearn stack has its own access control surface and is a separate study, not covered here. Twenty contracts across the three branches plus the shared token and registry, all verified on Etherscan and all compiled from the public liquity/bold repository at the single tagged deployment commit. Sixteen of the seventeen core contracts reproduce byte-for-byte from that commit, and the three branches are one codebase parameterised rather than three separate deployments, with the wstETH and rETH TroveManagers sharing identical runtime bytecode. As of block 25943559 the system carried roughly 34.4M BOLD of debt across 216 Troves.
+- **Scope and provenance:** this report covers BOLD and the Liquity contracts that issue and back it. The asset actually proposed for FiRM is ysyBOLD, a Yearn vault that deposits into these Stability Pools; the Yearn stack has its own access control surface and is a separate study, not covered here. Twenty contracts across the three branches plus the shared token and registry, all verified on Etherscan and all compiled from the public liquity/bold repository at the single tagged deployment commit. Sixteen of the seventeen core contracts reproduce byte-for-byte from that commit, and the three branches are one codebase parameterised rather than three separate deployments, with the wstETH and rETH TroveManagers sharing identical runtime bytecode. Current system debt and borrower counts are read live each scan and shown per branch in the Collateral Branches section.
 
 
 </details>
@@ -181,19 +181,19 @@
 1. [Analyst Focus Areas](#analyst-focus-areas)
 2. Contracts
    - [BOLD ★](#c-0x6440f144b7e50d6a8439336510312d2f54beb01d)
+   - [TroveManager (0x7bcb...Cf5A)](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a)
+   - [TroveManager (0xA289...8B22)](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22)
+   - [TroveManager (0xb2B2...e19e)](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e)
    - [CollateralRegistry](#c-0xf949982b91c8c61e952b3ba942cbbfaef5386684)
-   - [BorrowerOperations (0x372A...BC65)](#c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65)
-   - [BorrowerOperations (0xa741...5DA3)](#c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3)
-   - [BorrowerOperations (0xe811...7329)](#c-0xe8119fc02953b27a1b48d2573855738485a17329)
    - [ActivePool (0x531a...19a0)](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0)
    - [ActivePool (0x9074...532F)](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f)
    - [ActivePool (0xeB5A...6AfE)](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe)
    - [StabilityPool (0x5721...f9BF)](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf)
    - [StabilityPool (0x9502...e56B)](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b)
    - [StabilityPool (0xd442...8695)](#c-0xd442e41019b7f5c4dd78f50dc03726c446148695)
-   - [TroveManager (0x7bcb...Cf5A)](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a)
-   - [TroveManager (0xA289...8B22)](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22)
-   - [TroveManager (0xb2B2...e19e)](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e)
+   - [BorrowerOperations (0x372A...BC65)](#c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65)
+   - [BorrowerOperations (0xa741...5DA3)](#c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3)
+   - [BorrowerOperations (0xe811...7329)](#c-0xe8119fc02953b27a1b48d2573855738485a17329)
    - [WETHPriceFeed](#c-0xcc5f8102eb670c89a4a3c567c13851260303c24f)
    - [WSTETHPriceFeed](#c-0xe7aa2ba9e086a379d3beb224098bc634a46e314e)
    - [RETHPriceFeed](#c-0x34f1e9c7dcc279ec70d3c4488eb2d80fba8b7b2b)
@@ -289,15 +289,15 @@
 - ⚠️ [**No Timelock in admin chain: `borrowerOperations()` on TroveManager**](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) — `borrowerOperations()` has SUPPLY capability and is held by: `0x372A...BC65` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `borrowerOperations()` on TroveManager**](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22) — `borrowerOperations()` has SUPPLY capability and is held by: `0xa741...5DA3` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `borrowerOperations()` on TroveManager**](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) — `borrowerOperations()` has SUPPLY capability and is held by: `0xe811...7329` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0xa741...5DA3` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `stabilityPool()` on ActivePool**](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) — `stabilityPool()` has SUPPLY capability and is held by: `0x9502...e56B` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManagerAddress()` on ActivePool**](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) — `troveManagerAddress()` has SUPPLY capability and is held by: `0xA289...8B22` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
-- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0xe811...7329` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
+- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0xa741...5DA3` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `stabilityPool()` on ActivePool**](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) — `stabilityPool()` has SUPPLY capability and is held by: `0xd442...8695` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManagerAddress()` on ActivePool**](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) — `troveManagerAddress()` has SUPPLY capability and is held by: `0xb2B2...e19e` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
-- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0x372A...BC65` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
+- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0xe811...7329` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `stabilityPool()` on ActivePool**](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) — `stabilityPool()` has SUPPLY capability and is held by: `0x5721...f9BF` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManagerAddress()` on ActivePool**](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) — `troveManagerAddress()` has SUPPLY capability and is held by: `0x7bcb...Cf5A` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
+- 🔒 [**No Timelock in admin chain: `borrowerOperationsAddress()` on ActivePool**](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) — `borrowerOperationsAddress()` has SUPPLY capability and is held by: `0x372A...BC65` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManager()` on StabilityPool**](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf) — `troveManager()` has SUPPLY capability and is held by: `0x7bcb...Cf5A` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManager()` on StabilityPool**](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b) — `troveManager()` has SUPPLY capability and is held by: `0xA289...8B22` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `troveManager()` on StabilityPool**](#c-0xd442e41019b7f5c4dd78f50dc03726c446148695) — `troveManager()` has SUPPLY capability and is held by: `0xb2B2...e19e` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
@@ -308,8 +308,6 @@
 <details>
 <summary>🔄 **11 volatile parameter(s) observed across 2 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
 
-- 🔄 [**Observed: volatile parameter `offset` on StabilityPool**](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf) — `offset(uint256 _debtToOffset, uint256 _collToAdd)` changed 47 times. Current value: ``. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `offset` on StabilityPool**](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b) — `offset(uint256 _debtToOffset, uint256 _collToAdd)` changed 12 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `onOpenTrove` on TroveManager**](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) — `onOpenTrove(address _owner, uint256 _troveId, TroveChange memory _troveChange, uint256 _annualInterestRate)` changed 360 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `onOpenTroveAndJoinBatch` on TroveManager**](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) — `onOpenTroveAndJoinBatch(address _owner, uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _batchColl, uint256 _batchDebt)` changed 155 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `onCloseTrove` on TroveManager**](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) — `onCloseTrove(uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _newBatchColl, uint256 _newBatchDebt)` changed 350 times. Current value: ``. Assess change pattern.
@@ -319,6 +317,8 @@
 - 🔄 [**Observed: volatile parameter `onOpenTrove` on TroveManager**](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) — `onOpenTrove(address _owner, uint256 _troveId, TroveChange memory _troveChange, uint256 _annualInterestRate)` changed 74 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `onOpenTroveAndJoinBatch` on TroveManager**](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) — `onOpenTroveAndJoinBatch(address _owner, uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _batchColl, uint256 _batchDebt)` changed 29 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `onCloseTrove` on TroveManager**](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) — `onCloseTrove(uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _newBatchColl, uint256 _newBatchDebt)` changed 79 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `offset` on StabilityPool**](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf) — `offset(uint256 _debtToOffset, uint256 _collToAdd)` changed 47 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `offset` on StabilityPool**](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b) — `offset(uint256 _debtToOffset, uint256 _collToAdd)` changed 12 times. Current value: ``. Assess change pattern.
 
 </details>
 
@@ -659,597 +659,12 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | Total calls | 3727 🔄 |
 
 ---
-<a id="c-0xf949982b91c8c61e952b3ba942cbbfaef5386684"></a>
-## > CollateralRegistry `0xf949982B91C8c61e952B3bA942cbbfaef5386684`
-
-> *1 role · 1 member · 0 functions*
-
-> > 💰 **Inherited supply authority** — holds `collateralRegistryAddress()` on **BoldToken**. Access controls on this contract gate root token supply.
-
----
-<a id="c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65"></a>
-## > BorrowerOperations `0x372ABD1810eAF23Cb9D941BbE7596DFb2c46BC65`
-
-> *10 roles · 9 members · 0 functions*
-
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `priceFeedAddress()` → WETHPriceFeed, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_WETH (TroveNFT), `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
----
-<a id="c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3"></a>
-## > BorrowerOperations `0xa741A32f9dcFe6aDBa088fD0f97e90742d7d5DA3`
-
-> *10 roles · 9 members · 0 functions*
-
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `priceFeedAddress()` → WSTETHPriceFeed, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_wstETH (TroveNFT), `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
----
-<a id="c-0xe8119fc02953b27a1b48d2573855738485a17329"></a>
-## > BorrowerOperations `0xe8119fC02953B27a1b48D2573855738485A17329`
-
-> *10 roles · 9 members · 0 functions*
-
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `priceFeedAddress()` → RETHPriceFeed, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_rETH (TroveNFT), `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
----
-<a id="c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0"></a>
-## > ActivePool `0x531a8f99c70D6A56A7CEe02d6B4281650d7919a0`
-
-> *9 roles · 7 members · 8 functions*
-
-> 🔒 **Immutable References:** `collToken()` → wstETH (WstETH), `stabilityPoolAddress()` → StabilityPool, `collTokenAddress()` → wstETH (WstETH), `interestRouter()` → Governance
-
-### > 🟠 `borrowerOperationsAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xa741A32f9dcFe6aDBa088fD0f97e90742d7d5DA3` | [↳ BorrowerOperations](#c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `stabilityPool()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x9502b7c397E9aa22FE9dB7EF7DAF21cD2AEBe56B` | [↳ StabilityPool](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `troveManagerAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `sendCollToDefaultPool(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `setShutdownFlag()` `[PAUSE]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xA2895d6A3bf110561Dfe4b71cA539d84e1928B22` | [↳ TroveManager](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `defaultPoolAddress()`
-
-> **Privileged write functions:**
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xD796e1648526400386CC4d12FA05E5F11e6a22A1` | [↳ DefaultPool](#c-0xd796e1648526400386cc4d12fa05e5f11e6a22a1) | 🟠 HIGH | — | Storage+Events |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `setShutdownFlag()` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`mintAggInterest`** 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterest()` |
-> | Gated by | `borrowerOperationsAddress(), stabilityPool()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
-> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `borrowerOperationsAddress(), troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
-> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
----
-<a id="c-0x9074d72cc82dad1e13e454755aa8f144c479532f"></a>
-## > ActivePool `0x9074D72cc82DaD1e13E454755Aa8f144c479532F`
-
-> *9 roles · 7 members · 8 functions*
-
-> 🔒 **Immutable References:** `collToken()` → rETH (RocketTokenRETH), `stabilityPoolAddress()` → StabilityPool, `collTokenAddress()` → rETH (RocketTokenRETH), `interestRouter()` → Governance
-
-### > 🟠 `borrowerOperationsAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xe8119fC02953B27a1b48D2573855738485A17329` | [↳ BorrowerOperations](#c-0xe8119fc02953b27a1b48d2573855738485a17329) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `stabilityPool()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xd442E41019B7F5C4dD78F50dc03726C446148695` | [↳ StabilityPool](#c-0xd442e41019b7f5c4dd78f50dc03726c446148695) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `troveManagerAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `sendCollToDefaultPool(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `setShutdownFlag()` `[PAUSE]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xb2B2ABEb5C357a234363FF5D180912D319e3e19e` | [↳ TroveManager](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `defaultPoolAddress()`
-
-> **Privileged write functions:**
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x5cc5ceFD034Fdc4728D487a72Ca58A410CDdCD6b` | [↳ DefaultPool](#c-0x5cc5cefd034fdc4728d487a72ca58a410cddcd6b) | 🟠 HIGH | — | Storage+Events |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `setShutdownFlag()` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`mintAggInterest`** 🔄 **ACTIVE** (6906 changes)
-
-> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterest()` |
-> | Gated by | `borrowerOperationsAddress(), stabilityPool()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 6906 🔄 |
-
-> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (6906 changes)
-
-> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `borrowerOperationsAddress(), troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 6906 🔄 |
-
-> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (6906 changes)
-
-> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 6906 🔄 |
-
----
-<a id="c-0xeb5a8c825582965f1d84606e078620a84ab16afe"></a>
-## > ActivePool `0xeB5A8C825582965f1d84606E078620a84ab16AfE`
-
-> *9 roles · 7 members · 8 functions*
-
-> 🔒 **Immutable References:** `collToken()` → WETH (WETH9), `stabilityPoolAddress()` → StabilityPool, `collTokenAddress()` → WETH (WETH9), `interestRouter()` → Governance
-
-### > 🟠 `borrowerOperationsAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x372ABD1810eAF23Cb9D941BbE7596DFb2c46BC65` | [↳ BorrowerOperations](#c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `stabilityPool()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `mintAggInterest()` `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x5721cbbd64fc7Ae3Ef44A0A3F9a790A9264Cf9BF` | [↳ StabilityPool](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `troveManagerAddress()`
-
-> **Privileged write functions:**  
-> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
-> - `sendColl(address _account, uint256 _amount)`
-> - `sendCollToDefaultPool(uint256 _amount)`
-> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
-> - `setShutdownFlag()` `[PAUSE]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x7bcb64B2c9206a5B699eD43363f6F98D4776Cf5A` | [↳ TroveManager](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) | 🟠 HIGH | — | Storage+Events |  |
-
-### > 🟠 `defaultPoolAddress()`
-
-> **Privileged write functions:**
-> - `receiveColl(uint256 _amount)`
-> - `accountForReceivedColl(uint256 _amount)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xD4558240d50C2E219a21c9d25afD513Bb6e5B1A0` | [↳ DefaultPool](#c-0xd4558240d50c2e219a21c9d25afd513bb6e5b1a0) | 🟠 HIGH | — | Storage+Events |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
-
-> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
-
-> > This parameter has never been changed since deployment.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `setShutdownFlag()` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `PAUSE` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 0 ❄️ |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`mintAggInterest`** 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterest()` |
-> | Gated by | `borrowerOperationsAddress(), stabilityPool()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
-> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `borrowerOperationsAddress(), troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
-> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
-
-> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
-> | Gated by | `troveManagerAddress()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 10000 🔄 |
-
----
-<a id="c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf"></a>
-## > StabilityPool `0x5721cbbd64fc7Ae3Ef44A0A3F9a790A9264Cf9BF`
-
-> *9 roles · 6 members · 2 functions*
-
-> 🔒 **Immutable References:** `collToken()` → WETH (WETH9), `activePoolAddress()` → ActivePool, `priceFeedAddress()` → WETHPriceFeed, `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
-### > 🟠 `troveManager()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x7bcb64B2c9206a5B699eD43363f6F98D4776Cf5A` | [↳ TroveManager](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `activePool()`
-
-> **Privileged write functions:**
-> - `triggerBoldRewards(uint256 _boldYield)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xeB5A8C825582965f1d84606E078620a84ab16AfE` | [↳ ActivePool](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) | 🟠 HIGH | — | Storage only |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
-
-> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
-
-> | Field | Value |
-> |---|---|
-> | Current Value | `8` |
-> | Mutability | 🔒 immutable (constant) |
-> | Tags | `IMMUTABLE` |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`offset`** 🔄 **ACTIVE** (47 changes)
-
-> > ⚠️ This parameter has been changed **47 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
-> | Gated by | `troveManager()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 47 🔄 |
-
----
-<a id="c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b"></a>
-## > StabilityPool `0x9502b7c397E9aa22FE9dB7EF7DAF21cD2AEBe56B`
-
-> *9 roles · 6 members · 2 functions*
-
-> 🔒 **Immutable References:** `collToken()` → wstETH (WstETH), `activePoolAddress()` → ActivePool, `priceFeedAddress()` → WSTETHPriceFeed, `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
-### > 🟠 `troveManager()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xA2895d6A3bf110561Dfe4b71cA539d84e1928B22` | [↳ TroveManager](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `activePool()`
-
-> **Privileged write functions:**
-> - `triggerBoldRewards(uint256 _boldYield)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x531a8f99c70D6A56A7CEe02d6B4281650d7919a0` | [↳ ActivePool](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) | 🟠 HIGH | — | Storage only |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
-
-> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
-
-> | Field | Value |
-> |---|---|
-> | Current Value | `8` |
-> | Mutability | 🔒 immutable (constant) |
-> | Tags | `IMMUTABLE` |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`offset`** 🔄 **ACTIVE** (12 changes)
-
-> > ⚠️ This parameter has been changed **12 times** — monitor for unexpected modifications.
-
-> | Field | Value |
-> |---|---|
-> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
-> | Gated by | `troveManager()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 12 🔄 |
-
----
-<a id="c-0xd442e41019b7f5c4dd78f50dc03726c446148695"></a>
-## > StabilityPool `0xd442E41019B7F5C4dD78F50dc03726C446148695`
-
-> *9 roles · 6 members · 2 functions*
-
-> 🔒 **Immutable References:** `collToken()` → rETH (RocketTokenRETH), `activePoolAddress()` → ActivePool, `priceFeedAddress()` → RETHPriceFeed, `troveManagerAddress()` → TroveManager, `defaultPoolAddress()` → DefaultPool
-
-### > 🟠 `troveManager()`
-
-> **Privileged write functions:**  
-> **Capabilities:** 💰 **SUPPLY**
-> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xb2B2ABEb5C357a234363FF5D180912D319e3e19e` | [↳ TroveManager](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `activePool()`
-
-> **Privileged write functions:**
-> - `triggerBoldRewards(uint256 _boldYield)`
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0x9074D72cc82DaD1e13E454755Aa8f144c479532F` | [↳ ActivePool](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) | 🟠 HIGH | — | Storage only |  |
-
-> #### 🔧 Permissioned Parameters
-
-> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
-
-> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
-
-> | Field | Value |
-> |---|---|
-> | Current Value | `8` |
-> | Mutability | 🔒 immutable (constant) |
-> | Tags | `IMMUTABLE` |
-
-> #### 💰 Supply Actions
-
-> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
-
-> **`offset`**
-
-> | Field | Value |
-> |---|---|
-> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
-> | Gated by | `troveManager()` |
-> | Tags | `SUPPLY` |
-> | Last called | — |
-> | Called by | — |
-> | Total calls | 4 |
-
----
 <a id="c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a"></a>
 ## > TroveManager `0x7bcb64B2c9206a5B699eD43363f6F98D4776Cf5A`
 
 > *16 roles · 11 members · 14 functions*
 
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `collateralRegistryAddress()` → CollateralRegistry, `borrowerOperationsAddress()` → BorrowerOperations, `activePoolAddress()` → ActivePool, `sortedTroves()` → SortedTroves, `priceFeedAddress()` → WETHPriceFeed, `stabilityPoolAddress()` → StabilityPool, `troveNFT()` → LV2_WETH (TroveNFT), `sortedTrovesAddress()` → SortedTroves, `stabilityPool()` → StabilityPool, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_WETH (TroveNFT), `defaultPoolAddress()` → DefaultPool
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `stabilityPool()` → StabilityPool, `collateralRegistryAddress()` → CollateralRegistry, `troveNFTAddress()` → LV2_WETH (TroveNFT), `activePool()` → ActivePool, `sortedTroves()` → SortedTroves, `troveNFT()` → LV2_WETH (TroveNFT), `priceFeedAddress()` → WETHPriceFeed, `gasPoolAddress()` → GasPool, `collSurplusPoolAddress()` → CollSurplusPool, `activePoolAddress()` → ActivePool, `stabilityPoolAddress()` → StabilityPool, `borrowerOperationsAddress()` → BorrowerOperations, `sortedTrovesAddress()` → SortedTroves
 
 ### > 🟠 `borrowerOperations()`
 
@@ -1342,7 +757,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *16 roles · 11 members · 14 functions*
 
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `collateralRegistryAddress()` → CollateralRegistry, `borrowerOperationsAddress()` → BorrowerOperations, `activePoolAddress()` → ActivePool, `sortedTroves()` → SortedTroves, `priceFeedAddress()` → WSTETHPriceFeed, `stabilityPoolAddress()` → StabilityPool, `troveNFT()` → LV2_wstETH (TroveNFT), `sortedTrovesAddress()` → SortedTroves, `stabilityPool()` → StabilityPool, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_wstETH (TroveNFT), `defaultPoolAddress()` → DefaultPool
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `stabilityPool()` → StabilityPool, `collateralRegistryAddress()` → CollateralRegistry, `troveNFTAddress()` → LV2_wstETH (TroveNFT), `activePool()` → ActivePool, `sortedTroves()` → SortedTroves, `troveNFT()` → LV2_wstETH (TroveNFT), `priceFeedAddress()` → WSTETHPriceFeed, `gasPoolAddress()` → GasPool, `collSurplusPoolAddress()` → CollSurplusPool, `activePoolAddress()` → ActivePool, `stabilityPoolAddress()` → StabilityPool, `borrowerOperationsAddress()` → BorrowerOperations, `sortedTrovesAddress()` → SortedTroves
 
 ### > 🟠 `borrowerOperations()`
 
@@ -1435,7 +850,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *16 roles · 11 members · 14 functions*
 
-> 🔒 **Immutable References:** `activePool()` → ActivePool, `collSurplusPoolAddress()` → CollSurplusPool, `collateralRegistryAddress()` → CollateralRegistry, `borrowerOperationsAddress()` → BorrowerOperations, `activePoolAddress()` → ActivePool, `sortedTroves()` → SortedTroves, `priceFeedAddress()` → RETHPriceFeed, `stabilityPoolAddress()` → StabilityPool, `troveNFT()` → LV2_rETH (TroveNFT), `sortedTrovesAddress()` → SortedTroves, `stabilityPool()` → StabilityPool, `gasPoolAddress()` → GasPool, `troveNFTAddress()` → LV2_rETH (TroveNFT), `defaultPoolAddress()` → DefaultPool
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `stabilityPool()` → StabilityPool, `collateralRegistryAddress()` → CollateralRegistry, `troveNFTAddress()` → LV2_rETH (TroveNFT), `activePool()` → ActivePool, `sortedTroves()` → SortedTroves, `troveNFT()` → LV2_rETH (TroveNFT), `priceFeedAddress()` → RETHPriceFeed, `gasPoolAddress()` → GasPool, `collSurplusPoolAddress()` → CollSurplusPool, `activePoolAddress()` → ActivePool, `stabilityPoolAddress()` → StabilityPool, `borrowerOperationsAddress()` → BorrowerOperations, `sortedTrovesAddress()` → SortedTroves
 
 ### > 🟠 `borrowerOperations()`
 
@@ -1521,6 +936,591 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Last called | — |
 > | Called by | — |
 > | Total calls | 29 🔄 |
+
+---
+<a id="c-0xf949982b91c8c61e952b3ba942cbbfaef5386684"></a>
+## > CollateralRegistry `0xf949982B91C8c61e952B3bA942cbbfaef5386684`
+
+> *1 role · 1 member · 0 functions*
+
+> > 💰 **Inherited supply authority** — holds `collateralRegistryAddress()` on **BoldToken**. Access controls on this contract gate root token supply.
+
+---
+<a id="c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0"></a>
+## > ActivePool `0x531a8f99c70D6A56A7CEe02d6B4281650d7919a0`
+
+> *9 roles · 7 members · 8 functions*
+
+> 🔒 **Immutable References:** `collTokenAddress()` → wstETH (WstETH), `collToken()` → wstETH (WstETH), `interestRouter()` → Governance, `stabilityPoolAddress()` → StabilityPool
+
+### > 🟠 `borrowerOperationsAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xa741A32f9dcFe6aDBa088fD0f97e90742d7d5DA3` | [↳ BorrowerOperations](#c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `stabilityPool()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x9502b7c397E9aa22FE9dB7EF7DAF21cD2AEBe56B` | [↳ StabilityPool](#c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `troveManagerAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `sendCollToDefaultPool(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `setShutdownFlag()` `[PAUSE]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xA2895d6A3bf110561Dfe4b71cA539d84e1928B22` | [↳ TroveManager](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `defaultPoolAddress()`
+
+> **Privileged write functions:**
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xD796e1648526400386CC4d12FA05E5F11e6a22A1` | [↳ DefaultPool](#c-0xd796e1648526400386cc4d12fa05e5f11e6a22a1) | 🟠 HIGH | — | Storage+Events |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `setShutdownFlag()` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`mintAggInterest`** 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterest()` |
+> | Gated by | `stabilityPool(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+---
+<a id="c-0x9074d72cc82dad1e13e454755aa8f144c479532f"></a>
+## > ActivePool `0x9074D72cc82DaD1e13E454755Aa8f144c479532F`
+
+> *9 roles · 7 members · 8 functions*
+
+> 🔒 **Immutable References:** `collTokenAddress()` → rETH (RocketTokenRETH), `collToken()` → rETH (RocketTokenRETH), `interestRouter()` → Governance, `stabilityPoolAddress()` → StabilityPool
+
+### > 🟠 `borrowerOperationsAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xe8119fC02953B27a1b48D2573855738485A17329` | [↳ BorrowerOperations](#c-0xe8119fc02953b27a1b48d2573855738485a17329) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `stabilityPool()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xd442E41019B7F5C4dD78F50dc03726C446148695` | [↳ StabilityPool](#c-0xd442e41019b7f5c4dd78f50dc03726c446148695) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `troveManagerAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `sendCollToDefaultPool(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `setShutdownFlag()` `[PAUSE]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xb2B2ABEb5C357a234363FF5D180912D319e3e19e` | [↳ TroveManager](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `defaultPoolAddress()`
+
+> **Privileged write functions:**
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x5cc5ceFD034Fdc4728D487a72Ca58A410CDdCD6b` | [↳ DefaultPool](#c-0x5cc5cefd034fdc4728d487a72ca58a410cddcd6b) | 🟠 HIGH | — | Storage+Events |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `setShutdownFlag()` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`mintAggInterest`** 🔄 **ACTIVE** (6906 changes)
+
+> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterest()` |
+> | Gated by | `stabilityPool(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 6906 🔄 |
+
+> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (6906 changes)
+
+> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 6906 🔄 |
+
+> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (6906 changes)
+
+> > ⚠️ This parameter has been changed **6906 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 6906 🔄 |
+
+---
+<a id="c-0xeb5a8c825582965f1d84606e078620a84ab16afe"></a>
+## > ActivePool `0xeB5A8C825582965f1d84606E078620a84ab16AfE`
+
+> *9 roles · 7 members · 8 functions*
+
+> 🔒 **Immutable References:** `collTokenAddress()` → WETH (WETH9), `collToken()` → WETH (WETH9), `interestRouter()` → Governance, `stabilityPoolAddress()` → StabilityPool
+
+### > 🟠 `borrowerOperationsAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x372ABD1810eAF23Cb9D941BbE7596DFb2c46BC65` | [↳ BorrowerOperations](#c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `stabilityPool()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `mintAggInterest()` `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x5721cbbd64fc7Ae3Ef44A0A3F9a790A9264Cf9BF` | [↳ StabilityPool](#c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `troveManagerAddress()`
+
+> **Privileged write functions:**  
+> **Capabilities:** ⏸️ **PAUSE** 💰 **SUPPLY**
+> - `sendColl(address _account, uint256 _amount)`
+> - `sendCollToDefaultPool(uint256 _amount)`
+> - `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` `[SUPPLY]`
+> - `setShutdownFlag()` `[PAUSE]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x7bcb64B2c9206a5B699eD43363f6F98D4776Cf5A` | [↳ TroveManager](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) | 🟠 HIGH | — | Storage+Events |  |
+
+### > 🟠 `defaultPoolAddress()`
+
+> **Privileged write functions:**
+> - `receiveColl(uint256 _amount)`
+> - `accountForReceivedColl(uint256 _amount)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xD4558240d50C2E219a21c9d25afD513Bb6e5B1A0` | [↳ DefaultPool](#c-0xd4558240d50c2e219a21c9d25afd513bb6e5b1a0) | 🟠 HIGH | — | Storage+Events |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`setShutdownFlag`** ❄️ **DORMANT** 🔴 **SILENT** *(no event)*
+
+> > 🔴 **Silent setter** — no change event emitted. History reconstructed from calldata (txlist, Safe, Timelock, Governor); pre-governance eras may be missing.
+
+> > This parameter has never been changed since deployment.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `setShutdownFlag()` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `PAUSE` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 0 ❄️ |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`mintAggInterest`** 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterest()` |
+> | Gated by | `stabilityPool(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+> **`mintAggInterestAndAccountForTroveChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress(), borrowerOperationsAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+> **`mintBatchManagementFeeAndAccountForChange`** *(per-asset)* 🔄 **ACTIVE** (10000 changes)
+
+> > ⚠️ This parameter has been changed **10000 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `mintBatchManagementFeeAndAccountForChange(TroveChange calldata _troveChange, address _batchAddress)` |
+> | Gated by | `troveManagerAddress()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 10000 🔄 |
+
+---
+<a id="c-0x5721cbbd64fc7ae3ef44a0a3f9a790a9264cf9bf"></a>
+## > StabilityPool `0x5721cbbd64fc7Ae3Ef44A0A3F9a790A9264Cf9BF`
+
+> *9 roles · 6 members · 2 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `collToken()` → WETH (WETH9), `troveManagerAddress()` → TroveManager, `priceFeedAddress()` → WETHPriceFeed, `activePoolAddress()` → ActivePool
+
+### > 🟠 `troveManager()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x7bcb64B2c9206a5B699eD43363f6F98D4776Cf5A` | [↳ TroveManager](#c-0x7bcb64b2c9206a5b699ed43363f6f98d4776cf5a) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `activePool()`
+
+> **Privileged write functions:**
+> - `triggerBoldRewards(uint256 _boldYield)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xeB5A8C825582965f1d84606E078620a84ab16AfE` | [↳ ActivePool](#c-0xeb5a8c825582965f1d84606e078620a84ab16afe) | 🟠 HIGH | — | Storage only |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
+
+> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
+
+> | Field | Value |
+> |---|---|
+> | Current Value | `8` |
+> | Mutability | 🔒 immutable (constant) |
+> | Tags | `IMMUTABLE` |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`offset`** 🔄 **ACTIVE** (47 changes)
+
+> > ⚠️ This parameter has been changed **47 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
+> | Gated by | `troveManager()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 47 🔄 |
+
+---
+<a id="c-0x9502b7c397e9aa22fe9db7ef7daf21cd2aebe56b"></a>
+## > StabilityPool `0x9502b7c397E9aa22FE9dB7EF7DAF21cD2AEBe56B`
+
+> *9 roles · 6 members · 2 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `collToken()` → wstETH (WstETH), `troveManagerAddress()` → TroveManager, `priceFeedAddress()` → WSTETHPriceFeed, `activePoolAddress()` → ActivePool
+
+### > 🟠 `troveManager()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xA2895d6A3bf110561Dfe4b71cA539d84e1928B22` | [↳ TroveManager](#c-0xa2895d6a3bf110561dfe4b71ca539d84e1928b22) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `activePool()`
+
+> **Privileged write functions:**
+> - `triggerBoldRewards(uint256 _boldYield)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x531a8f99c70D6A56A7CEe02d6B4281650d7919a0` | [↳ ActivePool](#c-0x531a8f99c70d6a56a7cee02d6b4281650d7919a0) | 🟠 HIGH | — | Storage only |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
+
+> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
+
+> | Field | Value |
+> |---|---|
+> | Current Value | `8` |
+> | Mutability | 🔒 immutable (constant) |
+> | Tags | `IMMUTABLE` |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`offset`** 🔄 **ACTIVE** (12 changes)
+
+> > ⚠️ This parameter has been changed **12 times** — monitor for unexpected modifications.
+
+> | Field | Value |
+> |---|---|
+> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
+> | Gated by | `troveManager()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 12 🔄 |
+
+---
+<a id="c-0xd442e41019b7f5c4dd78f50dc03726c446148695"></a>
+## > StabilityPool `0xd442E41019B7F5C4dD78F50dc03726C446148695`
+
+> *9 roles · 6 members · 2 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `collToken()` → rETH (RocketTokenRETH), `troveManagerAddress()` → TroveManager, `priceFeedAddress()` → RETHPriceFeed, `activePoolAddress()` → ActivePool
+
+### > 🟠 `troveManager()`
+
+> **Privileged write functions:**  
+> **Capabilities:** 💰 **SUPPLY**
+> - `offset(uint256 _debtToOffset, uint256 _collToAdd)` — // SPDX-License-Identifier: BUSL-1.1 pragma solidity 0.8.24; `[SUPPLY]`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0xb2B2ABEb5C357a234363FF5D180912D319e3e19e` | [↳ TroveManager](#c-0xb2b2abeb5c357a234363ff5d180912d319e3e19e) | 🟠 HIGH | — | Storage only |  |
+
+### > 🟠 `activePool()`
+
+> **Privileged write functions:**
+> - `triggerBoldRewards(uint256 _boldYield)`
+
+> **Members (1):**
+
+> | Address | Name / Type | Risk | Granted | Source | Details |
+> |---|---|---|---|---|---|
+> | `0x9074D72cc82DaD1e13E454755Aa8f144c479532F` | [↳ ActivePool](#c-0x9074d72cc82dad1e13e454755aa8f144c479532f) | 🟠 HIGH | — | Storage only |  |
+
+> #### 🔧 Permissioned Parameters
+
+> **`MAX_SCALE_FACTOR_EXPONENT`** 🔒 **IMMUTABLE**
+
+> > 🔒 **Immutable** — declared as a constant in the contract source; cannot be changed without a contract upgrade. Bounds the reachable extreme of any setter that writes a related storage variable.
+
+> | Field | Value |
+> |---|---|
+> | Current Value | `8` |
+> | Mutability | 🔒 immutable (constant) |
+> | Tags | `IMMUTABLE` |
+
+> #### 💰 Supply Actions
+
+> _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
+
+> **`offset`**
+
+> | Field | Value |
+> |---|---|
+> | Setter | `offset(uint256 _debtToOffset, uint256 _collToAdd)` |
+> | Gated by | `troveManager()` |
+> | Tags | `SUPPLY` |
+> | Last called | — |
+> | Called by | — |
+> | Total calls | 4 |
+
+---
+<a id="c-0x372abd1810eaf23cb9d941bbe7596dfb2c46bc65"></a>
+## > BorrowerOperations `0x372ABD1810eAF23Cb9D941BbE7596DFb2c46BC65`
+
+> *10 roles · 9 members · 0 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `troveManagerAddress()` → TroveManager, `troveNFTAddress()` → LV2_WETH (TroveNFT), `activePool()` → ActivePool, `priceFeedAddress()` → WETHPriceFeed, `collSurplusPoolAddress()` → CollSurplusPool, `gasPoolAddress()` → GasPool, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves
+
+---
+<a id="c-0xa741a32f9dcfe6adba088fd0f97e90742d7d5da3"></a>
+## > BorrowerOperations `0xa741A32f9dcFe6aDBa088fD0f97e90742d7d5DA3`
+
+> *10 roles · 9 members · 0 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `troveManagerAddress()` → TroveManager, `troveNFTAddress()` → LV2_wstETH (TroveNFT), `activePool()` → ActivePool, `priceFeedAddress()` → WSTETHPriceFeed, `collSurplusPoolAddress()` → CollSurplusPool, `gasPoolAddress()` → GasPool, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves
+
+---
+<a id="c-0xe8119fc02953b27a1b48d2573855738485a17329"></a>
+## > BorrowerOperations `0xe8119fC02953B27a1b48D2573855738485A17329`
+
+> *10 roles · 9 members · 0 functions*
+
+> 🔒 **Immutable References:** `defaultPoolAddress()` → DefaultPool, `troveManagerAddress()` → TroveManager, `troveNFTAddress()` → LV2_rETH (TroveNFT), `activePool()` → ActivePool, `priceFeedAddress()` → RETHPriceFeed, `collSurplusPoolAddress()` → CollSurplusPool, `gasPoolAddress()` → GasPool, `activePoolAddress()` → ActivePool, `sortedTrovesAddress()` → SortedTroves
 
 ---
 <a id="c-0xcc5f8102eb670c89a4a3c567c13851260303c24f"></a>
@@ -1713,8 +1713,8 @@ Controls **3 role(s)** across **3 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | BoldToken `0x6440...B01D` | `borrowerOperations-WETH` | `borrowerOperationsAddresses (internal mapping, no getter)` | — |
-| ActivePool `0xeB5A...6AfE` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 | TroveManager `0x7bcb...Cf5A` | `borrowerOperations()` | `shutdown()`, `onOpenTrove(address _owner, uint256 _troveId, TroveChange memory _troveChange, uint256 _annualInterestRate)`, `onOpenTroveAndJoinBatch(address _owner, uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _batchColl, uint256 _batchDebt)`, `setTroveStatusToActive(uint256 _troveId)` +10 more | — |
+| ActivePool `0xeB5A...6AfE` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 
 ### 🟠 `0xa741A32f9dcFe6aDBa088fD0f97e90742d7d5DA3` — BorrowerOperations
 Controls **3 role(s)** across **3 contract(s)**
@@ -1722,8 +1722,8 @@ Controls **3 role(s)** across **3 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | BoldToken `0x6440...B01D` | `borrowerOperations-wstETH` | `borrowerOperationsAddresses (internal mapping, no getter)` | — |
-| ActivePool `0x531a...19a0` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 | TroveManager `0xA289...8B22` | `borrowerOperations()` | `shutdown()`, `onOpenTrove(address _owner, uint256 _troveId, TroveChange memory _troveChange, uint256 _annualInterestRate)`, `onOpenTroveAndJoinBatch(address _owner, uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _batchColl, uint256 _batchDebt)`, `setTroveStatusToActive(uint256 _troveId)` +10 more | — |
+| ActivePool `0x531a...19a0` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 
 ### 🟠 `0xe8119fC02953B27a1b48D2573855738485A17329` — BorrowerOperations
 Controls **3 role(s)** across **3 contract(s)**
@@ -1731,8 +1731,8 @@ Controls **3 role(s)** across **3 contract(s)**
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
 | BoldToken `0x6440...B01D` | `borrowerOperations-rETH` | `borrowerOperationsAddresses (internal mapping, no getter)` | — |
-| ActivePool `0x9074...532F` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 | TroveManager `0xb2B2...e19e` | `borrowerOperations()` | `shutdown()`, `onOpenTrove(address _owner, uint256 _troveId, TroveChange memory _troveChange, uint256 _annualInterestRate)`, `onOpenTroveAndJoinBatch(address _owner, uint256 _troveId, TroveChange memory _troveChange, address _batchAddress, uint256 _batchColl, uint256 _batchDebt)`, `setTroveStatusToActive(uint256 _troveId)` +10 more | — |
+| ActivePool `0x9074...532F` | `borrowerOperationsAddress()` | `sendColl(address _account, uint256 _amount)`, `receiveColl(uint256 _amount)`, `accountForReceivedColl(uint256 _amount)`, `mintAggInterestAndAccountForTroveChange(TroveChange calldata _troveChange, address _batchAddress)` +1 more | — |
 
 ### 🟠 `0xeB5A8C825582965f1d84606E078620a84ab16AfE` — ActivePool
 Controls **3 role(s)** across **3 contract(s)**
