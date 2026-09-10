@@ -76,6 +76,13 @@
       "summary": "CDP stablecoin minted against staked INV, with a USDS peg stability module.",
       "status": "reviewed",
       "order": 11
+    },
+    "BOLD": {
+      "subtitle": "Liquity V2, backing for ysyBOLD",
+      "protocol": "Liquity V2",
+      "summary": "Immutable CDP stablecoin over WETH, wstETH and rETH branches. Assessed as the backing of ysyBOLD, the Yearn vault proposed as collateral.",
+      "status": "reviewed",
+      "order": 12
     }
   },
   "weekly": {}
