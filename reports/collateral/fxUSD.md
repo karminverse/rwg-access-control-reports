@@ -13,7 +13,7 @@
 | ERC-4626 Vault | — |
 | Control Surface | ⚠️ Hybrid — 7 off-chain dependencies (custody, oracle, compliance, governance) |
 | Scan Integrity | ✅ No issues detected |
-| Report Date | 2026-10-12 23:43 UTC |
+| Report Date | 2026-11-15 20:06 UTC |
 
 ### Surface Summary
 
@@ -21,21 +21,21 @@
 |---|---:|
 | Contracts | 38 |
 | Role slots | 242 |
-| Privileged Fns | 321 |
-| EOA Holders | 3 ⚠️ |
-| Critical Roles | 25 ⚠️ |
+| Privileged Fns | 313 |
+| EOA Holders | 5 ⚠️ |
+| Critical Roles | 26 ⚠️ |
 
 ## Changes Since Last Scan
 
-> Comparing **2026-10-12T01:36:43Z** (block 26172998) → **2026-10-12T23:35:22Z** (block 26179559).
+> Comparing **2026-11-12T23:48:51Z** (block 26402200) → **2026-11-15T19:58:16Z** (block 26422245).
 
 ### Parameters
-- 🔄 `rebalance` on **PoolManager** (`0x250893…cd24`)
-    - set_at_block: `26149167` → `26175506`
 - 🔄 `instantRedeemNoFee` on **FxUSDBasePool** (`0x65c9a6…a3be`)
-    - set_at_block: `26158748` → `26177978`
+    - set_at_block: `26387405` → `26422204`
+- 🔄 `rebalance` on **PoolManager** (`0x250893…cd24`)
+    - set_at_block: `26399655` → `26417169`
 - 🔄 `deposit` on **FxUSDBasePool** (`0x65c9a6…a3be`)
-    - set_at_block: `26172891` → `26178889`
+    - set_at_block: `26402224` → `26421772`
 
 
 ## 📋 Protocol Context
@@ -45,29 +45,29 @@
 <details>
 <summary><strong>Architecture</strong></summary>
 
-- **What fxUSD is:** fxUSD is the stablecoin of f(x) Protocol v2 (AladdinDAO). The token 0x085780639CC2cACd35E474e71f4d000e2405d8f6 is a Transparent proxy, created in the v1 era and upgraded in place; its implementation is FxUSDRegeneracy 0xf729422D68c2cf00574fb5712972454cf402A9b1. As of block 26,171,878 the supply is 91,300,970.01 fxUSD: 9,135,892.76 is debt borrowed against the wstETH pool, 82,164,813.18 against the WBTC pool, about 90 percent, and 264.06 is legacy supply from the v1 wrap path. Those three amounts add up to the total supply to the wei, before rounding; a fourth term, fxUSD backed by USDC in the token's stable reserve, is 0 today.
+- **What fxUSD is:** fxUSD is the stablecoin of f(x) Protocol v2 (AladdinDAO). The token 0x085780639CC2cACd35E474e71f4d000e2405d8f6 is a Transparent proxy, created in the v1 era and upgraded in place; its implementation is FxUSDRegeneracy 0xf729422D68c2cf00574fb5712972454cf402A9b1. As of block 26,399,940 the supply is 36,953,673.15 fxUSD: 6,246,302.15 is debt borrowed against the wstETH pool, 30,707,297.30 against the WBTC pool, about 83 percent, and 73.71 is legacy supply from the v1 wrap path. Those three amounts add up to the total supply to the wei, before rounding; a fourth term, fxUSD backed by USDC in the token's stable reserve, is 0 at that block. Supply moves with borrowing: it ranged from about 37M to above 91M fxUSD in the October and November 2026 readings.
 
-- **Minting against collateral:** PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24 is the only contract that can call fxUSD's mint and burn; its address is fixed in the token's code. A borrower opens or changes a position through PoolManager's permissionless operate(). PoolManager pulls the collateral into itself and calls the pool's operate(), which checks the position's debt ratio at the oracle's price, the pool's own borrow switch and PoolConfiguration.isBorrowAllowed(); PoolManager then checks the pool's collateral and debt caps and mints the fxUSD, and repaying burns it. The two long pools are AaveFundingPool contracts that keep the accounts: wstETH 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8 (debt cap 150M fxUSD) and WBTC 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473 (debt cap 200M fxUSD). PoolManager holds the tokens; as of block 26,171,878 it records 5,146.12 wstETH and 1,306.92 WBTC of collateral for the two pools, which hold none themselves.
+- **Minting against collateral:** PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24 is the only contract that can call fxUSD's mint and burn; its address is fixed in the token's code. A borrower opens or changes a position through PoolManager's permissionless operate(). PoolManager pulls the collateral into itself and calls the pool's operate(), which checks the position's debt ratio at the oracle's price, the pool's own borrow switch and PoolConfiguration.isBorrowAllowed(); PoolManager then checks the pool's collateral and debt caps and mints the fxUSD, and repaying burns it. The two long pools are AaveFundingPool contracts that keep the accounts: wstETH 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8 (debt cap 150M fxUSD) and WBTC 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473 (debt cap 200M fxUSD). PoolManager holds the tokens; as of block 26,399,940 it records 4,154.03 wstETH and 584.62 WBTC of collateral for the two pools, which hold none themselves.
 
 - **How the pools price collateral:** each long pool reads its own oracle. StETHPriceOracle 0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb prices stETH as the Curve stETH pool EMA times Chainlink ETH/USD, and PoolManager converts wstETH to stETH with Lido's stEthPerToken rate (rate provider 0x81A777c4aB65229d1Bf64DaE4c831bDf628Ccc7f). WBTCPriceOracle 0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390 multiplies Chainlink BTC/USD by WBTC/BTC. That product is the anchor. Each oracle also reads on-chain spot prices through SpotPriceOracle 0xc2312CaF0De62eC9b4ADC785C79851Cb989C9abc and accepts them only within a band of the anchor, 1 percent for stETH and 2 percent for WBTC. Borrowing, rebalance and liquidation use the lowest accepted price, and redemption uses the highest. The short pools' oracles invert the long ones: 0x222786833b5fd5eE21532d8b576391bAbeFdAAd1 for the wstETH debt pool and 0x5d2c6215555B36889ef235c6d5cCDE22E9964e6a for the WBTC debt pool.
 
-- **The peg signal and funding:** FxUSDPriceOracle 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa reads the EMA of the Curve fxUSD/USDC pool 0x5018BE882DccE5E3F2f3B0913AE2096B9b3fB61f, times Chainlink USDC/USD, and compares it with a band of 0.998 to 1.002. While the EMA is below 0.998, borrowing is switched off, redemption is switched on and the long pools' funding, a yearly rate charged on each pool's collateral, rises to 10 times Aave's USDC borrow rate. At or above 0.998, funding is 1 times that rate while fxSP holds at least 95 percent fxUSD, and zero below that. Above 1.002, with USDC above 0.995, debt can also be repaid, and rebalances settled, in USDC; that USDC goes to the token's stable reserve, and the matching fxUSD stays in supply until PegKeeper's buyback burns it. As of block 26,171,878 the EMA read 0.9997, so redemption was off.
+- **The peg signal and funding:** FxUSDPriceOracle 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa reads the EMA of the Curve fxUSD/USDC pool 0x5018BE882DccE5E3F2f3B0913AE2096B9b3fB61f, times Chainlink USDC/USD, and compares it with a band of 0.998 to 1.002. While the EMA is below 0.998, borrowing is switched off, redemption is switched on and the long pools' funding, a yearly rate charged on each pool's collateral, rises to 10 times Aave's USDC borrow rate. At or above 0.998, funding is 1 times that rate while fxSP holds at least 95 percent fxUSD, and zero below that. Above 1.002, with USDC above 0.995, debt can also be repaid, and rebalances settled, in USDC; that USDC goes to the token's stable reserve, and the matching fxUSD stays in supply until PegKeeper's buyback burns it. As of block 26,399,940 the peg signal (the EMA times Chainlink USDC/USD) read 1.0001, so redemption was off.
 
-- **Redemption:** any fxUSD holder can redeem at least 100 fxUSD for collateral from a long pool through PoolManager while PoolManager is not paused, the pool is not undercollateralised overall, PoolConfiguration's peg gate is open (the EMA is below 0.998) and the pool's own redeem switch is open. It pays out collateral at the oracle's redeem price, the highest it accepts, less the redeem fee (0.5 percent as of block 26,171,878), taking debt from the positions with the highest debt ratios first. The short pools offer no fxUSD redemption; their only path is redeemByCreditNote. Before the peg gate shipped at block 22,732,036 (in PegKeeper; in PoolConfiguration since block 22,990,122), redemption had no price condition but needed each pool's redeem switch, which was open only from 2025-02-20 (wstETH) and 2025-03-19 (WBTC) until Safe 0x26B2 closed both on 2025-03-28. Redemption was used only that day: 6 redemptions of 5.22M fxUSD, all on the wstETH pool.
+- **Redemption:** any fxUSD holder can redeem at least 100 fxUSD for collateral from a long pool through PoolManager while PoolManager is not paused, the pool is not undercollateralised overall, PoolConfiguration's peg gate is open (the EMA is below 0.998) and the pool's own redeem switch is open. It pays out collateral at the oracle's redeem price, the highest it accepts, less the redeem fee (0.5 percent as of block 26,399,940), taking debt from the positions with the highest debt ratios first. The short pools offer no fxUSD redemption; their only path is redeemByCreditNote. Before the peg gate shipped at block 22,732,036 (in PegKeeper; in PoolConfiguration since block 22,990,122), redemption had no price condition but needed each pool's redeem switch, which was open only from 2025-02-20 (wstETH) and 2025-03-19 (WBTC) until Safe 0x26B2 closed both on 2025-03-28; the Safe reopened both at block 22,732,036, the block at which the peg gate shipped. The only redemptions on record are from 2025-03-28: 6 redemptions totalling 5.22M fxUSD, all on the wstETH pool.
 
-- **The stability pool and liquidation:** fxSP 0x65C9A641afCEB9C0E6034e558A319488FA0FA3be (FxUSDBasePool) is PoolManager's built-in stability pool. Depositors put in fxUSD or USDC and receive fxSP shares; deposits count fxUSD at 1.00, while fxSP's nav() values fxUSD at the FxUSDPriceOracle EMA. While fxSP's supply is at least 10,000, PoolManager accepts rebalance and liquidate only from fxSP, and anyone can call them on fxSP. fxSP spends its fxUSD first, and USDC for any remainder only while the EMA is above 1.002 and USDC above 0.995, to repay debt through PoolManager; the caller receives the collateral, bonus included, and pays fxSP back the same USD value in fxUSD at 1.00 or in USDC at its Chainlink price, so fxSP never holds collateral. On both long pools rebalance starts at a debt ratio of 0.88 with a 2.5 percent bonus, and liquidation at 0.95 with a 4 percent bonus, topped up from ReservePool 0xE93F5DD55eC9bdAbbba5eA88E4b4f3C253ee45Ed; debt beyond that is spread over the remaining borrowers. As of block 26,171,878 fxSP holds 83,415,725.17 fxUSD, 91.4 percent of supply, and 2,575,226.57 USDC. fxSAVE 0x7743e50F534a7f9F1791DdE7dCD89F7783Eefc39 owns most of fxSP's shares, about 97.6 percent, through its vault, which stakes them in the fxSP gauge.
+- **The stability pool and liquidation:** fxSP 0x65C9A641afCEB9C0E6034e558A319488FA0FA3be (FxUSDBasePool) is PoolManager's built-in stability pool. Depositors put in fxUSD or USDC and receive fxSP shares; deposits count fxUSD at 1.00, while fxSP's nav() values fxUSD at the FxUSDPriceOracle EMA. While fxSP's supply is at least 10,000, PoolManager accepts rebalance and liquidate only from fxSP, and anyone can call them on fxSP. fxSP spends its fxUSD first, and USDC for any remainder only while the EMA is above 1.002 and USDC above 0.995, to repay debt through PoolManager; the caller receives the collateral, bonus included, and pays fxSP back the same USD value in fxUSD at 1.00 or in USDC at its Chainlink price, so fxSP never holds collateral. On both long pools rebalance starts at a debt ratio of 0.88 with a 2.5 percent bonus, and liquidation at 0.95 with a 4 percent bonus, topped up from ReservePool 0xE93F5DD55eC9bdAbbba5eA88E4b4f3C253ee45Ed; debt beyond that is spread over the remaining borrowers. As of block 26,399,940 fxSP holds 31,312,881.58 fxUSD, 84.7 percent of supply, and 33,502,745.88 USDC, a mix that swings with the market, between almost all fxUSD and about half USDC in the October and November 2026 readings. fxSAVE 0x7743e50F534a7f9F1791DdE7dCD89F7783Eefc39 owns most of fxSP's shares, about 97.1 percent as of block 26,399,940, through its vault, which stakes them in the fxSP gauge.
 
-- **Short pools:** ShortPoolManager 0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D runs two short pools, 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876 (wstETH debt) and 0xA0cC8162c523998856D59065fAa254F87D20A5b0 (WBTC debt). A short position posts fxUSD as collateral and borrows wstETH or WBTC out of the matching long pool, up to 50 percent of that pool's collateral; PoolManager lends it against credit notes, which it holds. ShortPoolManager holds the short pools' collateral: as of block 26,171,878, 16,298.06 and 134,442.46 fxUSD against 3.5696 wstETH and 1.2489 WBTC of raw debt. When PoolManager's own balance runs short, it pulls from its strategy and pays the rest of a redemption, withdrawal or liquidation in credit notes, which are redeemable only through redeemByCreditNote.
+- **Short pools:** ShortPoolManager 0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D runs two short pools, 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876 (wstETH debt) and 0xA0cC8162c523998856D59065fAa254F87D20A5b0 (WBTC debt). A short position posts fxUSD as collateral and borrows wstETH or WBTC out of the matching long pool, up to 50 percent of that pool's collateral; PoolManager lends it against credit notes, which it holds. ShortPoolManager holds the short pools' collateral: as of block 26,399,940, 16,056.37 and 60,825.97 fxUSD against 3.4908 wstETH and 0.5659 WBTC of raw debt. When PoolManager's own balance runs short, it pulls from its strategy and pays the rest of a redemption, withdrawal or liquidation in credit notes, which are redeemable only through redeemByCreditNote.
 
-- **The v1 legacy path:** before v2, fxUSD was backed by v1 fTokens. Two v1 markets remain wired to the token: wstETH (market 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, treasury 0xED803540037B0ae069c93420F89Cd653B6e3Df1f) and sfrxETH (market 0x714B853b3bA73E439c652CfE79660F329E6ebB42, treasury 0xcfEEfF214b256063110d3236ea12Db49d2dF2359). The treasuries mint the fTokens fstETH and ffrxETH through mintFToken under FX_MARKET_ROLE, which the two markets hold. fxUSD's permissionless wrap and wrapFrom turn those fTokens into fxUSD 1:1, and its permissionless redeem burns legacy fxUSD and redeems the fTokens through the v1 market for wstETH or sfrxETH; only unwrap, held by the router Diamond, returns fTokens. The v1 markets' own mint route into fxUSD is closed. As of block 26,171,878, 264.06 fxUSD of legacy supply is outstanding; of the 322.61 fstETH and 1,195.00 ffrxETH supply, fxUSD holds 2.23 and 193.76, and the v1 rebalance pools hold the rest, which their depositors can wrap through wrapFrom.
+- **The v1 legacy path:** before v2, fxUSD was backed by v1 fTokens. Two v1 markets remain wired to the token: wstETH (market 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, treasury 0xED803540037B0ae069c93420F89Cd653B6e3Df1f) and sfrxETH (market 0x714B853b3bA73E439c652CfE79660F329E6ebB42, treasury 0xcfEEfF214b256063110d3236ea12Db49d2dF2359). The treasuries mint the fTokens fstETH and ffrxETH through mintFToken under FX_MARKET_ROLE, which the two markets hold. fxUSD's permissionless wrap and wrapFrom turn those fTokens into fxUSD 1:1, and its permissionless redeem burns legacy fxUSD and redeems the fTokens through the v1 market for wstETH or sfrxETH; only unwrap, held by the router Diamond, returns fTokens. The v1 markets' own mint route into fxUSD is closed. As of block 26,399,940, 73.71 fxUSD of legacy supply is outstanding; of the 322.61 fstETH and 1,004.64 ffrxETH supply, fxUSD holds 2.23 and 3.41 (the sfrxETH leg is 68.06 short, as explained under Off-Registry Mint Recipients), and the v1 rebalance pools hold the rest, which their depositors can wrap through wrapFrom.
 
-- **Upgrades and the Timelock:** 16 contracts in this report are Transparent proxies behind ProxyAdmin 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4: fxUSD, PoolManager, ShortPoolManager, PoolConfiguration, FxUSDPriceOracle, fxSP, PegKeeper, the four pools, ProtocolTreasury 0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce, and the two v1 treasuries and two v1 markets. The same ProxyAdmin also administers fxSAVE, three other ProtocolTreasury proxies, both credit notes and the fxSP gauge, outside this report. Since block 24,920,358 (2026-04-20) its owner has been OZ TimelockController 0x68863fb8855b04509a835082478D6E3D0bE4E61a, with a 3 day delay: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF is its only proposer and canceller, and anyone can execute an operation once its delay has passed. The Timelock is also the only DEFAULT_ADMIN_ROLE holder on the v2 core contracts, so their settings change through it. The router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 is upgradable outside this path: its owner, Safe 0x26B2, changes its facets through diamondCut. The five Safes are proxies too, and each can change its own singleton.
+- **Upgrades and the Timelock:** 16 contracts in this report are Transparent proxies behind ProxyAdmin 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4: fxUSD, PoolManager, ShortPoolManager, PoolConfiguration, FxUSDPriceOracle, fxSP, PegKeeper, the four pools, ProtocolTreasury 0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce, and the two v1 treasuries and two v1 markets. The same ProxyAdmin also administers 15 proxies outside this report, 31 in all: fxSAVE, three other ProtocolTreasury proxies, both credit notes, the fxSP gauge, the two v1 fTokens, the two v1 xTokens and the four v1 rebalance pools. Since block 24,920,358 (2026-04-20) its owner has been OZ TimelockController 0x68863fb8855b04509a835082478D6E3D0bE4E61a, with a 3 day delay: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF is its only proposer and canceller, and anyone can execute an operation once its delay has passed. The Timelock is also the only DEFAULT_ADMIN_ROLE holder on the v2 core contracts, so their settings change through it. The router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 is upgradable outside this path: its owner, Safe 0x26B2, changes its facets through diamondCut. The five Safes are proxies too, and each can change its own singleton.
 
 - **Emergency roles and the Safes:** EMERGENCY_ROLE on the four pools, PoolManager and ShortPoolManager is held by Safe 0x26B2, Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 and the Timelock. It sets a pool's price oracle and its borrow and redeem switches, and pauses the two managers, without a Timelock delay. Safe 0x26B2 also holds DEFAULT_ADMIN_ROLE on the two v1 treasuries and owns SpotPriceOracle and the router Diamond. Safes 0x26B2, 0xA0FB1b11ccA5871fb0225B64308e249B97804E99, 0xFC08757c505eA28709dF66E54870fB6dE09f0C5E and 0xc40549aa1D05C30af23a1C4a5af6bA11FCAFe23F are 6 of 9 with the same nine owners, and Safe 0x28c921ad is 3 of 4 over four of them; none has a module or a guard. f(x)'s governance votes run on Snapshot (fxn.eth, veFXN, per its docs), and no contract executes those votes on chain.
 
-- **Daily operations:** keeper EOA 0x11E91BB6d1334585AA37D8F4fde3932C7960B938 calls harvest on PoolManager and ShortPoolManager, which sends long funding and rewards to the treasuries registered in PoolConfiguration, short funding to ShortPoolManager's reward splitter and each manager's fees to its own revenue pools, and pays the caller a 0.1 percent bounty. PegKeeper 0x50562fe7e870420F5AAe480B7F94EB4ace2fcd70 trades between fxSP's fxUSD and USDC through fxSP.arbitrage at Chainlink's USDC price, paying any surplus to the caller; its STABILIZE and BUYBACK roles are held by keeper EOA 0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779 and by ProtocolTreasury 0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce, which relays them for keeper EOA 0xcDcB516937F95c18a98Dd70458afB64E3C43dC13. Keeper EOA 0x4215 also trades for two DebtReducers, 0xF32fFd90133C7EC15e1519b9f7De8143310961aC and 0x2AC0a3b5Cb25d6071f05e9729922261bDF8e7Cb4, which use their own balances to lower pool debt. Safe 0x26B2 or Safe 0x28c921ad (the Timelock also holds ASSET_MANAGER_ROLE) can move idle long collateral into a strategy the Timelock approved through alloc; PoolManager's wstETH strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8 sits in Aave V3's Lido market and is empty as of block 26,171,878.
+- **Daily operations:** keeper EOA 0x11E91BB6d1334585AA37D8F4fde3932C7960B938 calls harvest on PoolManager and ShortPoolManager, which sends long funding and rewards to the treasuries registered in PoolConfiguration, short funding to ShortPoolManager's reward splitter and each manager's fees to its own revenue pools, and pays the caller a 0.1 percent bounty. PegKeeper 0x50562fe7e870420F5AAe480B7F94EB4ace2fcd70 trades between fxSP's fxUSD and USDC through fxSP.arbitrage at Chainlink's USDC price, paying any surplus to the caller; its STABILIZE and BUYBACK roles are held by keeper EOA 0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779 and by ProtocolTreasury 0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce, which relays them for keeper EOA 0xcDcB516937F95c18a98Dd70458afB64E3C43dC13. Keeper EOA 0x4215 also trades for two DebtReducers, 0xF32fFd90133C7EC15e1519b9f7De8143310961aC and 0x2AC0a3b5Cb25d6071f05e9729922261bDF8e7Cb4, which use their own balances to lower pool debt. Safe 0x26B2 or Safe 0x28c921ad (the Timelock also holds ASSET_MANAGER_ROLE) can move idle long collateral into a strategy the Timelock approved through alloc; PoolManager's wstETH strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8 sits in Aave V3's Lido market and is empty as of block 26,399,940.
 
-- **Scope:** this report covers fxUSD's mint, collateral, oracle and governance surface across 38 contracts. fxSAVE, its Convex vault and the fxSP gauge belong to the fxSAVE study, as do fxSP's own settings and the router Diamonds' reach. Chainlink, Lido, WBTC custody, Curve, Aave and Circle are described as dependencies rather than scanned.
+- **Scope:** this report covers fxUSD's mint, collateral, oracle and governance surface across 38 contracts. fxSAVE, its Convex vault and the fxSP gauge are covered in the fxSAVE report, as are fxSP's own settings and the router Diamonds' reach. Chainlink, Lido, WBTC custody, Curve, Aave and Circle are described as dependencies rather than scanned.
 
 
 **Referenced material**
@@ -85,32 +85,32 @@
 
 > *7 control surfaces extend beyond on-chain observability. Each entry shows what the analyst CAN observe (on-chain signal) alongside the off-chain dependency it relies on.*
 
-- **1. custody** 🟠 — WBTC backs 90.0 percent of fxUSD debt: 82,156,297.46 of the 91,290,179.34 non-legacy fxUSD is borrowed against WBTC in the WBTC long pool. PoolManager holds 1,305.65 WBTC, about 1.12 percent of WBTC supply. WBTC is backed only by BTC held by its custodian. The WBTC Controller owner decides who may mint it (setFactory, setMembers) and can pause every WBTC transfer.
+- **1. custody** 🟠 — WBTC backs most of fxUSD debt, all of it borrowed in the WBTC long pool: between 83 and 90 percent in the October and November 2026 readings. PoolManager holds that pool's WBTC, about 1 percent of WBTC supply or less in the same readings. WBTC is backed only by BTC held by its custodian. The WBTC Controller owner decides who may mint it (setFactory, setMembers) and can pause every WBTC transfer.
     - *On-chain signal:* WBTC 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599 paused() (false) and its Pause() event; Controller 0xCA06411bd7a7296d7dbdd0050DFc846E95fEBEB7 events Paused, FactorySet, MembersSet and OwnershipTransferred (owner 0x972eed35781f09987a5c40f761f6a24623c570de, a 6 of 10 multisig); Members 0x3e8640574aa764763291ed733672d3a105107ac5 custodian() (WalletSimple 0xb0f42d187145911c2ad1755831aded125619bd27) and its CustodianSet event; Chainlink WBTC/BTC 0xfdFD9C85aD200c506Cf9e21F1FD8dd01932FBB23 answer.
-    - *Off-chain dependency:* BitGo and BiT Global custody joint venture (per BitGo's announcement of 2024-08-09; not reconfirmed for 2026).
+    - *Off-chain dependency:* BitGo and BiT Global custody joint venture (per BitGo's announcement of 2024-08-09, the only source used).
     - *Recovery path:* None on the f(x) side. A custody failure reaches the pool only as a WBTC/BTC price move, which runs through fxSP rebalance and liquidation, the ReservePool and bad debt redistribution. If the Controller owner pauses WBTC, every WBTC transfer to or from PoolManager reverts, so WBTC pool withdrawals, redemptions, rebalances and liquidation payouts stop until WBTC is unpaused.
-- **2. oracle** 🟠 — Chainlink USDC/USD is a liveness input for the whole long side. FxUSDPriceOracle rejects a USDC/USD answer older than 129,600 s. Every long pool operate, rebalance, liquidate and redeem reads that price, as do fxSP deposit, rebalance, liquidate, arbitrage and nav(). The feed's measured heartbeat is about 23 hours, so one missed update trips the check. On the short pools a stale answer blocks only new borrowing.
+- **2. oracle** 🟠 — Chainlink USDC/USD is a liveness input for the whole long side. FxUSDPriceOracle rejects a USDC/USD answer older than 129,600 s. Every long pool operate, rebalance, liquidate and redeem reads that price, as do fxSP deposit, rebalance, liquidate, arbitrage and nav(). The feed's heartbeat, measured over blocks 25,951,379 to 26,151,378 (about 28 days), is about 23 hours, so one missed update trips the check. On the short pools a stale answer blocks only new borrowing.
     - *On-chain signal:* USDC/USD proxy 0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6: latestRoundData().updatedAt age against 129,600 s (measured max gap 82,836 s) and aggregator() (baseline 0x54bcc589d9743e521c64233706fc8cb36d275b07); FxUSDPriceOracle 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa getUSDCPrice() reverting.
-    - *Off-chain dependency:* Chainlink USDC/USD DON; proxy owner 0x21f73d42eb58ba49ddb685dc29d3bf5c0f0373ca. Tier not yet read.
+    - *Off-chain dependency:* Chainlink USDC/USD DON; proxy owner 0x21f73d42eb58ba49ddb685dc29d3bf5c0f0373ca. Chainlink rates the feed Low Market Risk (read on data.chain.link, 2026-10-12).
     - *Recovery path:* Every complete fix goes through the 3 day Timelock, and until then the long pools stay frozen, liquidation included. The simplest is a FxUSDPriceOracle upgrade, because the feed is an immutable of its implementation and fxSP holds that oracle as an immutable; the other is an fxSP upgrade plus a PoolConfiguration oracle change.
-- **3. oracle** 🟠 — One missed Chainlink WBTC/BTC update freezes the WBTC pool, which carries 90.0 percent of fxUSD debt. WBTCPriceOracle prices WBTC as Chainlink BTC/USD (staleness limit 10,800 s) times WBTC/BTC (staleness limit 129,600 s). Over the measured window WBTC/BTC updated only on its 24 hour heartbeat, so a WBTC discount reaches the pool at most daily until the WBTC/BTC deviation threshold (0.5 percent) trips. Chainlink rates WBTC/BTC Medium Market Risk, one step above the Low rating of the other three feeds fxUSD reads (read on data.chain.link, 2026-10-12). It is a Pegged Asset feed, so the rating reflects depeg and thin liquidity rather than price swings.
+- **3. oracle** 🟠 — One missed Chainlink WBTC/BTC update freezes the WBTC pool, which carries most of fxUSD debt. WBTCPriceOracle prices WBTC as Chainlink BTC/USD (staleness limit 10,800 s) times WBTC/BTC (staleness limit 129,600 s). Over the measured window, blocks 25,951,379 to 26,151,378 (about 28 days), WBTC/BTC updated only on its 24 hour heartbeat, so a WBTC discount reaches the pool at most daily until the WBTC/BTC deviation threshold (0.5 percent) trips. Chainlink rates WBTC/BTC Medium Market Risk, one step above the Low rating of the other three feeds fxUSD reads (read on data.chain.link, 2026-10-12). It is a Pegged Asset feed, so the rating reflects depeg and thin liquidity rather than price swings.
     - *On-chain signal:* BTC/USD 0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c and WBTC/BTC 0xfdFD9C85aD200c506Cf9e21F1FD8dd01932FBB23: aggregator() and latestRoundData().updatedAt age (measured max gaps 3,684 s and 86,436 s); WBTCPriceOracle 0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390 getPrice() reverting.
-    - *Off-chain dependency:* Chainlink BTC/USD and WBTC/BTC DONs; proxy owner 0x21f73d42eb58ba49ddb685dc29d3bf5c0f0373ca. Tier not yet read.
+    - *Off-chain dependency:* Chainlink BTC/USD and WBTC/BTC DONs; proxy owner 0x21f73d42eb58ba49ddb685dc29d3bf5c0f0373ca. Chainlink rates BTC/USD Low Market Risk and WBTC/BTC Medium Market Risk (read on data.chain.link, 2026-10-12).
     - *Recovery path:* Recovery is an immediate oracle swap through the pool's EMERGENCY_ROLE updatePriceOracle (Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF 6 of 9, Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 3 of 4, or the Timelock), since the feeds are constructor immutables of a non-proxy oracle. Until then the WBTC pool is frozen, liquidation included.
-- **4. oracle** 🟡 — The wstETH pool (10.0 percent of fxUSD debt) prices wstETH as Lido stEthPerToken (PoolManager rate provider 0x81A777c4aB65229d1Bf64DaE4c831bDf628Ccc7f) times the Curve stETH-ng EMA times Chainlink ETH/USD. The EMA is the price anchor: on-chain spot reads can move the pool's borrow, liquidation and redeem prices only within 1 percent of it and are reset to it outside that band. The Curve DAO sets the EMA window of pool 0x21e27a5e5513d6e65c4f830167390997aa84843a with only a non-zero check. A very long window freezes the anchor through a stETH depeg, and a very short one lets the anchor follow the pool's spot price (about 9,668 ETH of liquidity). f(x) applies no bound or staleness check to the Lido rate.
-    - *On-chain signal:* wstETH.stEthPerToken(); Curve stETH-ng ma_exp_time() (2,597 s) and price_oracle(); set_ma_exp_time emits no event, so poll ma_exp_time() or watch the Curve Parameter Voting 0xBCfF8B0b9419b9A88c44546519b1e909cF330399 for votes that call OwnerProxy 0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571 set_ma_exp_time; StETHPriceOracle 0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb getPrice(); ETH/USD 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419 updatedAt against 10,800 s (measured max gap 3,660 s).
-    - *Off-chain dependency:* Lido accounting oracle and DAO (see the BOLD report). Curve DAO: OwnerProxy 0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571 is admin of the pool's factory 0xB9fC157394Af804a3578134A6585C0dc9cc990d4. OwnerProxy's parameter_admin, the Aragon Agent 0x4eeb3ba4f221ca16ed4a0cc7254e2e32df948c5f, sets ma_exp_time after a 7 day veCRV vote of the Parameter Voting (60 percent support, 15 percent quorum). OwnerProxy's ownership_admin, the Ownership Agent 0x40907540d8a6C65c637785e8f8B742ae6b0b9968, can replace the parameter_admin after a 7 day vote. Chainlink ETH/USD.
+- **4. oracle** 🟡 — The wstETH pool (the smaller share of fxUSD debt) prices wstETH as Lido stEthPerToken (PoolManager rate provider 0x81A777c4aB65229d1Bf64DaE4c831bDf628Ccc7f) times the Curve stETH-ng EMA times Chainlink ETH/USD. The EMA is the price anchor: on-chain spot reads can move the pool's borrow, liquidation and redeem prices only within 1 percent of it and are reset to it outside that band. The Curve DAO sets the EMA window of pool 0x21e27a5e5513d6e65c4f830167390997aa84843a with only a non-zero check. A very long window freezes the anchor through a stETH depeg, and a very short one lets the anchor follow the pool's spot price (about 9,670 ETH and stETH of liquidity at block 26,399,940). f(x) applies no bound or staleness check to the Lido rate.
+    - *On-chain signal:* wstETH.stEthPerToken(); Curve stETH-ng ma_exp_time() (2,597 s) and price_oracle(); set_ma_exp_time emits no event, so poll ma_exp_time() or watch the Curve Parameter Voting 0xBCfF8B0b9419b9A88c44546519b1e909cF330399 for votes that call OwnerProxy 0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571 set_ma_exp_time; StETHPriceOracle 0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb getPrice(); ETH/USD 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419 updatedAt against 10,800 s (measured max gap 3,660 s over blocks 25,951,379 to 26,151,378).
+    - *Off-chain dependency:* Lido accounting oracle and DAO (described in the RWG's report on BOLD). Curve DAO: OwnerProxy 0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571 is admin of the pool's factory 0xB9fC157394Af804a3578134A6585C0dc9cc990d4. OwnerProxy's parameter_admin, the Aragon Agent 0x4eeb3ba4f221ca16ed4a0cc7254e2e32df948c5f, sets ma_exp_time after a 7 day veCRV vote of the Parameter Voting (60 percent support, 15 percent quorum). OwnerProxy's ownership_admin, the Ownership Agent 0x40907540d8a6C65c637785e8f8B742ae6b0b9968, can replace the parameter_admin after a 7 day vote. Chainlink ETH/USD.
     - *Recovery path:* The oracle can be swapped at once through EMERGENCY_ROLE (Safe 0x26B2 6 of 9, Safe 0x28c921ad 3 of 4, or the Timelock). That swap can also answer a Curve EMA retune during the retune's 7 day public vote. A rate provider change goes through PoolManager.updateRateProvider (the Timelock, 3 days).
-- **5. compliance** 🟡 — A Circle pause of USDC, or a blacklist of fxSP or of the receiver, makes fxSP redemption revert while fxSP holds any USDC, because every redemption then pays USDC pro rata. fxSP holds 2,537,358.56 USDC. Rebalances and liquidations paid in USDC stop too; those paid in fxUSD continue.
+- **5. compliance** 🟡 — A Circle pause of USDC, or a blacklist of fxSP or of the receiver, makes fxSP redemption revert while fxSP holds any USDC, because every redemption then pays USDC pro rata. fxSP's USDC share swings with the market, between a few percent and about half of its assets in the October and November 2026 readings. Rebalances and liquidations paid in USDC stop too; those paid in fxUSD continue.
     - *On-chain signal:* USDC 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 paused() and isBlacklisted(fxSP), baseline false for both; pauser 0x4914f61d25e5c567143774b76edbf4d5109a8566; blacklister 0x0a06be16275b95a7d2567fbdae118b36c7da78f9.
     - *Off-chain dependency:* Circle (USDC issuer, blacklister and pauser).
     - *Recovery path:* None in f(x).
-- **6. governance** 🟡 — Aave V3 sits under the whole v2 core in two ways: as a rate input and as custody. Rate input: PoolConfiguration holds the Aave Core Pool 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2 as an immutable and reads getReserveNormalizedVariableDebt(USDC) from it on every operate, redeem, rebalance and liquidate of a long or short pool, once 30 minutes have passed since its last snapshot. If that read reverts, or the index falls below the last snapshot, all of those operations revert, liquidation included, and no snapshot can advance. If the index jumps, the average rate rises with no cap. Long funding takes the extra out of every long position's collateral; it is on today at 1 times that rate (4.968 percent a year), because fxSP is at least 95 percent fxUSD. Custody: fxSP's USDC allocation is AaveV3CompoundStrategy 0xd023Aac0e2D46c93d4c6e8e2A449bF2d4687804f (Aave Core aEthUSDC, cap 100,000,000 USDC, holds 9 wei). Every fxSP call reads the strategy's aToken balance, so a revert there freezes all of fxSP, the only live liquidator. PoolManager's wstETH allocation is AaveV3Strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8 (Aave Lido instance Pool 0x4e033931ad43597d96d6bcc25c280717730b58b1, aEthLidowstETH, cap 100,000 wstETH, holds 0). Either Safe can push all idle USDC (2,537,358.56) or wstETH (5,151.74) into these at once; outflows above the idle balance then depend on Aave liquidity and on no reserve pause.
-    - *On-chain signal:* PoolConfiguration 0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d getAverageInterestRate() (baseline 4.968 percent) and getLongPoolFundingRatio(pool) for both long pools, reverting or jumping; the Aave Core Pool's EIP-1967 implementation slot (baseline 0x728a138A4823392C2EFA55e028d434F526fE03CF) and the Lido instance Pool's (baseline 0x78680a9ac74b093571e7a5b76636248f031d9bc2); totalSupply() on both strategies (9 and 0); allocations(USDC) on fxSP 0x65C9A641afCEB9C0E6034e558A319488FA0FA3be and allocations(wstETH) on PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24; paused bit 60 of getConfiguration(USDC) on the Core Pool and of getConfiguration(wstETH) on the Lido Pool (baseline clear).
+- **6. governance** 🟡 — Aave V3 sits under the whole v2 core in two ways: as a rate input and as custody. Rate input: PoolConfiguration holds the Aave Core Pool 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2 as an immutable and reads getReserveNormalizedVariableDebt(USDC) from it on every operate, redeem, rebalance and liquidate of a long or short pool, once 30 minutes have passed since its last snapshot. If that read reverts, or the index falls below the last snapshot, all of those operations revert, liquidation included, and no snapshot can advance. If the index jumps, the average rate rises with no cap. Long funding takes the extra out of every long position's collateral: 1 times that rate (about 5 percent a year at block 26,399,940) while fxSP is at least 95 percent fxUSD, and nothing while fxSP holds more USDC than that and the peg holds. Custody: fxSP's USDC allocation is AaveV3CompoundStrategy 0xd023Aac0e2D46c93d4c6e8e2A449bF2d4687804f (Aave Core aEthUSDC, cap 100,000,000 USDC, empty at block 26,399,940). Every fxSP call reads the strategy's aToken balance, so a revert there freezes all of fxSP, the only live liquidator. PoolManager's wstETH allocation is AaveV3Strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8 (Aave Lido instance Pool 0x4e033931ad43597d96d6bcc25c280717730b58b1, aEthLidowstETH, cap 100,000 wstETH, empty at block 26,399,940). Either Safe can push all idle USDC (33.5M at block 26,399,940) or wstETH (about 4,150) into these at once; outflows above the idle balance then depend on Aave liquidity and on no reserve pause.
+    - *On-chain signal:* PoolConfiguration 0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d getAverageInterestRate() (baseline 5.00 percent at block 26,399,940) and getLongPoolFundingRatio(pool) for both long pools, reverting or jumping; the Aave Core Pool's EIP-1967 implementation slot (baseline 0x4295Fe69b3e978Eb511e4558B4407AD871612fCb) and the Lido instance Pool's (baseline 0x13Fa6017A1d0479ad3117e7E80B785Cc1372D0F3); totalSupply() on both strategies (0 and 0); allocations(USDC) on fxSP 0x65C9A641afCEB9C0E6034e558A319488FA0FA3be and allocations(wstETH) on PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24; paused bit 60 of getConfiguration(USDC) on the Core Pool and of getConfiguration(wstETH) on the Lido Pool (baseline clear).
     - *Off-chain dependency:* Aave governance upgrades both Pools, each through its PoolAddressesProvider, after an AAVE holder vote and an 86,400 s level 1 delay. PayloadsController 0xdAbad81aF85554E9ae636395611C58F7eC1aAEc5 owns Executor Lvl1 0x5300A1a15135EA4dc7aD5a167152C01EFc9b192A, which owns both providers (Core 0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e, Lido 0xcfbf336fe147d643b9cb705648500e101504b16d). The Aave Guardian Safe 0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30 (4 of 7) is EMERGENCY_ADMIN on both markets.
-    - *Recovery path:* A reverting or falling index needs a PoolConfiguration upgrade through the 3 day Timelock, because the Aave Pool and base asset are implementation immutables. A reverting aToken read needs an fxSP upgrade through the same Timelock, since fxSP's kill and alloc revert on that same read. A planned Aave Pool upgrade is public before it runs (an AAVE holder vote, then a 1 day payload delay), so f(x) can have its 3 day fix queued if it starts during the vote; an Aave bug gives no warning. A Guardian reserve pause strands only funds already pushed into a strategy (none today).
-- **7. oracle** 🟡 — The fxUSD peg signal is the EMA of Curve fxUSD/USDC pool 0x5018BE882DccE5E3F2f3B0913AE2096B9b3fB61f (price_oracle(0), 10 minute half life) times Chainlink USDC/USD. Below 0.998 it switches borrowing off, redemption on and long funding to 10 times the Aave rate. Above 1.002 it enables stable repay. fxSP.nav() prices fxUSD at it. The pool holds 4,467,608.90 USDC and 5,406,224.98 fxUSD. Curve DAO sets the pool's EMA window with only a non-zero check; the EMA input is capped at 2.0, with no floor.
-    - *On-chain signal:* The Curve pool's price_oracle(0) (baseline 0.99984), ma_exp_time() (baseline 866) and SetNewMATime event; FxUSDPriceOracle 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa getPrice() and curvePool(); PoolConfiguration isBorrowAllowed() and isRedeemAllowed() (baseline true and false).
+    - *Recovery path:* A reverting or falling index needs a PoolConfiguration upgrade through the 3 day Timelock, because the Aave Pool and base asset are implementation immutables. A reverting aToken read needs an fxSP upgrade through the same Timelock, since fxSP's kill and alloc revert on that same read. A planned Aave Pool upgrade is public before it runs (an AAVE holder vote, then a 1 day payload delay), so f(x) can have its 3 day fix queued if it starts during the vote; an Aave bug gives no warning. A Guardian reserve pause strands only funds already pushed into a strategy (none at block 26,399,940).
+- **7. oracle** 🟡 — The fxUSD peg signal is the EMA of Curve fxUSD/USDC pool 0x5018BE882DccE5E3F2f3B0913AE2096B9b3fB61f (price_oracle(0), 10 minute half life) times Chainlink USDC/USD. Below 0.998 it switches borrowing off, redemption on and long funding to 10 times the Aave rate. Above 1.002 it enables stable repay. fxSP.nav() prices fxUSD at it. The pool is small next to fxUSD's supply: a few million on each side (about 5.0M USDC and 3.4M fxUSD at block 26,399,940). Curve DAO sets the pool's EMA window with only a non-zero check; the EMA input is capped at 2.0, with no floor.
+    - *On-chain signal:* The Curve pool's price_oracle(0) (baseline 1.0003 at block 26,399,940), ma_exp_time() (baseline 866) and SetNewMATime event; FxUSDPriceOracle 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa getPrice() and curvePool(); PoolConfiguration isBorrowAllowed() and isRedeemAllowed() (baseline true and false).
     - *Off-chain dependency:* Curve DAO sets the EMA window, A and fees after a 7 day veCRV vote of the Ownership Voting 0xE478de485ad2fe566d49342Cbd03E49ed7DB3356 (51 percent support, 30 percent quorum), through the Ownership Agent 0x40907540d8a6C65c637785e8f8B742ae6b0b9968, admin() of the StableSwap NG factory 0x6A8cbed756804B16E05E741eDaBd5cB544AE21bf.
     - *Recovery path:* The Timelock, as DEFAULT_ADMIN, can call FxUSDPriceOracle.updateCurvePool or updateMaxPriceDeviation; its 3 day delay fits inside the 7 day Curve vote. A manipulated EMA needs no f(x) key: it moves the borrow and redeem switches and fxSP's nav() at once.
 
@@ -133,11 +133,11 @@
 | 7. WBTC long pool fxUSD debt cap | `200,000,000 fxUSD` | PoolManager DEFAULT_ADMIN: the Timelock (updatePoolCapacity) | 3 days |
 | 8. wstETH long pool fxUSD debt cap | `150,000,000 fxUSD` | PoolManager DEFAULT_ADMIN: the Timelock (updatePoolCapacity) | 3 days |
 | 9. v1 fstETH supply | `322.61 fstETH` | v1 wstETH treasury mintFToken (FX_MARKET_ROLE; role admin Safe 0x26B2) | immediate |
-| 10. v1 ffrxETH supply | `1,195.00 ffrxETH` | v1 sfrxETH treasury mintFToken (FX_MARKET_ROLE; role admin Safe 0x26B2) | immediate |
-| 11. fxUSD created through the v1 wrap (legacyTotalSupply) | `264.06 fxUSD` | anyone, through the permissionless wrap of v1 fTokens | immediate |
+| 10. v1 ffrxETH supply | `1,004.64 ffrxETH` | v1 sfrxETH treasury mintFToken (FX_MARKET_ROLE; role admin Safe 0x26B2) | immediate |
+| 11. fxUSD created through the v1 wrap (legacyTotalSupply) | `73.71 fxUSD` | anyone, through the permissionless wrap of v1 fTokens | immediate |
 | 12. Safe 0x26B2 holds the v1 mint role, wstETH treasury | `no` | DEFAULT_ADMIN: Safe 0x26B2 itself | immediate |
 | 13. Safe 0x26B2 holds the v1 mint role, sfrxETH treasury | `no` | DEFAULT_ADMIN: Safe 0x26B2 itself | immediate |
-| 14. fxUSD price the protocol uses (Curve EMA) | `0.9997` | market; the peg band and the Curve pool are set by the Timelock | live |
+| 14. fxUSD price the protocol uses (Curve EMA) | `1.0003` | market; the peg band and the Curve pool are set by the Timelock | live |
 | 15. Redemption allowed by the peg gate | `closed (EMA at or above 0.998)` | follows row 14; the band is set by the Timelock | automatic |
 | 16. WBTC long pool redemption switch | `open` | EMERGENCY_ROLE: Safe 0x26B2 (6 of 9) or Safe 0x28c9 (3 of 4), or the Timelock | immediate |
 | 17. wstETH long pool redemption switch | `open` | EMERGENCY_ROLE: Safe 0x26B2 (6 of 9) or Safe 0x28c9 (3 of 4), or the Timelock | immediate |
@@ -154,14 +154,14 @@
 
 - **`0xED803540037B0ae069c93420F89Cd653B6e3Df1f`** — *v1 wstETH market behind fxUSD.markets(wstETH): WrappedTokenTreasuryV2, minter of fstETH 0xD6B8162e2fb9F3EFf09bb8598ca0C8958E33A23D*
     - *Declared ceiling:* `none. markets(wstETH).mintCap is 2^256-1 and the code never reads it; the only bound is fstETH supply, which this treasury mints under baseTokenCap 20,000 wstETH and its own price oracle, both set with no delay by DEFAULT_ADMIN Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9)`
-    - *Current balance:* `2.233896211114135978 fxUSD outstanding (markets(wstETH).managed), matched by 2.233896211114135978 fstETH held by fxUSD; 320.378614 fstETH outside fxUSD can still be wrapped`
+    - *Current balance:* `2.233896211114135978 fxUSD outstanding (markets(wstETH).managed), matched by 2.233896211114135978 fstETH held by fxUSD; 320.378614 fstETH outside fxUSD can be wrapped`
     - *Declared at block:* `26156548`
     - *Governance:* [https://etherscan.io/tx/0x403c31bddab7d3375ff432f78105751dff360bed3bd4954338f3581b0b1d398d](https://etherscan.io/tx/0x403c31bddab7d3375ff432f78105751dff360bed3bd4954338f3581b0b1d398d)
-    - *Notes:* Added without a governance vote: AddMarket(wstETH, 1,000,000e18) at block 19,288,065 was sent by the deployer EOA 0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468, then fxUSD DEFAULT_ADMIN, which raised mintCap to 2^256-1 at 19,297,996. wrap and wrapFrom are permissionless and mint fxUSD 1:1 for fstETH; wrapFrom draws from v1 rebalance pools 0x9aD382b028e03977D446635Ba6b8492040F829b7 and 0x0417CE2934899d7130229CDa39Db456Ff2332685. FX_MARKET_ROLE on the treasury (held only by v1 market 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, whose own route is closed) is administered by the Safe above with no delay, so a self grant plus mintFToken creates fstETH without base tokens that wrap turns into fxUSD; the cap and oracle that size it are set by the same Safe. fxUSD has no addMarket or removeMarket today; this set changes only through a fxUSD upgrade (ProxyAdmin 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4, Timelock, 3 days).
+    - *Notes:* Added without a governance vote: AddMarket(wstETH, 1,000,000e18) at block 19,288,065 was sent by the deployer EOA 0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468, then fxUSD DEFAULT_ADMIN, which raised mintCap to 2^256-1 at 19,297,996. wrap and wrapFrom are permissionless and mint fxUSD 1:1 for fstETH; wrapFrom draws from v1 rebalance pools 0x9aD382b028e03977D446635Ba6b8492040F829b7 and 0x0417CE2934899d7130229CDa39Db456Ff2332685. FX_MARKET_ROLE on the treasury (held only by v1 market 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, whose own route is closed) is administered by the Safe above with no delay, so a self grant plus mintFToken creates fstETH without base tokens that wrap turns into fxUSD; the cap and oracle that size it are set by the same Safe. The FxUSDRegeneracy implementation 0xf729422D68c2cf00574fb5712972454cf402A9b1 has no addMarket or removeMarket; this set changes only through a fxUSD upgrade (ProxyAdmin 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4, Timelock, 3 days).
 - **`0xcfEEfF214b256063110d3236ea12Db49d2dF2359`** — *v1 sfrxETH market behind fxUSD.markets(sfrxETH): WrappedTokenTreasuryV2, minter of ffrxETH 0xa87F04c9743Fd1933F82bdDec9692e9D97673769*
     - *Declared ceiling:* `none. markets(sfrxETH).mintCap is 2^256-1 and the code never reads it; the only bound is ffrxETH supply, which this treasury mints under baseTokenCap 5,000 sfrxETH and its own price oracle, both set with no delay by DEFAULT_ADMIN Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9)`
-    - *Current balance:* `261.824288070531719229 fxUSD outstanding (markets(sfrxETH).managed) against 193.764288070531719229 ffrxETH held by fxUSD, short 68.06; 1,001.231038 ffrxETH outside fxUSD can still be wrapped`
-    - *Declared at block:* `26156548`
+    - *Current balance:* `71.472328393482101327 fxUSD outstanding (markets(sfrxETH).managed) against 3.412328393482101327 ffrxETH held by fxUSD, short 68.06; 1,001.231038 ffrxETH outside fxUSD can be wrapped`
+    - *Declared at block:* `26399940`
     - *Governance:* [https://etherscan.io/tx/0xa7922020312947885b5a6e95c67d8cde2e3fcaade31f50552d873fe7c5bb3963](https://etherscan.io/tx/0xa7922020312947885b5a6e95c67d8cde2e3fcaade31f50552d873fe7c5bb3963)
     - *Notes:* Added without a governance vote: AddMarket(sfrxETH, 1,000,000e18) at block 19,288,066 by the deployer EOA 0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468; mintCap raised to 2^256-1 at 19,297,996. wrapFrom draws from v1 rebalance pools 0xb925F8CAA6BE0BFCd1A7383168D1c932D185A748 and 0x4a2ab45D27428901E826db4a52Dae00594b68022. The 68.06 shortfall dates from one wrapFrom in 2024 under the v1 implementation, which minted 10,000 fxUSD for 9,931.94 ffrxETH. The unbacked mint route is the same as on the wstETH entry, through v1 market 0x714B853b3bA73E439c652CfE79660F329E6ebB42.
 
@@ -177,45 +177,45 @@
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9) and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (3 of 4), no delay for either, and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days when it uses its own seat). The role admin is DEFAULT_ADMIN_ROLE, held by the Timelock only (sole proposer Safe 0x26B2), so a new holder needs a 3 day op and then acts at once.
     - *Live current value (as of block 22,067,306):* `0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390`
     - *Recorded changes:* 1 historical event(s); last setter `0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468`
-    - *Threshold:* priceOracle() != 0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390 (any UpdatePriceOracle event); EMERGENCY_ROLE holder set != {Safe 0x26B2, Safe 0x28c9, Timelock}. The setter checks nothing, not even a zero address. Triage: the drain can land in the same transaction or block as the swap, so check Liquidate events and the pool's collateral (PoolManager getPoolInfo) first, not only the oracle identity. Shared EMERGENCY_ROLE line (other entries point here), for seven contracts: long pools 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473 and 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8, short pools 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876 and 0xA0cC8162c523998856D59065fAa254F87D20A5b0, PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24, ShortPoolManager 0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D and PoolConfiguration 0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d. On all seven, getRoleAdmin(EMERGENCY_ROLE) is DEFAULT_ADMIN_ROLE, held by the Timelock alone. A new holder therefore appears first as a CallScheduled on the Timelock carrying grantRole (0x2f2ff15d) with role 0xbf233dd2aafeb4d50879c4aa5c81e96d92f6e6945c906a58f9f2d1c1631b4b26 and one of the seven as target, then as RoleGranted(EMERGENCY_ROLE) on that contract. A grant of any other role on these contracts takes the grade of the lever it confers; DEFAULT_ADMIN_ROLE confers every Timelock lever on that contract. Each contract is verified on its own.
-    - *Impact:* Either Safe can point this pool at any price source in one transaction, unchecked. A fake low price lets any caller of the permissionless fxSP.liquidate take almost all of the pool's collateral for a few thousand fxUSD in one transaction, leaving the pool's debt unbacked (simulated on both long pools: 1,306.06 of 1,306.87 WBTC plus 5,170.36 wstETH for about 7,750 fxUSD). A fake high price lets a borrower mint unbacked fxUSD up to the debt cap. A reverting source freezes the pool, which carries about 90 percent of fxUSD debt.
+    - *Threshold:* priceOracle() != 0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390 (any UpdatePriceOracle event); EMERGENCY_ROLE holder set != {Safe 0x26B2, Safe 0x28c9, Timelock}. The setter checks nothing, not even a zero address. Triage: the drain can land in the same transaction or block as the swap, so check Liquidate events and the pool's collateral (PoolManager getPoolInfo) first, not only the oracle identity. Shared EMERGENCY_ROLE line (other entries point here), for seven contracts: long pools 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473 and 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8, short pools 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876 and 0xA0cC8162c523998856D59065fAa254F87D20A5b0, PoolManager 0x250893CA4Ba5d05626C785e8da758026928FCD24, ShortPoolManager 0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D and PoolConfiguration 0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d. On all seven, getRoleAdmin(EMERGENCY_ROLE) is DEFAULT_ADMIN_ROLE, held by the Timelock alone. A new holder therefore appears first as a CallScheduled on the Timelock carrying grantRole (0x2f2ff15d) with role 0xbf233dd2aafeb4d50879c4aa5c81e96d92f6e6945c906a58f9f2d1c1631b4b26 and one of the seven as target, then as RoleGranted(EMERGENCY_ROLE) on that contract. A grant of any other role on these contracts takes the grade of the lever it confers; DEFAULT_ADMIN_ROLE confers every Timelock lever on that contract.
+    - *Impact:* Either Safe can point this pool at any price source in one transaction, unchecked. A fake low price lets any caller of the permissionless fxSP.liquidate take almost all of the pool's collateral for a few thousand fxUSD in one transaction, leaving the pool's debt unbacked (simulated at block 26,163,790 on both long pools: 1,306.06 of the WBTC pool's 1,306.87 WBTC plus 5,170.36 wstETH for about 7,750 fxUSD). A fake high price lets a borrower mint unbacked fxUSD up to the debt cap. A reverting source freezes the pool, which carries most of fxUSD debt.
 - **2. `Long-pool oracle swap, wstETH pool: updatePriceOracle(address), and grantRole(bytes32,address) of EMERGENCY_ROLE`** 🔴 on [**AaveFundingPool Pool_wstETH (0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8)**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8)
     - *Role gate:* As on the WBTC pool: EMERGENCY_ROLE = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9) and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (3 of 4), no delay, and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a; role admin DEFAULT_ADMIN_ROLE = the Timelock only (3 day grant).
     - *Live current value (as of block 22,081,079):* `0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb`
     - *Recorded changes:* 2 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
     - *Threshold:* priceOracle() != 0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb (any UpdatePriceOracle event); EMERGENCY_ROLE holder set != {Safe 0x26B2, Safe 0x28c9, Timelock}. RoleGranted(EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry. Triage as on that entry: check Liquidate events and pool collateral first.
-    - *Impact:* Same lever as the WBTC long-pool oracle swap entry, on the wstETH pool. A fake low price lets any caller of fxSP.liquidate take almost all of the pool's collateral in one transaction (simulated: 5,170.36 wstETH for about 6,442 fxUSD), a fake high price mints unbacked fxUSD up to the debt cap (about 140.9M of headroom here), and a reverting source freezes the pool.
+    - *Impact:* Same lever as the WBTC long-pool oracle swap entry, on the wstETH pool. A fake low price lets any caller of fxSP.liquidate take almost all of the pool's collateral in one transaction (simulated at block 26,163,790: 5,170.36 wstETH for about 6,442 fxUSD), a fake high price mints unbacked fxUSD up to the debt cap (about 141M to 144M of headroom under the 150M cap in the October and November 2026 readings), and a reverting source freezes the pool.
 - **3. `v1 unbacked mint, wstETH treasury: grantRole(bytes32,address) of FX_MARKET_ROLE or DEFAULT_ADMIN_ROLE, mintFToken(uint256,address), updateBaseTokenCap(uint256) and updatePriceOracle(address)`** 🔴 on [**WrappedTokenTreasuryV2 wstETH (0xED803540037B0ae069c93420F89Cd653B6e3Df1f)**](#c-0xed803540037b0ae069c93420f89cd653b6e3df1f)
-    - *Role gate:* DEFAULT_ADMIN_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), held directly with no delay. That role administers both itself and FX_MARKET_ROLE, so the Safe can grant itself FX_MARKET_ROLE and call mintFToken in one transaction. The Timelock, Safe 0x28c9 and the deployer hold nothing here; only a code upgrade is timelocked. FX_MARKET_ROLE today: only MarketV2 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, whose own fToken route is closed.
+    - *Role gate:* DEFAULT_ADMIN_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), held directly with no delay. That role administers both itself and FX_MARKET_ROLE, so the Safe can grant itself FX_MARKET_ROLE and call mintFToken in one transaction. The Timelock, Safe 0x28c9 and the deployer hold nothing here; only a code upgrade is timelocked. FX_MARKET_ROLE is held only by MarketV2 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155, whose own fToken route is closed.
     - *Live current value (as of block 19,883,159):* `0x83bDc459Ac3887B2A61aA47DCA3Acac26a333D20`
     - *Recorded changes:* 4 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
     - *Threshold:* Any RoleGranted on 0xED803540037B0ae069c93420F89Cd653B6e3Df1f; an FX_MARKET_ROLE holder other than MarketV2 0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155; totalSupply() of fstETH 0xD6B8162e2fb9F3EFf09bb8598ca0C8958E33A23D above 322.612510571983809811 (no organic fToken mint route is open, so any rise is the unbacked path or an upgrade); baseTokenCap() above 20,000e18; priceOracle() != 0x83bDc459Ac3887B2A61aA47DCA3Acac26a333D20.
-    - *Impact:* The 6 of 9 Safe can, in one transaction and with no delay, grant itself the market role on this treasury, mint fTokens without depositing anything, and wrap them 1:1 into fxUSD that cannot be told apart from backed fxUSD. At today's cap and price that is about 50.1M fxUSD on this leg (about 62M, roughly 68 percent of supply, with the sfrxETH leg), and the same Safe can lift the cap or swap the price oracle in the same transaction, so there is no real ceiling. Wrapped fxUSD cannot be recalled.
+    - *Impact:* The 6 of 9 Safe can, in one transaction and with no delay, grant itself the market role on this treasury, mint fTokens without depositing anything, and wrap them 1:1 into fxUSD that cannot be told apart from backed fxUSD. At the two treasuries' caps and the prices of block 26,399,940 that is tens of millions of fxUSD across this leg and the sfrxETH leg (about 50M), comparable to or more than all fxUSD in circulation, and the same Safe can lift the cap or swap the price oracle in the same transaction, so there is no real ceiling. Wrapped fxUSD cannot be recalled.
 - **4. `v1 unbacked mint, sfrxETH treasury: grantRole(bytes32,address), mintFToken(uint256,address), updateBaseTokenCap(uint256) and updatePriceOracle(address)`** 🔴 on [**WrappedTokenTreasuryV2 sfrxETH (0xcfEEfF214b256063110d3236ea12Db49d2dF2359)**](#c-0xcfeeff214b256063110d3236ea12db49d2df2359)
-    - *Role gate:* As on the wstETH treasury: DEFAULT_ADMIN_ROLE = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), held directly, no delay; FX_MARKET_ROLE today only MarketV2 0x714B853b3bA73E439c652CfE79660F329E6ebB42.
+    - *Role gate:* As on the wstETH treasury: DEFAULT_ADMIN_ROLE = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), held directly, no delay; FX_MARKET_ROLE is held only by MarketV2 0x714B853b3bA73E439c652CfE79660F329E6ebB42.
     - *Live current value (as of block 19,883,159):* `0xffe563c168C01e05DA4f3d81938AF158466ad793`
     - *Recorded changes:* 6 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
-    - *Threshold:* Any RoleGranted on 0xcfEEfF214b256063110d3236ea12Db49d2dF2359; an FX_MARKET_ROLE holder other than MarketV2 0x714B853b3bA73E439c652CfE79660F329E6ebB42; totalSupply() of ffrxETH 0xa87F04c9743Fd1933F82bdDec9692e9D97673769 above 1,194.995326355407671146; baseTokenCap() above 5,000e18; priceOracle() != 0xffe563c168C01e05DA4f3d81938AF158466ad793.
-    - *Impact:* Same lever as the wstETH treasury entry, on the sfrxETH leg: about 12.3M fxUSD of unbacked mint at today's cap and price, with no real ceiling because the same Safe sets the cap and the oracle at once.
+    - *Threshold:* Any RoleGranted on 0xcfEEfF214b256063110d3236ea12Db49d2dF2359; an FX_MARKET_ROLE holder other than MarketV2 0x714B853b3bA73E439c652CfE79660F329E6ebB42; totalSupply() of ffrxETH 0xa87F04c9743Fd1933F82bdDec9692e9D97673769 above 1,004.643366678358053244; baseTokenCap() above 5,000e18; priceOracle() != 0xffe563c168C01e05DA4f3d81938AF158466ad793.
+    - *Impact:* Same lever as the wstETH treasury entry, on the sfrxETH leg: about 10M to 12M fxUSD of unbacked mint at the 5,000 sfrxETH cap and the prices of the October and November 2026 readings, with no real ceiling because the same Safe sets the cap and the oracle at once.
 - **5. `v1 unbacked mint, exit leg: wrap(address,uint256,address) and wrapFrom(address,uint256,address) on fxUSD`** 🔴 on [**FxUSDRegeneracy fxUSD (0x085780639CC2cACd35E474e71f4d000e2405d8f6)**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6)
     - *Role gate:* Permissionless. The gate is upstream, on the v1 treasuries' DEFAULT_ADMIN_ROLE (Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF, no delay). markets(base).mintCap is 2^256-1 and never read.
-    - *Threshold:* Triage only: fxUSD legacyTotalSupply() above 264.058184281645855207. wrapFrom (0x3a4639e1) of existing fTokens is organic (most recently block 23,539,033, 2025-10-09); wrap (0x5c15155e) after a treasury role grant or an fToken supply rise is the unbacked path. Page on the treasury entries' RoleGranted and fToken supply lines, not here.
+    - *Threshold:* Triage only: fxUSD legacyTotalSupply() above 73.706224604596237305. wrapFrom (0x3a4639e1) of existing fTokens is organic (most recently block 23,539,033, 2025-10-09); wrap (0x5c15155e) after a treasury role grant or an fToken supply rise is the unbacked path. Page on the treasury entries' RoleGranted and fToken supply lines, not here.
     - *Impact:* The exit leg of the v1 unbacked mint (see the wstETH treasury entry): anyone can wrap fTokens 1:1 into fxUSD that cannot be told apart from backed fxUSD, so fTokens minted without backing become unbacked fxUSD with no further key. Wrapped fxUSD cannot be recalled.
 - **6. `Long-pool oracle configuration, WBTC: updateMaxPriceDeviation(uint256), updateOnchainSpotEncodings(bytes), updateMaxWBTCDeviation(uint256) and transferOwnership(address) on WBTCPriceOracle`** 🟠 on [**WBTCPriceOracle (0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390)**](#c-0xb3c90e64eb6f456a5f5c17aa99b6aeca6f4a6390)
-    - *Role gate:* owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (Ownable2Step, accepted at block 26126801): 3 days, sole proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), executor open; pendingOwner() = 0x0. No setter has an upper bound. Not a proxy.
+    - *Role gate:* owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (Ownable2Step, accepted at block 26,126,801): 3 days, sole proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), executor open; pendingOwner() = 0x0. No setter has an upper bound. Not a proxy.
     - *Live current value (as of block 22,067,294):* `20000000000000000 (0.020000e18)`
     - *Recorded changes:* 3 historical event(s); last setter `0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468`
     - *Threshold:* maxPriceDeviation() != 2e16 (any UpdateMaxPriceDeviation event); maxWBTCDeviation() != 2e16 (any UpdateMaxWBTCDeviation event), above all a value above 1e18, which makes the redeem price read revert; owner() != Timelock or pendingOwner() != 0x0; any CallScheduled targeting 0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390 with 0x24f1c5c1 updateMaxPriceDeviation, 0x113101f2 updateOnchainSpotEncodings(bytes), 0x1c1f11da updateMaxWBTCDeviation or 0xf2fde38b transferOwnership. The encodings setter is silent (private storage, no getter, no event), so watch its storage fingerprint: slot 2 data length 99, keccak 0x0bb4dfba1224309248895cc44c0bed0fd940cd98eee4413cf7c56428eadde001. The SpotPriceOracle reader entry watches the instant reader that could use a widened band.
-    - *Impact:* maxPriceDeviation is the only clamp between manipulable spot reads and the liquidation price, and its setter has no bound. Once one Timelock op widens it, the 6 of 9 Safe's instant SpotPriceOracle reader, or anyone who moves an encoded spot pool, sets the liquidation price, and the permissionless fxSP.liquidate pays out the pool's collateral at that price, leaving fxUSD unbacked. The pool's priceOracle() does not change. An overflowing band or a reverting encoding freezes the WBTC pool, which carries about 90 percent of fxUSD debt.
+    - *Impact:* maxPriceDeviation is the only clamp between manipulable spot reads and the liquidation price, and its setter has no bound. Once one Timelock op widens it, the 6 of 9 Safe's instant SpotPriceOracle reader, or anyone who moves an encoded spot pool, sets the liquidation price, and the permissionless fxSP.liquidate pays out the pool's collateral at that price, leaving fxUSD unbacked. The pool's priceOracle() does not change. An overflowing band or a reverting encoding freezes the WBTC pool, which carries most of fxUSD debt.
 - **7. `Long-pool oracle configuration, wstETH: updateMaxPriceDeviation(uint256), updateOnchainSpotEncodings(bytes,uint256) and transferOwnership(address) on StETHPriceOracle`** 🟠 on [**StETHPriceOracle (0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb)**](#c-0x0c5c61025f047cb7e3e85852dc8eafd7b9a4abfb)
-    - *Role gate:* As on WBTCPriceOracle: owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (Ownable2Step, accepted at block 26126801), 3 days, sole proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF; pendingOwner() = 0x0. No setter has an upper bound. Not a proxy.
+    - *Role gate:* As on WBTCPriceOracle: owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (Ownable2Step, accepted at block 26,126,801), 3 days, sole proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF; pendingOwner() = 0x0. No setter has an upper bound. Not a proxy.
     - *Live current value (as of block 22,067,286):* `10000000000000000 (0.010000e18)`
     - *Recorded changes:* 1 historical event(s); last setter `0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468`
     - *Threshold:* maxPriceDeviation() != 1e16 (any UpdateMaxPriceDeviation event); owner() != Timelock or pendingOwner() != 0x0; any CallScheduled targeting 0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb with 0x24f1c5c1 updateMaxPriceDeviation, 0x2427546d updateOnchainSpotEncodings(bytes,uint256) or 0xf2fde38b transferOwnership. The encodings setter is silent, so watch its storage fingerprints: slot 2 length 67, keccak 0xef71118e533236a4c2ee628feb729140bc7e0c8501ec6170937da776f2e6cdf9; slot 3 length 132, keccak 0xa3ca863bd4e26e8ff030cf51306a2c4595c447e91ee69ecd442feb36ee86d93e; slot 4 empty.
     - *Impact:* Same lever as the WBTCPriceOracle configuration entry, on the wstETH pool: widening the 1 percent band lets the SpotPriceOracle reader or a moved spot pool set the liquidation price that the permissionless fxSP.liquidate pays out at, and an overflowing band or a reverting encoding freezes the pool.
 - **8. `Shared ProxyAdmin: upgrade(address,address), upgradeAndCall(address,address,bytes), changeProxyAdmin(address,address), transferOwnership(address) and renounceOwnership()`** 🟠 on [**ProxyAdmin (0x9B54B7703551D9d0ced177A78367560a8B2eDDA4)**](#c-0x9b54b7703551d9d0ced177a78367560a8b2edda4)
-    - *Role gate:* owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a: 3 days (minDelay 259200, one delay for all 31 proxies), sole proposer and canceller Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), executor open. Ownership moves in one step (OZ v3 Ownable). No Safe or EOA can upgrade these proxies directly. Outside this set, Safe 0x26B2 can cut Router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 directly with no delay; that cut reaches no fxUSD supply (MEDIUM, not a lever).
-    - *Threshold:* Any CallScheduled on the Timelock with target 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4 (0x99a88ec4 upgrade, 0x9623609d upgradeAndCall, 0x7eff275e changeProxyAdmin, 0xf2fde38b transferOwnership, 0x715018a6 renounceOwnership); owner() != Timelock. On the 31 proxies whose EIP-1967 admin slot is 0x9B54 today: any Upgraded or AdminChanged event, or an admin slot != 0x9B54. Implementation != this baseline: fxUSD 0xf729422D68c2cf00574fb5712972454cf402A9b1; PoolManager 0xa70DDDb8ddD06B1C26061d998E041748b18eCf85; ShortPoolManager 0x73A7B27308f2c8B3769FB88734f561C23A4AFb66; long pools 0x25739865593fA498E92D91E62019DBC051BDC993; short pools 0xfa525154c6371E9d46570b44C7328e6cC3e7cc47; PoolConfiguration 0x67a94c63689cdA730e99491d29E56acD247e5430; FxUSDPriceOracle 0x12be1e1E1F4632f68A78E0Ea0247d7E3C2DBc8aA; fxSP 0x9CFeFD90d4C8428D4CBaC9bAAA6D52C6BA7897f9; fxSAVE 0xE4031e271809d20074E4bef1caeEfEc5f710e8A6.
+    - *Role gate:* owner() = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a: 3 days (minDelay 259200, one delay for all 31 proxies), sole proposer and canceller Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), executor open. Ownership moves in one step (OZ v3 Ownable). No Safe or EOA can upgrade these proxies directly. Outside this set, Safe 0x26B2 can cut Router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 directly with no delay; that cut reaches no fxUSD supply, so it is graded MEDIUM and is not listed among these levers.
+    - *Threshold:* Any CallScheduled on the Timelock with target 0x9B54B7703551D9d0ced177A78367560a8B2eDDA4 (0x99a88ec4 upgrade, 0x9623609d upgradeAndCall, 0x7eff275e changeProxyAdmin, 0xf2fde38b transferOwnership, 0x715018a6 renounceOwnership); owner() != Timelock. On the 31 proxies whose EIP-1967 admin slot is 0x9B54: any Upgraded or AdminChanged event, or an admin slot != 0x9B54. Implementation != this baseline: fxUSD 0xf729422D68c2cf00574fb5712972454cf402A9b1; PoolManager 0xa70DDDb8ddD06B1C26061d998E041748b18eCf85; ShortPoolManager 0x73A7B27308f2c8B3769FB88734f561C23A4AFb66; long pools 0x25739865593fA498E92D91E62019DBC051BDC993; short pools 0xfa525154c6371E9d46570b44C7328e6cC3e7cc47; PoolConfiguration 0x67a94c63689cdA730e99491d29E56acD247e5430; FxUSDPriceOracle 0x12be1e1E1F4632f68A78E0Ea0247d7E3C2DBc8aA; fxSP 0x9CFeFD90d4C8428D4CBaC9bAAA6D52C6BA7897f9; fxSAVE 0xE4031e271809d20074E4bef1caeEfEc5f710e8A6.
     - *Impact:* An upgrade rewrites the code of fxUSD, PoolManager, the pools, fxSP, fxSAVE, FxUSDPriceOracle and the v1 stack, so it can mint unlimited fxUSD, move all collateral or empty fxSP. Ownership moves in one step, and changeProxyAdmin can lift a single proxy such as fxUSD out from under the Timelock while the rest still looks delayed. renounceOwnership would freeze every fix. The only buffer is the 3 day public queue.
 - **9. `Timelock roles and delay: grantRole(bytes32,address) and revokeRole(bytes32,address) for PROPOSER, CANCELLER, EXECUTOR and TIMELOCK_ADMIN, and updateDelay(uint256)`** 🟠 on [**TimelockController (0x68863fb8855b04509a835082478D6E3D0bE4E61a)**](#c-0x68863fb8855b04509a835082478d6e3d0be4e61a)
     - *Role gate:* TIMELOCK_ADMIN_ROLE administers all four roles and is held by the Timelock itself only; updateDelay is a self-call. So every change is a Timelock op: proposer and canceller Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF only (6 of 9), 3 days (minDelay 259200), executor open (address(0) plus Safe 0x26B2). OZ v4.9.0.
@@ -236,29 +236,29 @@
     - *Live current value (as of block 22,995,917):* `0x5d2c6215555B36889ef235c6d5cCDE22E9964e6a`
     - *Recorded changes:* 1 historical event(s); last setter `0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468`
     - *Threshold:* priceOracle() != 0x5d2c6215555B36889ef235c6d5cCDE22E9964e6a (any UpdatePriceOracle event). RoleGranted(EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry. Kill and settle triage: killPool and settleKillPool are POOL_KILLER_ROLE functions used after a short pool is under-collateralized. On ShortPoolManager 0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D: any KillPool or SettleKillPool event; killPoolData(pool) != (0, 0, 0, 0) for either short pool (0xA0cC8162c523998856D59065fAa254F87D20A5b0, 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876); any RoleGranted(POOL_KILLER_ROLE).
-    - *Impact:* Short pools let users post fxUSD and borrow wstETH or WBTC taken out of the long pools that back fxUSD, up to half of each long pool's collateral: about 653 WBTC here and 2,577 wstETH on the other short pool, roughly 62M USD together. Either Safe can swap this pool's price source in one transaction. A false price lets borrowing outrun its fxUSD collateral, so long collateral leaves against too little. A reverting source freezes the short pool.
+    - *Impact:* Short pools let users post fxUSD and borrow wstETH or WBTC taken out of the long pools that back fxUSD, up to half of each long pool's collateral: about 292 WBTC here and 2,077 wstETH on the other short pool at block 26,399,940, roughly 26M USD together. Either Safe can swap this pool's price source in one transaction. A false price lets borrowing outrun its fxUSD collateral, so long collateral leaves against too little. A reverting source freezes the short pool.
 - **13. `Short-pool oracle swap, wstETH debt pool: updatePriceOracle(address), and grantRole(bytes32,address) of EMERGENCY_ROLE`** 🔴 on [**ShortPool wstETH debt (0x25707b9e6690B52C60aE6744d711cf9C1dFC1876)**](#c-0x25707b9e6690b52c60ae6744d711cf9c1dfc1876)
     - *Role gate:* As on the WBTC debt short pool: EMERGENCY_ROLE = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9) and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (3 of 4), no delay, and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days); role admin = the Timelock only (3 day grant).
     - *Live current value (as of block 22,953,759):* `0x222786833b5fd5eE21532d8b576391bAbeFdAAd1`
     - *Recorded changes:* 1 historical event(s); last setter `0xa1d0027Ca4C0CB79f9403d06A29470abC7b0a468`
     - *Threshold:* priceOracle() != 0x222786833b5fd5eE21532d8b576391bAbeFdAAd1 (any UpdatePriceOracle event). RoleGranted (EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry. Kill and settle triage lines: see the WBTC debt short pool entry.
-    - *Impact:* Same lever as the WBTC debt short pool entry, on the wstETH debt pool: either Safe can swap the price source in one transaction, so short borrowing of up to about 2,577 wstETH from the long pool can outrun its fxUSD collateral, and a reverting source freezes the short pool.
+    - *Impact:* Same lever as the WBTC debt short pool entry, on the wstETH debt pool: either Safe can swap the price source in one transaction, so short borrowing of up to half the long pool's wstETH (about 2,077 wstETH at block 26,399,940) can outrun its fxUSD collateral, and a reverting source freezes the short pool.
 - **14. `PoolManager mint path: registerPool(address,uint96,uint96), updatePoolCapacity(address,uint96,uint96) and updateRateProvider(address,address)`** 🟠 on [**PoolManager, fxUSD's only minter (0x250893CA4Ba5d05626C785e8da758026928FCD24)**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only: 3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9). No setter validates its input.
     - *Live current value (as of block 25,923,711):* `f(x) wstETH position: 150000000000000000000000000 (150,000,000.000000e18) · f(x) WBTC position: 200000000000000000000000000 (200,000,000.000000e18)`
     - *Recorded changes:* 16 historical event(s); last setter `0x11E91BB6d1334585AA37D8F4fde3932C7960B938`
-    - *Threshold:* Any RegisterPool (pool set length at storage slot 150 != 2: 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8, 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473); tokenRates(wstETH).rateProvider != 0x81A777c4aB65229d1Bf64DaE4c831bDf628Ccc7f or tokenRates(WBTC) != (1e10, 0x0); debtCapacity above 150,000,000 fxUSD (wstETH pool) or 200,000,000 (WBTC pool); collateralCapacity above 500,000 wstETH or 30,000 WBTC; any capacity set below the live balance (wstETH pool: 9,133,881.88 debt, 5,154.98 wstETH; WBTC pool: 82,156,297.46 debt, 1,306.87 WBTC); any CallScheduled targeting PoolManager with 0x34c63d3e, 0x3eb9c694 or 0x85184db7.
+    - *Threshold:* Any RegisterPool (pool set length at storage slot 150 != 2: 0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8, 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473); tokenRates(wstETH).rateProvider != 0x81A777c4aB65229d1Bf64DaE4c831bDf628Ccc7f or tokenRates(WBTC) != (1e10, 0x0); debtCapacity above 150,000,000 fxUSD (wstETH pool) or 200,000,000 (WBTC pool); collateralCapacity above 500,000 wstETH or 30,000 WBTC; any capacity set below the pool's live balance, which moves with the market (in the October and November 2026 readings: about 6.2M to 9.1M fxUSD of debt and about 4,150 to 5,150 wstETH on the wstETH pool; about 31M to 82M fxUSD of debt and about 585 to 1,307 WBTC on the WBTC pool); any CallScheduled targeting PoolManager with 0x34c63d3e, 0x3eb9c694 or 0x85184db7.
     - *Impact:* PoolManager mints fxUSD for whatever its registered pools report. Pool registration has its validation commented out and can never be undone, so one Timelock op can add a rogue pool that mints fxUSD up to whatever cap the same op sets. The same seat can swap the rate provider that values collateral, so the same deposit backs more fxUSD or withdrawals take too much. A cap below the live balance freezes the pool, liquidation included.
 - **15. `Short side registry, capacities and rate providers: registerPool(address,address,uint96,uint96,uint64), updateRateProvider(address,address) and updatePoolCapacity(address,uint96,uint96) on ShortPoolManager`** 🟠 on [**ShortPoolManager (0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D)**](#c-0xacdc0ab51178d0ae8f70c1ead7d3cf5421fdd66d)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only: 3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9). Short pool registration has no validation and no removal; the rate provider and capacity setters check nothing.
-    - *Threshold:* Any RegisterPool on ShortPoolManager (pool set length at storage slot 150 != 2); tokenRates(wstETH or WBTC).rateProvider != 0x0; any CallScheduled targeting ShortPoolManager with 0x0877e854, 0x85184db7 or 0x3eb9c694; getPoolInfo collateral capacity != 1e27 or raw debt capacity != 1e24 on either short pool, above all a cap set below the live balance. Live balances: 16,298.06 fxUSD collateral and 3.5696 raw wstETH debt on 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876; 134,442.46 fxUSD collateral and 1.2489 raw WBTC debt on 0xA0cC8162c523998856D59065fAa254F87D20A5b0.
+    - *Threshold:* Any RegisterPool on ShortPoolManager (pool set length at storage slot 150 != 2); tokenRates(wstETH or WBTC).rateProvider != 0x0; any CallScheduled targeting ShortPoolManager with 0x0877e854, 0x85184db7 or 0x3eb9c694; getPoolInfo collateral capacity != 1e27 or raw debt capacity != 1e24 on either short pool, above all a cap set below the live balance. Live balances at block 26,399,940: 16,056.37 fxUSD collateral and 3.4908 raw wstETH debt on 0x25707b9e6690B52C60aE6744d711cf9C1dFC1876; 60,825.97 fxUSD collateral and 0.5659 raw WBTC debt on 0xA0cC8162c523998856D59065fAa254F87D20A5b0.
     - *Impact:* The short side borrows wstETH and WBTC straight out of the long pools that back fxUSD. One Timelock op can register a rogue short pool that gets its own borrow allowance against the long pools, or rescale short debt through a new rate provider, so long collateral leaves against too little fxUSD. A capacity below the live balance stops short liquidation and repayment, so unpaid short debt stays on the long collateral that backs fxUSD.
 - **16. `Short borrow share of long collateral: updateShortBorrowCapacityRatio(address,uint256) on PoolManager`** 🟠 on [**PoolManager (0x250893CA4Ba5d05626C785e8da758026928FCD24)**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only: 3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9). The ratio is uncapped.
     - *Live current value (as of block 23,132,084):* `f(x) wstETH position: 500000000000000000 (0.500000e18) · f(x) WBTC position: 500000000000000000 (0.500000e18)`
     - *Recorded changes:* 2 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
     - *Threshold:* shortBorrowCapacityRatio(pool) != 0.5e18 on either long pool (0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8, 0xAB709e26Fa6B0A30c119D8c55B887DeD24952473), above all a rise (0 only closes short borrowing); any CallScheduled targeting PoolManager with 0xaa05d03d.
-    - *Impact:* This ratio caps how much of each long pool's collateral the short side can borrow, half today. One Timelock op can raise it with no limit, letting short borrowing take more of the collateral that backs fxUSD. See the ShortPoolManager short side entry.
+    - *Impact:* This ratio caps how much of each long pool's collateral the short side can borrow; it is set at half. One Timelock op can raise it with no limit, letting short borrowing take more of the collateral that backs fxUSD. See the ShortPoolManager short side entry.
 - **17. `Pool pairing, WBTC long pool: updateCounterparty(address)`** 🟠 on [**AaveFundingPool Pool_WBTC (0xAB709e26Fa6B0A30c119D8c55B887DeD24952473)**](#c-0xab709e26fa6b0a30c119d8c55b887ded24952473)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only: 3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9). The setter checks non-zero only.
     - *Live current value (as of block 23,132,084):* `0xA0cC8162c523998856D59065fAa254F87D20A5b0`
@@ -285,31 +285,31 @@
     - *Impact:* Same lever as the WBTC long pool pairing entry, seen from the short side: re-pairs this short pool with a different long pool.
 - **21. `Strategy custody of long collateral: alloc(address,address,uint96) and kill(address) on PoolManager`** 🟠 on [**PoolManager (0x250893CA4Ba5d05626C785e8da758026928FCD24)**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24)
     - *Role gate:* alloc and kill: DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF); alloc emits no event. The follow-on manage(address,uint256) is instant for ASSET_MANAGER_ROLE (Safe 0x26B2, Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 and the Timelock) and can only push into the strategy the Timelock set, up to its capacity.
-    - *Threshold:* allocations(wstETH) != (0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8, 1e23) or allocations(WBTC) != (0x0, 0), above all a change of strategy identity; any CallScheduled targeting PoolManager with 0xd890cba9 alloc or 0xcbf0b0c0 kill. Triage: totalSupply() above 0 on strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8, or above 9 wei on 0xd023Aac0e2D46c93d4c6e8e2A449bF2d4687804f, signals an instant manage push, which only a 3 day Timelock kill recalls in full. A reverting fxSP strategy would halt liquidation, because every fxSP call reads it; fxSP's own allocation is the fxSAVE report's lever.
+    - *Threshold:* allocations(wstETH) != (0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8, 1e23) or allocations(WBTC) != (0x0, 0), above all a change of strategy identity; any CallScheduled targeting PoolManager with 0xd890cba9 alloc or 0xcbf0b0c0 kill. Triage: totalSupply() above 0 on strategy 0xFd3A6540e21D0E285f88FBFd904883B23e08F5C8, or above 0 on 0xd023Aac0e2D46c93d4c6e8e2A449bF2d4687804f, signals an instant manage push, which only a 3 day Timelock kill recalls in full. A reverting fxSP strategy would halt liquidation, because every fxSP call reads it; fxSP's own allocation is the fxSAVE report's lever.
     - *Impact:* One Timelock op can point the wstETH and WBTC that back fxUSD at any contract, and either Safe can then move the collateral into it at once with manage. That is a direct drain of fxUSD backing.
 - **22. `SpotPriceOracle reader: updateReader(uint256,address) and transferOwnership(address)`** 🟠 on [**SpotPriceOracle (0xc2312CaF0De62eC9b4ADC785C79851Cb989C9abc)**](#c-0xc2312caf0de62ec9b4adc785c79851cb989c9abc)
-    - *Role gate:* owner() = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), no delay; pendingOwner() = 0x0. Both Ownable2Step steps are instant. Unlike the two long-pool oracles, this owner was never moved to the Timelock, and no transfer was ever started. Not a proxy.
-    - *Threshold:* readers(t) != 0x0 for any poolType t in 0..15 (all zero today); any UpdateReader event; owner() != Safe 0x26B2 or pendingOwner() != 0x0 (OwnershipTransferStarted).
+    - *Role gate:* owner() = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9), no delay; pendingOwner() = 0x0. Both Ownable2Step steps are instant. Unlike the two long-pool oracles, this contract's ownership was never moved to the Timelock, and no transfer to the Timelock was ever started. Not a proxy.
+    - *Threshold:* readers(t) != 0x0 for any poolType t in 0..15 (baseline: all zero); any UpdateReader event; owner() != Safe 0x26B2 or pendingOwner() != 0x0 (OwnershipTransferStarted).
     - *Impact:* One Safe transaction can swap the code that reads spot prices behind both long-pool oracles; the short pools read it through them. A reverting reader freezes borrowing, repayment, redemption and liquidation on all four pools with no pause event, until the same Safe undoes it. A lying reader cannot inflate borrowing: each oracle clamps spot reads to a band around an anchor the reader cannot touch. If one Timelock op widens that band (oracle configuration entries), this reader sets the liquidation price.
 - **23. `Borrow and redeem switch, WBTC long pool: updateBorrowAndRedeemStatus(bool,bool)`** 🟠 on [**AaveFundingPool Pool_WBTC (0xAB709e26Fa6B0A30c119D8c55B887DeD24952473)**](#c-0xab709e26fa6b0a30c119d8c55b887ded24952473)
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (no delay) and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days), as on the WBTC long-pool oracle swap entry.
     - *Live current value (as of block 22,732,036):* `False`
     - *Recorded changes:* 4 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
-    - *Threshold:* isBorrowPaused() or isRedeemPaused() true (UpdateBorrowStatus or UpdateRedeemStatus event); both false today.
+    - *Threshold:* isBorrowPaused() or isRedeemPaused() true (UpdateBorrowStatus or UpdateRedeemStatus event); baseline: both false.
     - *Impact:* Stops new borrowing or closes redemption on this pool without any Paused event. Closing redemption removes the depeg backstop for fxUSD holders on this pool. Reversible. See the PoolManager pause entry.
 - **24. `Borrow and redeem switch, wstETH long pool: updateBorrowAndRedeemStatus(bool,bool)`** 🟠 on [**AaveFundingPool Pool_wstETH (0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8)**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8)
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (no delay) and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days).
     - *Live current value (as of block 22,732,036):* `False`
     - *Recorded changes:* 7 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
-    - *Threshold:* isBorrowPaused() or isRedeemPaused() true (UpdateBorrowStatus or UpdateRedeemStatus event); both false today.
+    - *Threshold:* isBorrowPaused() or isRedeemPaused() true (UpdateBorrowStatus or UpdateRedeemStatus event); baseline: both false.
     - *Impact:* Same lever as the WBTC long pool borrow and redeem switch entry, on the wstETH long pool.
 - **25. `Pool fee word: updatePoolFeeRatio(address,address,uint256,uint256,uint256,uint256,uint256) on PoolConfiguration`** 🟡 on [**PoolConfiguration (0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d)**](#c-0x16b334f2644cc00b85db1a1eff0c2c395e00c28d)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF). Each fee field is capped at 100 percent only; supplyRatioStep has no lower bound; the derived supply fee is uncapped.
     - *Live current value (as of block 24,684,269):* `10 keys · [3000000, 1000000, 0, 0] ×6 · [0, 0, 5000000, 2000000] ×4`
       *Full per-market breakdown in the Permissioned Parameters table.*
     - *Recorded changes:* 33 historical event(s); last setter `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF`
-    - *Profile-declared value (verified at block 26,171,848):* `Ten fee words, unchanged at block 26169784. Long pools, the default word and the 0xB753366082466c4B5984312f0c4Bb97554be067E word: borrow 0.5 percent, repay 0.2 percent. Short pools' default word, and the router Diamond word on all four pools: supply ratio 0.3 percent, withdraw 0.1 percent. supplyRatioStep is 0.3e18 in every word, so the supply fee stays at the ratio until the average Aave borrow rate passes 60 percent. The live tuples read (supply fee, withdraw, borrow, repay) in 1e9 precision.`
-    - *Threshold:* Any UpdatePoolFeeRatio, or CallScheduled carrying 0x880acd85, that: zeroes a pool's default word (recipient 0x0); sets supplyRatioStep to 0 in any non-zero word; raises a default-word fee above the live values (long pools: borrow 0.5 percent, repay 0.2 percent, withdraw 0; short pools: supply 0.3 percent, withdraw 0.1 percent; step 0.3e18); or adds or changes a custom word. Custom words today: router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 on all four pools (supply 0.3 percent, withdraw 0.1 percent, step 0.3e18) and 0xB753366082466c4B5984312f0c4Bb97554be067E on both long pools (equal to the default).
+    - *Profile-declared value (verified at block 26,171,848):* `Ten fee words, as read at block 26,169,784. Long pools, the default word and the 0xB753366082466c4B5984312f0c4Bb97554be067E word: borrow 0.5 percent, repay 0.2 percent. Short pools' default word, and the router Diamond word on all four pools: supply ratio 0.3 percent, withdraw 0.1 percent. supplyRatioStep is 0.3e18 in every word, so the supply fee stays at the ratio until the average Aave borrow rate passes 60 percent. The live tuples read (supply fee, withdraw, borrow, repay) in 1e9 precision.`
+    - *Threshold:* Any UpdatePoolFeeRatio, or CallScheduled carrying 0x880acd85, that: zeroes a pool's default word (recipient 0x0); sets supplyRatioStep to 0 in any non-zero word; raises a default-word fee above the live values (long pools: borrow 0.5 percent, repay 0.2 percent, withdraw 0; short pools: supply 0.3 percent, withdraw 0.1 percent; step 0.3e18); or adds or changes a custom word. Custom words as read at block 26,169,784: router Diamond 0x33636D49FbefBE798e15e7F356E8DBef543CC708 on all four pools (supply 0.3 percent, withdraw 0.1 percent, step 0.3e18) and 0xB753366082466c4B5984312f0c4Bb97554be067E on both long pools (equal to the default).
     - *Impact:* Every repay, withdraw and borrow pays these fees, and a zero default word fails the per-operation checkpoint. One Timelock op can freeze a pool outright, liquidation included, push borrow, repay or withdraw fees to 100 percent, or set a zero step, which makes every repay and top-up revert while liquidations keep running against borrowers who cannot defend. Custom words can do the same to one caller. Another Timelock op reverses each form.
 - **26. `Liquidation and rebalance thresholds, WBTC long pool: updateLiquidateRatios(uint256,uint256) and updateRebalanceRatios(uint256,uint256)`** 🟡 on [**AaveFundingPool Pool_WBTC (0xAB709e26Fa6B0A30c119D8c55B887DeD24952473)**](#c-0xab709e26fa6b0a30c119d8c55b887ded24952473)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF). The ratio bounds are commented out; only the packed field widths limit the values.
@@ -354,11 +354,11 @@
     - *Threshold:* curvePool() != 0x5018BE882DccE5E3F2f3B0913AE2096B9b3fB61f; maxDePegPriceDeviation() or maxUpPegPriceDeviation() != 2e15 (a dePeg band of 1e18 never opens redemption; above 1e18 every read reverts); any RoleGranted on this contract; any CallScheduled targeting it with 0x7f63f75d, 0x4215dd1a or 0x2f2ff15d.
     - *Impact:* This peg signal decides when borrowing stops, when fxUSD holders may redeem against collateral, and when long funding switches on. One Timelock op can re-point it or widen the band so borrowing stays open through a depeg while the redemption backstop never opens, or make every read revert, freezing both long pools. Both outcomes are reversible and no backing leaves. How fxSP's nav() prices fxUSD from this signal, which values fxSAVE, belongs to the fxSAVE report.
 - **33. `fxUSD peg signal source: updateOracle(address) and grantRole(bytes32,address) of EMERGENCY_ROLE on PoolConfiguration`** 🟡 on [**PoolConfiguration (0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d)**](#c-0x16b334f2644cc00b85db1a1eff0c2c395e00c28d)
-    - *Role gate:* updateOracle: EMERGENCY_ROLE, held by nobody today. Its admin is DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF), so a 3 day grant comes first and the grantee then acts at once with no check.
+    - *Role gate:* updateOracle: EMERGENCY_ROLE, which has no holder. Its admin is DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF), so a 3 day grant comes first and the grantee then acts at once with no check.
     - *Live current value (as of block 22,953,677):* `0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa`
     - *Recorded changes:* 1 historical event(s); last setter `0x0000000000000000000000000000000000000000`
     - *Threshold:* oracle() != 0x3eC677Ba393f2257ED0E1d37aA8442EB7F0953Fa; any EMERGENCY_ROLE holder. RoleGranted(EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry.
-    - *Impact:* Re-points the peg signal described in the FxUSDPriceOracle peg signal entry, with no check, once someone holds the role. Inert today: nobody holds EMERGENCY_ROLE here, and reviving it needs the same 3 day Timelock path as the FxUSDPriceOracle setters.
+    - *Impact:* Re-points the peg signal described in the FxUSDPriceOracle peg signal entry, with no check, once someone holds the role. Inert while the role has no holder: nobody holds EMERGENCY_ROLE here, and granting it needs the same 3 day Timelock path as the FxUSDPriceOracle setters.
 - **34. `Debt ratio range, WBTC long pool: updateDebtRatioRange(uint256,uint256)`** 🟡 on [**AaveFundingPool Pool_WBTC (0xAB709e26Fa6B0A30c119D8c55B887DeD24952473)**](#c-0xab709e26fa6b0a30c119d8c55b887ded24952473)
     - *Role gate:* DEFAULT_ADMIN_ROLE = Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a only (3 days, proposer Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF). The bounds are commented out in PoolStorage; only the 60 bit packed field limits the value (about 1.153e18).
     - *Live current value (as of block 25,825,710):* `: 100000000000000 · : 855000000000000000 (0.855000e18)`
@@ -385,7 +385,7 @@
     - *Impact:* Same lever as the WBTC debt short pool debt ratio entry, on the wstETH debt short pool.
 - **38. `Long side pause: setPause(bool), and grantRole(bytes32,address) of EMERGENCY_ROLE, on PoolManager`** 🟡 on [**PoolManager (0x250893CA4Ba5d05626C785e8da758026928FCD24)**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24)
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF (6 of 9) and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (3 of 4), no delay, and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a. Role admin = the Timelock, so a Safe that keeps re-pausing can be removed only by a 3 day op.
-    - *Threshold:* paused() == true (Paused event); all false today. RoleGranted(EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry.
+    - *Threshold:* paused() == true (Paused event); baseline: false. RoleGranted(EMERGENCY_ROLE): see the shared line on the WBTC long-pool oracle swap entry.
     - *Impact:* Either Safe can stop the long side in one transaction: a manager pause halts repay, redemption, rebalance and liquidation. Every pause is reversible, and fxUSD transfers, fxSP exits and the Curve market keep working. The risk is timing: a pause during a sharp WBTC drop stops liquidations and can leave bad debt behind fxUSD.
 - **39. `Short side pause: setPause(bool), and grantRole(bytes32,address) of EMERGENCY_ROLE, on ShortPoolManager`** 🟡 on [**ShortPoolManager (0xaCDc0AB51178d0Ae8F70c1EAd7d3cF5421FDd66D)**](#c-0xacdc0ab51178d0ae8f70c1ead7d3cf5421fdd66d)
     - *Role gate:* As on PoolManager: EMERGENCY_ROLE = Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF, Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (no delay) and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days); role admin = the Timelock.
@@ -394,12 +394,12 @@
 - **40. `Borrow switch, WBTC debt short pool: updateBorrowAndRedeemStatus(bool,bool)`** 🟡 on [**ShortPool WBTC debt (0xA0cC8162c523998856D59065fAa254F87D20A5b0)**](#c-0xa0cc8162c523998856d59065faa254f87d20a5b0)
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (no delay) and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days).
     - *Live current value:* `False`
-    - *Threshold:* isBorrowPaused() true (UpdateBorrowStatus event); false today. The short pools' redeem flag is dead, because ShortPoolManager.redeem reverts.
+    - *Threshold:* isBorrowPaused() true (UpdateBorrowStatus event); baseline: false. The short pools' redeem flag is dead, because ShortPoolManager.redeem reverts.
     - *Impact:* Stops new short borrowing on this pool without any Paused event. Reversible, and it touches no fxUSD backing. See the PoolManager pause entry.
 - **41. `Borrow switch, wstETH debt short pool: updateBorrowAndRedeemStatus(bool,bool)`** 🟡 on [**ShortPool wstETH debt (0x25707b9e6690B52C60aE6744d711cf9C1dFC1876)**](#c-0x25707b9e6690b52c60ae6744d711cf9c1dfc1876)
     - *Role gate:* EMERGENCY_ROLE: Safe 0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF and Safe 0x28c921adAC4c1072658eB01a28DA06b5F651eF62 (no delay) and Timelock 0x68863fb8855b04509a835082478D6E3D0bE4E61a (3 days).
     - *Live current value:* `False`
-    - *Threshold:* isBorrowPaused() true (UpdateBorrowStatus event); false today. The redeem flag is dead, as on the WBTC debt short pool.
+    - *Threshold:* isBorrowPaused() true (UpdateBorrowStatus event); baseline: false. The redeem flag is dead, as on the WBTC debt short pool.
     - *Impact:* Same lever as the WBTC debt short pool borrow switch entry, on the wstETH debt short pool.
 
 </details>
@@ -450,6 +450,8 @@
 > **Observational findings — not risk determinations.** Each item below is a focus point for the Risk Analyst to interpret against collateralization context and the protocol's stated intent. Attention levels (CRITICAL / HIGH / LOW) reflect the scanner's heuristic weight — not a realized risk to FiRM. These observations support future risk assessments; they do not constitute one.
 
 > **20 critical-attention** and **92 high-attention** observation(s) across 38 contract(s).
+>
+> 2 observation(s) below carry a level set by RWG review; each also shows the scanner's own level.
 
 <details>
 <summary><strong>View findings (collapsed — profile reviewed)</strong></summary>
@@ -463,8 +465,8 @@
     - ↳ 🔴 [**Observed: EOA holds `BUYBACK_ROLE` on PegKeeper**](#c-0x50562fe7e870420f5aae480b7f94eb4ace2fcd70) — `0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
     - ↳ 🔴 [**Observed: EOA holds `PERMISSIONED_TRADER_ROLE` on DebtReducer**](#c-0xf32ffd90133c7ec15e1519b9f7de8143310961ac) — `0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779` (EOA) — single key controls a role whose functions (`swapAndReduceDebt`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PoolManager. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `HARVESTER_ROLE` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `0x11E91BB6d1334585AA37D8F4fde3932C7960B938` (EOA) — single key controls a role whose functions (`harvest`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
-- 🔴 [**Observed: EOA holds `STABILIZE_ROLE` on ProtocolTreasury**](#c-0x87d5e4caaf4358a4337c10859c7107c7aef4f8ce) — `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13` (EOA) — single key controls a role whose functions (`stabilize`, `stabilize`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PegKeeper. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
-- 🔴 [**Observed: EOA holds `BUYBACK_ROLE` on ProtocolTreasury**](#c-0x87d5e4caaf4358a4337c10859c7107c7aef4f8ce) — `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13` (EOA) — single key controls a role whose functions (`buyback`, `buyback`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PegKeeper. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `STABILIZE_ROLE` on ProtocolTreasury**](#c-0x87d5e4caaf4358a4337c10859c7107c7aef4f8ce) — `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13` (EOA) — single key controls a role whose functions (`stabilize`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PegKeeper. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
+- 🔴 [**Observed: EOA holds `BUYBACK_ROLE` on ProtocolTreasury**](#c-0x87d5e4caaf4358a4337c10859c7107c7aef4f8ce) — `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13` (EOA) — single key controls a role whose functions (`buyback`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PegKeeper. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 [**Observed: EOA holds `HARVESTER_ROLE` on ShortPoolManager**](#c-0xacdc0ab51178d0ae8f70c1ead7d3cf5421fdd66d) — `0x11E91BB6d1334585AA37D8F4fde3932C7960B938` (EOA) — single key controls a role whose functions (`harvest`) may reach inherited [SUPPLY] authority via FxUSDRegeneracy, PoolManager. Inheritance is a dependency-graph edge — verify these functions actually exercise it before treating it as a confirmed path. Assess custody and intent.
 - 🔴 **Observed: EOA spans 2 contracts** — `0x11E91BB6d1334585AA37D8F4fde3932C7960B938` holds roles in PoolManager, ShortPoolManager — single key controls cross-contract authority. Roles reach inherited [SUPPLY] authority via a dependency path. Assess custody and segmentation.
 - 🔴 [**Observed: upgrade surfaced new inflationary/upgrade authority on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — Upgrade on 2025-01-02 (+4/-0 fn) [+SUPPLY]. Review the Upgrade History table to verify intent.
@@ -488,7 +490,7 @@
 
 - 💰 [**`poolManager()` on AaveFundingPool**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8) — 0x6Ecf...22E8 — held by 0x2508...CD24 — open the role card for holder identities & admin chain.
 - 💰 [**`poolManager()` on AaveFundingPool**](#c-0xab709e26fa6b0a30c119d8c55b887ded24952473) — 0xAB70...2473 — held by 0x2508...CD24 — open the role card for holder identities & admin chain.
-- 💰 [**`NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — 0x65C9...A3be — 5 holders — open the role card for holder identities & admin chain.
+- 💰 [**`NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — 0x65C9...A3be — 7 holders — open the role card for holder identities & admin chain.
 - 💰 [**`stableToken()` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — 0x65C9...A3be — held by 0xA0b8...eB48 — open the role card for holder identities & admin chain.
 - 💰 [**`MIGRATOR_ROLE` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — 0x0857...d8f6 — held by 0x3363...C708 — open the role card for holder identities & admin chain.
 - 💰 [**`market()` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — 0x0857...d8f6 — 2 holders — open the role card for holder identities & admin chain.
@@ -553,15 +555,15 @@
 - ⚠️ [**No Timelock in admin chain: `FX_MARKET_ROLE` on WrappedTokenTreasuryV2**](#c-0xcfeeff214b256063110d3236ea12db49d2df2359) — `FX_MARKET_ROLE` has SUPPLY capability and is held by: `0x714B...bB42` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `PROTOCOL_INITIALIZER_ROLE` on WrappedTokenTreasuryV2**](#c-0xcfeeff214b256063110d3236ea12db49d2df2359) — `PROTOCOL_INITIALIZER_ROLE` has SUPPLY capability and is held by: `0xFC38...fC62` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `baseToken()` on WrappedTokenTreasuryV2**](#c-0xcfeeff214b256063110d3236ea12db49d2df2359) — `baseToken()` has SUPPLY capability and is held by: `0xac3E...e38F` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
-- ⚠️ [**No Timelock in admin chain: `NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — `NO_INSTANT_REDEEM_FEE_ROLE` has SUPPLY capability and is held by: `0x26B2...7BbF` (Safe), `0x3363...C708` (Contract), `0xA0FB...4E99` (Safe) +2 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
+- ⚠️ [**No Timelock in admin chain: `NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — `NO_INSTANT_REDEEM_FEE_ROLE` has SUPPLY capability and is held by: `0x26B2...7BbF` (Safe), `0x3363...C708` (Contract), `0x5470...121e` (EOA) +4 more. No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `poolManager()` on AaveFundingPool**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8) — `poolManager()` has SUPPLY capability and is held by: `0x2508...CD24` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `MIGRATOR_ROLE` on MarketV2**](#c-0xad9a0e7c08bc9f747df97a3e7e7f620632cb6155) — `MIGRATOR_ROLE` has SUPPLY capability and is held by: `0x3363...C708` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - ⚠️ [**No Timelock in admin chain: `poolManager()` on ShortPool**](#c-0x25707b9e6690b52c60ae6744d711cf9c1dfc1876) — `poolManager()` has SUPPLY capability and is held by: `0xaCDc...d66D` (Contract). No Timelock contract appears in the direct admin chain — supply-altering calls can land in a single block once the role-holder's governance threshold is met. FiRM-lens: no analyst-observable buffer between decision and action.
 - 🔒 [**No Timelock in admin chain: `pegKeeper()` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — `pegKeeper()` has SUPPLY capability and is held by: `0x5056...cd70` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `poolManager()` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — `poolManager()` has SUPPLY capability and is held by: `0x2508...CD24` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
-- 🔒 [**No Timelock in admin chain: `fxBASE()` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `fxBASE()` has SUPPLY capability and is held by: `0x65C9...A3be` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
-- 🔒 [**No Timelock in admin chain: `counterparty()` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `counterparty()` has SUPPLY capability and is held by: `0xaCDc...d66D` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `configuration()` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `configuration()` has SUPPLY capability and is held by: `0x16b3...C28d` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
+- 🔒 [**No Timelock in admin chain: `counterparty()` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `counterparty()` has SUPPLY capability and is held by: `0xaCDc...d66D` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
+- 🔒 [**No Timelock in admin chain: `fxBASE()` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `fxBASE()` has SUPPLY capability and is held by: `0x65C9...A3be` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 - 🔒 [**No Timelock in admin chain: `stableToken()` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — `stableToken()` has SUPPLY capability and is held by: `0xA0b8...eB48` (Contract). No Timelock appears in the admin chain and none is needed: the backing pointer is declared `immutable` in the contract source, so it is fixed at construction and cannot be re-pointed by any key, role or governance action. FiRM-lens: there is no decision to buffer on this edge. The authority of the contract it points AT is assessed on that contract's own card.
 
 </details>
@@ -574,13 +576,13 @@
 <details>
 <summary>🔄 **23 volatile parameter(s) observed across 8 contract(s) (≥5 historical changes each)** — Operational tempo signal — high-velocity setters indicate active governance maintenance, oracle keepers, or routinely-tuned risk parameters. Expand to review each parameter's change count and current value; assess against the protocol's stated intent.</summary>
 
-- 🔄 [**Observed: volatile parameter `wrapFrom` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — `wrapFrom(address _pool, uint256 _amount, address _receiver)` changed 84 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `mint` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — `mint(address to, uint256 amount)` changed 28 times. Current value: ``. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `rebalance` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)` changed 5259 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `wrapFrom` on FxUSDRegeneracy**](#c-0x085780639cc2cacd35e474e71f4d000e2405d8f6) — `wrapFrom(address _pool, uint256 _amount, address _receiver)` changed 84 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `rebalance` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)` changed 5593 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getPoolInfo.debtCapacity` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `updatePoolCapacity(address pool, uint96 collateralCapacity, uint96 debtCapacity)` changed 12 times. Current value: 2 markets · highest 200M (f(x) WBTC position) · 150M ×1 — full per-key breakdown in the Permissioned Parameters table on PoolManager. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getPoolInfo.collateralCapacity` on PoolManager**](#c-0x250893ca4ba5d05626c785e8da758026928fcd24) — `updatePoolCapacity(address pool, uint96 collateralCapacity, uint96 debtCapacity)` changed 12 times. Current value: 2 markets · highest 500k (f(x) wstETH position) · <1M ×1 — full per-key breakdown in the Permissioned Parameters table on PoolManager. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getPoolFeeRatio` on PoolConfiguration**](#c-0x16b334f2644cc00b85db1a1eff0c2c395e00c28d) — `updatePoolFeeRatio(address pool, address recipient, uint256 supplyRatio, uint256 supplyRatioStep, uint256 withdrawFeeRatio, uint256 borrowFeeRatio, uint256 repayFeeRatio)` changed 33 times. Current value: 10 keys · [3000000, 1000000, 0, 0] ×6 · [0, 0, 5000000, 2000000] ×4 — full per-key breakdown in the Permissioned Parameters table on PoolConfiguration. Assess change pattern.
-- 🔄 [**Observed: volatile parameter `instantRedeemNoFee` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` changed 407 times. Current value: ``. Assess change pattern.
+- 🔄 [**Observed: volatile parameter `instantRedeemNoFee` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` changed 443 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `getDebtRatioRange` on AaveFundingPool**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8) — `updateDebtRatioRange(uint256 minRatio, uint256 maxRatio)` changed 6 times. Current value: `: 100000000000000 · : 855000000000000000 (0.855000e18)`. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `operate` on AaveFundingPool**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8) — `operate(uint256 positionId, int256 newRawColl, int256 newRawDebt, address owner)` changed 12684 times. Current value: ``. Assess change pattern.
 - 🔄 [**Observed: volatile parameter `isBorrowPaused` on AaveFundingPool**](#c-0x6ecfa38fee8a5277b91efda204c235814f0122e8) — `updateBorrowAndRedeemStatus(bool borrowStatus, bool redeemStatus)` changed 7 times. Current value: `False`. Assess change pattern.
@@ -602,6 +604,11 @@
 
 - 🌐 [**Observed: 7 off-chain control dependencies (custody, oracle, compliance, governance)**](#sec-off-chain-deps) — Asset has 7 control surface(s) that extend beyond on-chain observability. See the 🌐 Off-Chain Dependencies section for each kind, the on-chain signal the analyst can monitor, the off-chain dependency it relies on, and the recovery path if the off-chain piece fails. Cross-reference against the protocol's stated trust model.
 - 🎯 [**Observed: 2 off-registry mint recipients declared**](#sec-ceiling-targets) — Asset has 2 off-registry mint recipients declared in profile.ceiling_targets[] — these are addresses that hold a non-zero ceiling on a factory-style mint contract WITHOUT appearing in any registry array the scanner enumerates. See the 🎯 Off-Registry Mint Recipients section for the target identity, declared ceiling, governance link, and recovery path of each. Verify against on-chain event-derived recipients via `eth_getLogs` on the relevant setter event; any unexplained recipient with non-zero allocation is a /debrief §11d finding.
+
+### ⚪ INFO (2)
+
+- ⚪ [**Observed: EOA holds `NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — This role only lets its holder redeem its own fxSP shares at once without the instant redeem fee. It cannot mint or burn fxUSD or reach anyone else's shares, so it is not a supply lever for fxUSD. What the waiver means for fxSP and fxSAVE holders in a depeg is graded in the fxSAVE report. Level set by RWG review (2026-11-12); the scanner's own level is CRITICAL: `0x547090EB068220b3Da1F7b611ef21723Caa4121e` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
+- ⚪ [**Observed: EOA holds `NO_INSTANT_REDEEM_FEE_ROLE` on FxUSDBasePool**](#c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be) — This role only lets its holder redeem its own fxSP shares at once without the instant redeem fee. It cannot mint or burn fxUSD or reach anyone else's shares, so it is not a supply lever for fxUSD. What the waiver means for fxSP and fxSAVE holders in a depeg is graded in the fxSAVE report. Level set by RWG review (2026-11-12); the scanner's own level is CRITICAL: `0x61b09116D341C6cc45513F29FE3B6C13fE3699A3` (EOA) — single key controls [SUPPLY] capability. Assess custody and intent.
 
 </details>
 
@@ -3411,7 +3418,7 @@
 **Hash:** `bfs_seed:proxyAdmin-ProxyAdmin`  
 **Privileged write functions:**  
 **Capabilities:** ⬆️ **UPGRADE**
-- `EIP-1967 admin slot of fxUSD` — The ProxyAdmin of fxUSD and of every other in-scope proxy, owner the Timelock. Never reached natively: the fxUSD proxy emitted no AdminChanged event, and proxyAdmin() on the other proxies is screened.
+- `EIP-1967 admin slot of fxUSD` — The ProxyAdmin of fxUSD and of the other Transparent proxies in this report; its owner is the Timelock. The address is read from fxUSD's EIP-1967 admin slot, because the fxUSD proxy has emitted no AdminChanged event.
  `[UPGRADE]`
 
 **Members (1):**
@@ -3452,7 +3459,7 @@
 **Hash:** `bfs_seed:fxUSDPriceOracle-FxUSDPriceOracle`  
 **Privileged write functions:**  
 **Capabilities:** ⚙️ **CONFIG**
-- `fxSP.fxUSDPriceOracle() and PoolConfiguration.oracle() (both screened)` — FxUSDPriceOracle (proxy, DEFAULT_ADMIN the Timelock): the fxUSD/USDC peg signal behind the borrow, redeem and funding switches, and fxSP's USDC price.
+- `fxSP.fxUSDPriceOracle() and PoolConfiguration.oracle()` — FxUSDPriceOracle (proxy, DEFAULT_ADMIN the Timelock): the fxUSD/USDC peg signal behind the borrow, redeem and funding switches, and fxSP's USDC price.
  `[CONFIG]`
 
 **Members (1):**
@@ -3559,28 +3566,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 | 4 | wstETH (WstETH) | `arg1=3380000000000000000 (3.380000e18) · arg2=0x3bF317a8BcF2C79c35C2fb63383e7d5D3ff25B06 · arg3=9107551294752913077000 (9,107.551295e18)` | `0x3bF3...5B06` | 2024-09-11 |
 | 5 | wstETH (WstETH) | `arg1=1260000000000000000 (1.260000e18) · arg2=0x84afb4B60844F8759154d6Ff7B0580Daa2D4e37d · arg3=3736560951289956283200 (3,736.560951e18)` | `0x84af...e37d` | 2024-08-29 |
 
-**`unwrap`** *(per-asset)* 🔄 **ACTIVE** (124 changes)
+**`unwrap`** *(per-asset)* 🔄 **ACTIVE** (120 changes)
 
-> ⚠️ This parameter has been changed **124 times** — monitor for unexpected modifications.
+> ⚠️ This parameter has been changed **120 times** — monitor for unexpected modifications.
 
 | Field | Value |
 |---|---|
 | Setter | `unwrap(address _baseToken, uint256 _amount, address _receiver)` |
 | Gated by | `MIGRATOR_ROLE` |
 | Tags | `SUPPLY` |
-| Last called | 2025-11-17 |
-| Called by | `0xe75e...6B0D` |
-| Total calls | 124 🔄 |
+| Last called | 2026-10-26 |
+| Called by | `0x7D34...15d4` |
+| Total calls | ≥120 🔄 |
 
-**Recent changes (showing last 5 of 124):**
+**Recent changes (showing last 5 of 120):**
 
 | # | Asset | Value | Set By | Date |
 |---|---|---|---|---|
-| 1 | wstETH (WstETH) | `1616211916545431227249 (1,616.211917e18)` | `0xe75e...6B0D` | 2025-11-17 |
-| 2 | wstETH (WstETH) | `1829862874015388597 (1.829863e18)` | `0x4137...C21F` | 2025-07-22 |
-| 3 | wstETH (WstETH) | `159442223875919154522 (159.442224e18)` | `0xc9ea...dCd6` | 2025-07-16 |
-| 4 | sfrxETH (sfrxETH) | `6818736308631752731191 (6,818.736309e18)` | `0x0BdE...f786` | 2025-04-23 |
-| 5 | sfrxETH (sfrxETH) | `4194126392690537404332 (4,194.126393e18)` | `0xfc99...e535` | 2025-04-23 |
+| 1 | sfrxETH (sfrxETH) | `190351959677049617902 (190.351960e18)` | `0x7D34...15d4` | 2026-10-26 |
+| 2 | wstETH (WstETH) | `1616211916545431227249 (1,616.211917e18)` | `0xe75e...6B0D` | 2025-11-17 |
+| 3 | wstETH (WstETH) | `1829862874015388597 (1.829863e18)` | `0x4137...C21F` | 2025-07-22 |
+| 4 | wstETH (WstETH) | `159442223875919154522 (159.442224e18)` | `0xc9ea...dCd6` | 2025-07-16 |
+| 5 | sfrxETH (sfrxETH) | `6818736308631752731191 (6,818.736309e18)` | `0x0BdE...f786` | 2025-04-23 |
 
 **`wrapFrom`** *(per-asset)* 🔄 **ACTIVE** (84 changes) 🔴 **SILENT** *(no event)*
 
@@ -3635,7 +3642,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -3658,7 +3665,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -6364,7 +6371,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `pegKeeper()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `fxBASE()` → fxSP (TransparentUpgradeableProxy), `stable()` → USDC (FiatTokenProxy), `fxUSD()` → fxUSD (TransparentUpgradeableProxy)
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `stable()` → USDC (FiatTokenProxy), `fxBASE()` → fxSP (TransparentUpgradeableProxy)
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -6518,7 +6525,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newThreshold=998000000000000000 (0.998000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-01-30 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 2 | `995000000000000000 (0.995000e18)` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > #### 💰 Supply Actions
 
@@ -14527,7 +14534,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `reservePool()` → ReservePool, `treasury()` → PlatformFeeSpliter, `miscRevenuePool()` → RevenuePool, `closeRevenuePool()` → RevenuePool, `openRevenuePool()` → RevenuePool
+> 🔒 **Immutable References:** `treasury()` → PlatformFeeSpliter, `openRevenuePool()` → RevenuePool, `reservePool()` → ReservePool, `closeRevenuePool()` → RevenuePool, `miscRevenuePool()` → RevenuePool
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -14663,7 +14670,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:configuration-PoolConfiguration`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `PoolManager.configuration (immutable)` — PoolConfiguration: fee and funding ratios, and the borrow, redeem, funding and stable-repay switches read through FxUSDPriceOracle. Same weak native edge as fxSP.
+> - `PoolManager.configuration (immutable)` — PoolConfiguration: fee and funding ratios, and the borrow, redeem, funding and stable-repay switches read through FxUSDPriceOracle.
  `[CONFIG]`
 
 > **Members (1):**
@@ -14677,7 +14684,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:fxBASE-fxSP`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `PoolManager.fxBASE (immutable)` — fxSP, the only caller of rebalance and liquidate while its supply is at least 10,000 (anyone may call below that). The native fxBASE() edge rests on the scanner's weak helper match inside _afterRebalanceOrLiquidate; the real gate, onlyFxUSDSave, is not matched. This keeps fxSP in scope if that match changes.
+> - `PoolManager.fxBASE (immutable)` — fxSP, the only caller of rebalance and liquidate while its supply is at least 10,000 (anyone may call below that). The gate is onlyFxUSDSave in PoolManager.
  `[CONFIG]`
 
 > **Members (1):**
@@ -14691,7 +14698,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:longPool-WBTC`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `PoolManager.pools (private EnumerableSet, no getter)` — WBTC long pool (AaveFundingPool), 89.64 percent of fxUSD debt. RegisterPool at block 22081079.
+> - `PoolManager.pools (private EnumerableSet, no getter)` — WBTC long pool (AaveFundingPool), most of fxUSD debt. RegisterPool at block 22081079.
  `[CONFIG]`
 
 > **Members (1):**
@@ -14719,7 +14726,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `bfs_seed:reservePool-ReservePool`  
 > **Privileged write functions:**  
 > **Capabilities:** ⚙️ **CONFIG**
-> - `PoolManager.reservePool() (screened: gates no function)` — ReservePool (not a proxy): pays liquidation bonuses (requestBonus is called only from liquidate in PoolManager and ShortPoolManager; rebalance bonuses come from pool collateral); withdrawFund is DEFAULT_ADMIN, the Timelock.
+> - `PoolManager.reservePool() (gates no function)` — ReservePool (not a proxy): pays liquidation bonuses (requestBonus is called only from liquidate in PoolManager and ShortPoolManager; rebalance bonuses come from pool collateral); withdrawFund is DEFAULT_ADMIN, the Timelock.
  `[CONFIG]`
 
 > **Members (1):**
@@ -14748,7 +14755,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -14762,7 +14769,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -14789,7 +14796,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -14803,7 +14810,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -14878,7 +14885,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 1 | `100000` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > **`getFundingExpenseRatio`** 🔴 **SILENT** *(no event)*
 
@@ -14919,7 +14926,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 1 | `newRatio=1000000` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-04-21 |
 > | 2 | `newRatio=10000000` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-01-07 |
 > | 3 | `newRatio=0` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-01-04 |
-> | 4 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 4 | `10000000` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > **`getLiquidationExpenseRatio`** 🔴 **SILENT** *(no event)*
 
@@ -15017,7 +15024,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 1 | `5000000` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > **`getRewardsExpenseRatio`** 🔴 **SILENT** *(no event)*
 
@@ -15098,7 +15105,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 1 | `10000000000000000000000 (10,000.000000e18)` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > **`reservePool`**
 
@@ -15227,7 +15234,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Field | Value |
 > |---|---|
 > | Setter | `liquidate(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)` |
-> | Gated by | `fxBASE(), configuration(), fxUSD()` |
+> | Gated by | `fxUSD(), configuration(), fxBASE()` |
 > | Tags | `SUPPLY` |
 > | Last called | 2025-07-28 |
 > | Called by | `0xBeD8...A7CF` |
@@ -15243,28 +15250,28 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 4 | xWBTC (TransparentUpgradeableProxy) | `0` | `0xBeD8...A7CF` | 2025-07-28 |
 > | 5 | xWBTC (TransparentUpgradeableProxy) | `0` | `0xBeD8...A7CF` | 2025-07-28 |
 
-> **`rebalance`** *(per-asset)* 🔄 **ACTIVE** (5259 changes)
+> **`rebalance`** *(per-asset)* 🔄 **ACTIVE** (5593 changes)
 
-> > ⚠️ This parameter has been changed **5259 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **5593 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)` |
-> | Gated by | `fxBASE(), configuration(), fxUSD()` |
+> | Gated by | `fxUSD(), configuration(), fxBASE()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-10-12 |
-> | Called by | `0x12E6...8F88` |
-> | Total calls | 5259 🔄 |
+> | Last called | 2026-11-15 |
+> | Called by | `0x93A0...3ba4` |
+> | Total calls | 5593 🔄 |
 
-> **Recent changes (showing last 5 of 5259):**
+> **Recent changes (showing last 5 of 5593):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | xWBTC (TransparentUpgradeableProxy) | `0` | `0x12E6...8F88` | 2026-10-12 |
-> | 2 | xstETH (TransparentUpgradeableProxy) | `0` | `0x12E6...8F88` | 2026-10-08 |
-> | 3 | xstETH (TransparentUpgradeableProxy) | `0` | `0x3aF2...ae94` | 2026-10-08 |
-> | 4 | xstETH (TransparentUpgradeableProxy) | `0` | `0x0250...B9b6` | 2026-10-08 |
-> | 5 | xstETH (TransparentUpgradeableProxy) | `0` | `0x27a8...Dbc7` | 2026-10-08 |
+> | 1 | xWBTC (TransparentUpgradeableProxy) | `0` | `0x93A0...3ba4` | 2026-11-15 |
+> | 2 | xstETH (TransparentUpgradeableProxy) | `0` | `0xB7c8...DD20` | 2026-11-15 |
+> | 3 | xWBTC (TransparentUpgradeableProxy) | `0` | `0xEadD...A69b` | 2026-11-15 |
+> | 4 | xstETH (TransparentUpgradeableProxy) | `0` | `0xB7c8...DD20` | 2026-11-15 |
+> | 5 | xstETH (TransparentUpgradeableProxy) | `0` | `0x3A8f...ea78` | 2026-11-15 |
 
 > **`redeemForSettle`** *(per-asset)* ❄️ **DORMANT**
 
@@ -15378,7 +15385,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -15407,7 +15414,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -15435,7 +15442,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -15470,7 +15477,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x0c5c61025f047cb7e3e85852dc8eafd7b9a4abfb"></a>
 ## > StETHPriceOracle `0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb`
 
-> *3 roles · 2 members · 6 functions*
+> *3 roles · 2 members · 5 functions*
 
 > > ⚡ **Inherited authority** [CONFIG] — via `priceOracle-longPool-wstETH` on **FxUSDRegeneracy**
 
@@ -15484,7 +15491,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Capabilities:** ⚙️ **CONFIG**
 > - `renounceOwnership()` — Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner.
 > - `transferOwnership(address newOwner)` — Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
-> - `updateOnchainSpotEncodings(bytes memory encodings)` — Update the on-chain spot encodings.
 > - `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` — Update the value of maximum price deviation.
 > - `updateOnchainSpotEncodings(bytes memory encodings, uint256 spotType)` — Update the on-chain spot encodings.
 > - `acceptOwnership()` — Second step of `OZ Ownable2Step` — callable by the pending holder set via `transferOwnership`, not by the current role. Included here to surface the full transfer handoff. `[CONFIG]`
@@ -15528,13 +15534,13 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-03-17 |
+> | 1 | `10000000000000000 (0.010000e18)` | `0xa1d0...a468` (EOA) | 2025-03-17 |
 
 ---
 <a id="c-0xb3c90e64eb6f456a5f5c17aa99b6aeca6f4a6390"></a>
 ## > WBTCPriceOracle `0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390`
 
-> *2 roles · 1 member · 7 functions*
+> *2 roles · 1 member · 6 functions*
 
 > > ⚡ **Inherited authority** [CONFIG] — via `priceOracle-longPool-WBTC` on **FxUSDRegeneracy**
 
@@ -15548,7 +15554,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > - `transferOwnership(address newOwner)` — Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
 > - `updateOnchainSpotEncodings(bytes memory encodings)` — Update the on-chain spot encodings.
 > - `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` — Update the value of maximum price deviation.
-> - `updateOnchainSpotEncodings(bytes memory encodings, uint256 spotType)` — Update the on-chain spot encodings.
 > - `updateMaxWBTCDeviation(uint256 newMaxWBTCDeviation)` — Update the value of maximum WBTC deviation.
 > - `acceptOwnership()` — Second step of `OZ Ownable2Step` — callable by the pending holder set via `transferOwnership`, not by the current role. Included here to surface the full transfer handoff. `[CONFIG]`
 
@@ -15591,8 +15596,8 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `10000000000000000 (0.010000e18)` | `0xa1d0...a468` (EOA) | 2025-03-17 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-03-17 |
+> | 1 | `20000000000000000 (0.020000e18)` | `0xa1d0...a468` (EOA) | 2025-03-17 |
+> | 2 | `10000000000000000 (0.010000e18)` | `0xa1d0...a468` (EOA) | 2025-03-17 |
 
 > **`maxWBTCDeviation`**
 
@@ -15610,7 +15615,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-03-17 |
+> | 1 | `20000000000000000 (0.020000e18)` | `0xa1d0...a468` (EOA) | 2025-03-17 |
 
 ---
 <a id="c-0xc2312caf0de62ec9b4adc785c79851cb989c9abc"></a>
@@ -15641,7 +15646,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -15664,7 +15669,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -17087,7 +17092,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newDePegDeviation=2000000000000000 (0.002000e18) · newUpPegDeviation=2000000000000000 (0.002000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-07-24 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 2 | `2000000000000000 (0.002000e18)` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 > **`maxUpPegPriceDeviation`**
 
@@ -17106,7 +17111,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newDePegDeviation=2000000000000000 (0.002000e18) · newUpPegDeviation=2000000000000000 (0.002000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-07-24 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 2 | `2000000000000000 (0.002000e18)` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 ---
 <a id="c-0xed803540037b0ae069c93420f89cd653b6e3df1f"></a>
@@ -17697,7 +17702,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -17766,7 +17771,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -17843,7 +17848,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `_baseTokenCap=20000000000000000000000 (20,000.000000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2024-03-21 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 2 | `10000000000000000000000 (10,000.000000e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`getHarvesterRatio`**
 
@@ -17861,7 +17866,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 1 | `10000000` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`getRebalancePoolRatio`**
 
@@ -17880,7 +17885,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `_newRatio=990000000` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-01-02 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 2 | `500000000` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`platform`**
 
@@ -17972,7 +17977,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0x38a9...fe99` (EOA) | 2024-02-27 |
+> | 1 | `3256988856830000000000 (3,256.988857e18)` | `0x38a9...fe99` (EOA) | 2024-02-27 |
 
 > **`strategy`** ❄️ **DORMANT**
 
@@ -18633,7 +18638,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -18702,7 +18707,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -18780,8 +18785,8 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|---|---|
 > | 1 | `_baseTokenCap=5000000000000000000000 (5,000.000000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2024-04-19 |
 > | 2 | `_baseTokenCap=10000000000000000000000 (10,000.000000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2024-03-21 |
-> | 3 | `10000000000000000000000 (10,000.000000e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
-> | 4 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 3 | `5000000000000000000000 (5,000.000000e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 4 | `10000000000000000000000 (10,000.000000e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`getHarvesterRatio`**
 
@@ -18799,7 +18804,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 1 | `10000000` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`getRebalancePoolRatio`**
 
@@ -18818,7 +18823,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `_newRatio=990000000` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-01-02 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 2 | `500000000` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`platform`**
 
@@ -18910,7 +18915,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0x38a9...fe99` (EOA) | 2024-02-27 |
+> | 1 | `3240652520326128373477 (3,240.652520e18)` | `0x38a9...fe99` (EOA) | 2024-02-27 |
 
 > **`strategy`** ❄️ **DORMANT**
 
@@ -18986,7 +18991,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x87d5e4caaf4358a4337c10859c7107c7aef4f8ce"></a>
 ## > ProtocolTreasury `0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce`
 
-> *10 roles · 8 members · 10 functions*
+> *10 roles · 8 members · 8 functions*
 
 > > ⚠️ **Upgradeable** (TransparentUpgradeable) — impl: `0x253d0C045eE4fB6F2707Fe7d1Fcd0ef036E032A9`
 
@@ -18997,7 +19002,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | 1 | 2025-10-31 | Upgrade | `0x253d...32A9` | Initial deployment | [0x25cba1775c135933077b3ad070bcbdfbc07631bb30ccfdb311debce62fbd87a0](https://etherscan.io/tx/0x25cba1775c135933077b3ad070bcbdfbc07631bb30ccfdb311debce62fbd87a0) |
 > | 2 | 2025-10-31 | Admin Changed | `0x9B54...DDA4` | Previous: `0x0000...0000` | [0x25cba1775c135933077b3ad070bcbdfbc07631bb30ccfdb311debce62fbd87a0](https://etherscan.io/tx/0x25cba1775c135933077b3ad070bcbdfbc07631bb30ccfdb311debce62fbd87a0) |
 
-> > 💰 **Inherited supply authority** — holds `pegKeeper()` on **FxUSDRegeneracy**, `BUYBACK_ROLE` on **PegKeeper**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `BUYBACK_ROLE` on **PegKeeper**, upstream of `pegKeeper()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -19041,7 +19046,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -19055,7 +19060,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -19077,7 +19082,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -19087,7 +19092,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `0xa7c777b85fc58675e1f97f547c6d0658b5454f6e82d1930f8a36716c5ac0de05`  
 > **Managed by:** `DEFAULT_ADMIN_ROLE`  
 > **Privileged write functions:**
-> - `buyback(uint256 amountIn, bytes calldata data)` — Buyback fxUSD with stable reserve in FxUSDSave.
 > - `buyback(address pegKeeper, uint256 amountIn, bytes calldata data)` — Buyback fxUSD with stable reserve in FxUSDSave.
 
 > **Members (1):**
@@ -19137,7 +19141,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Hash:** `0x90ba4e11ad240e3543d2e8a32e330be1330b184ccfcddfdcf9cefb7f695dc7ca`  
 > **Managed by:** `DEFAULT_ADMIN_ROLE`  
 > **Privileged write functions:**
-> - `stabilize(address srcToken, uint256 amountIn, bytes calldata data)` — Stabilize the fxUSD price in curve pool.
 > - `stabilize(address pegKeeper, address srcToken, uint256 amountIn, bytes calldata data)` — Stabilize the fxUSD price in curve pool.
 
 > **Members (1):**
@@ -19172,7 +19175,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -19183,7 +19186,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *1 role · 1 member · 0 functions*
 
-> > 💰 **Inherited supply authority** — holds `pegKeeper()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `converter()` on **PegKeeper**, upstream of `pegKeeper()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `converter()` → GeneralTokenConverter
 
@@ -19193,7 +19196,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *4 roles · 4 members · 2 functions*
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `DEBT_REDUCER_ROLE` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `DEBT_REDUCER_ROLE` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `poolManager()` → TransparentUpgradeableProxy
 
@@ -19220,7 +19223,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -21944,9 +21947,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `configuration()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `configuration()` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `SHORT_POOL_MANAGER()` → TransparentUpgradeableProxy, `oracle()` → TransparentUpgradeableProxy, `POOL_MANAGER()` → TransparentUpgradeableProxy, `AAVE_LENDING_POOL()` → Contract, `FXUSD_BASE_POOL()` → fxSP (TransparentUpgradeableProxy), `AAVE_BASE_ASSET()` → USDC (FiatTokenProxy)
+> 🔒 **Immutable References:** `SHORT_POOL_MANAGER()` → TransparentUpgradeableProxy, `FXUSD_BASE_POOL()` → fxSP (TransparentUpgradeableProxy), `AAVE_BASE_ASSET()` → USDC (FiatTokenProxy), `POOL_MANAGER()` → TransparentUpgradeableProxy, `oracle()` → TransparentUpgradeableProxy, `AAVE_LENDING_POOL()` → Contract
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -22111,7 +22114,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 1 | `995000000000000000 (0.995000e18)` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 ---
 <a id="c-0xacdc0ab51178d0ae8f70c1ead7d3cf5421fdd66d"></a>
@@ -27476,9 +27479,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `counterparty()` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `reservePool()` → ReservePool, `treasury()` → PlatformFeeSpliter, `counterparty()` → TransparentUpgradeableProxy, `configuration()` → TransparentUpgradeableProxy, `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `miscRevenuePool()` → RevenuePool, `closeRevenuePool()` → RevenuePool, `openRevenuePool()` → RevenuePool
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `treasury()` → PlatformFeeSpliter, `counterparty()` → TransparentUpgradeableProxy, `openRevenuePool()` → RevenuePool, `reservePool()` → ReservePool, `closeRevenuePool()` → RevenuePool, `miscRevenuePool()` → RevenuePool
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -27584,7 +27587,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -27598,7 +27601,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -27632,7 +27635,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -27658,7 +27661,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -27782,7 +27785,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 1 | `1000000` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 > | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 > **`getLiquidationExpenseRatio`** 🔴 **SILENT** *(no event)*
@@ -28101,7 +28104,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x65c9a641afceb9c0e6034e558a319488fa0fa3be"></a>
 ## > FxUSDBasePool `0x65C9A641afCEB9C0E6034e558A319488FA0FA3be`
 
-> *10 roles · 13 members · 11 functions*
+> *10 roles · 15 members · 11 functions*
 
 > > ⚠️ **Upgradeable** (TransparentUpgradeable) — impl: `0x9CFeFD90d4C8428D4CBaC9bAAA6D52C6BA7897f9`
 
@@ -36263,7 +36266,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `fxBASE()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `fxBASE()` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `fxUSDPriceOracle()` → TransparentUpgradeableProxy, `poolManager()` → TransparentUpgradeableProxy
 
@@ -36313,7 +36316,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > **Delay history for `TimelockController (3d)` (0x6886...E61a):** 3d → 3d
 
-### > 🟠 `NO_INSTANT_REDEEM_FEE_ROLE` 🔄 5 changes
+### > 🔴 `NO_INSTANT_REDEEM_FEE_ROLE` 🔄 9 changes
 
 > **Hash:** `0x522a3e82a506d706a025772fecc3caa3af4986c00ba0d31cb2fa5d31b66b296d`  
 > **Managed by:** `DEFAULT_ADMIN_ROLE`  
@@ -36321,21 +36324,29 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Capabilities:** 💰 **SUPPLY**
 > - `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` — Redeem pool shares instantly without withdraw fee. `[SUPPLY]`
 
-> **Members (5):**
+> **Members (7):**
 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
 > | `0x26B2ec4E02ebe2F54583af25b647b1D619e67BbF` | [↳ Gnosis Safe 6/9](#c-0x26b2ec4e02ebe2f54583af25b647b1d619e67bbf) | 🟢 LOW | 2025-11-04 | Events only · hasRole ✓ | 6/9 signers |
 > | `0x33636D49FbefBE798e15e7F356E8DBef543CC708` | [↳ Diamond](#c-0x33636d49fbefbe798e15e7f356e8dbef543cc708) | 🟠 HIGH | 2025-11-04 | Events only · hasRole ✓ |  |
+> | `0x547090EB068220b3Da1F7b611ef21723Caa4121e` | EOA | 🔴 CRITICAL | 2026-10-15 | Events only · hasRole ✓ | ⚠️ Single private key |
+> | `0x61b09116D341C6cc45513F29FE3B6C13fE3699A3` | EOA | 🔴 CRITICAL | 2026-10-19 🆕 | Events only · hasRole ✓ | ⚠️ Single private key |
 > | `0xA0FB1b11ccA5871fb0225B64308e249B97804E99` | [↳ Gnosis Safe 6/9](#c-0xa0fb1b11cca5871fb0225b64308e249b97804e99) | 🟢 LOW | 2025-11-04 | Events only · hasRole ✓ | 6/9 signers |
 > | `0xFC08757c505eA28709dF66E54870fB6dE09f0C5E` | [↳ Gnosis Safe 6/9](#c-0xfc08757c505ea28709df66e54870fb6de09f0c5e) | 🟢 LOW | 2025-11-04 | Events only · hasRole ✓ | 6/9 signers |
 > | `0xc40549aa1D05C30af23a1C4a5af6bA11FCAFe23F` | [↳ Gnosis Safe 6/9](#c-0xc40549aa1d05c30af23a1c4a5af6ba11fcafe23f) | 🟢 LOW | 2025-11-04 | Events only · hasRole ✓ | 6/9 signers |
+
+> **🕘 Previous Holders (1)** _(verified inactive — `hasRole`/`is` returned false)_:
+
+> | Address | Name / Type | Granted | Status |
+> |---|---|---|---|
+> | `0x4Ef75e307f7EDbf0462C679192C1FF7E911c389a` | fxLOOP (LagoonVaultProxy) | 2026-10-15 | 🕘 HISTORICAL |
 
 > **Signers of `Gnosis Safe 6/9` (0x26B2...7BbF):**
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -36349,7 +36360,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x8EcAB7B8ed8215cA52500cbf1548B9239173ef82` | EOA | — | EOA |
 > | `0xeF0Ca09fbf9a5f61E657Fb208b46b8685c1d4766` | EOA | — | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
@@ -36363,7 +36374,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x8EcAB7B8ed8215cA52500cbf1548B9239173ef82` | EOA | — | EOA |
 > | `0xeF0Ca09fbf9a5f61E657Fb208b46b8685c1d4766` | EOA | — | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
@@ -36379,7 +36390,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|---|---|
 > | `0x8EcAB7B8ed8215cA52500cbf1548B9239173ef82` | EOA | 2021-09-01 | EOA |
 > | `0xeF0Ca09fbf9a5f61E657Fb208b46b8685c1d4766` | EOA | 2021-09-01 | EOA |
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | 2021-09-01 | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | 2021-09-01 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | 2021-09-01 | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xcdF067F306E7a511Ef701588AFCdcff292B19282` | EOA | 2023-12-26 | EOA |
@@ -36421,7 +36432,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -36435,7 +36446,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -36520,7 +36531,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newPeriod=3600` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-06-18 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 2 | `1800` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > **`stableDepegPrice`**
 
@@ -36538,57 +36549,57 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 1 | `995000000000000000 (0.995000e18)` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > #### 💰 Supply Actions
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (174 changes)
+> **`deposit`** *(per-asset)* 🔄 **ACTIVE** (633 changes)
 
-> > ⚠️ This parameter has been changed **174 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **633 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `deposit(address receiver, address tokenIn, uint256 amountTokenToDeposit, uint256 minSharesOut)` |
 > | Gated by | `stableToken()` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-10-12 |
-> | Called by | `0x4215...4779` (EOA) |
-> | Total calls | 174 🔄 |
+> | Last called | 2026-11-15 |
+> | Called by | `0xB1e6...28dC` |
+> | Total calls | 633 🔄 |
 
-> **Recent changes (showing last 5 of 174):**
+> **Recent changes (showing last 5 of 633):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | f(x) USD Saving | `4786471796313352098519 (4,786.471796e18)` | `0x4215...4779` (EOA) | 2026-10-12 |
-> | 2 | Diamond | `3958932012558134782304 (3,958.932013e18)` | `0x1Ef3...8B73` | 2026-10-12 |
-> | 3 | Bundler3 | `9897330042853597678 (9.897330e18)` | `0x32Fb...bA24` | 2026-10-12 |
-> | 4 | EnsoShortcuts | `1580662991823976670 (1.580663e18)` | `0x427C...A7E7` | 2026-10-12 |
-> | 5 | Bundler3 | `346431044727831089108458 (346,431.044728e18)` | `0x61b0...99A3` | 2026-10-12 |
+> | 1 | SY f(x) USD Saving | `3324179495567747547071 (3,324.179496e18)` | `0xB1e6...28dC` | 2026-11-15 |
+> | 2 | fxSAVE (TransparentUpgradeableProxy) | `3093422777077804422378 (3,093.422777e18)` | `0x4215...4779` (EOA) | 2026-11-15 |
+> | 3 | SY f(x) USD Saving | `830435671681735388210 (830.435672e18)` | `0xF23D...7400` | 2026-11-15 |
+> | 4 | fxSAVE (TransparentUpgradeableProxy) | `5258645538586684099308 (5,258.645539e18)` | `0x4215...4779` (EOA) | 2026-11-15 |
+> | 5 | SY f(x) USD Saving | `1905790728112419256476 (1,905.790728e18)` | `0x4f54...01a6` | 2026-11-15 |
 
-> **`instantRedeemNoFee`** *(per-asset)* 🔄 **ACTIVE** (407 changes)
+> **`instantRedeemNoFee`** *(per-asset)* 🔄 **ACTIVE** (443 changes)
 
-> > ⚠️ This parameter has been changed **407 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **443 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` |
 > | Gated by | `NO_INSTANT_REDEEM_FEE_ROLE` |
 > | Tags | `SUPPLY` |
-> | Last called | 2026-10-12 |
-> | Called by | `0x32Fb...bA24` |
-> | Total calls | 407 🔄 |
+> | Last called | 2026-11-15 |
+> | Called by | `0x6506...Dd50` |
+> | Total calls | 443 🔄 |
 
-> **Recent changes (showing last 5 of 407):**
+> **Recent changes (showing last 5 of 443):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | Bundler3 | `296835` | `0x32Fb...bA24` | 2026-10-12 |
-> | 2 | EOA | `29751` | `0x61b0...99A3` | 2026-10-12 |
-> | 3 | Gnosis Safe 6/9 | `amountSharesToRedeem=111151067267294571242267 (111,151.067267e18)` | `0xc405...e23F` (Gnosis Safe 6/9) | 2026-10-10 |
-> | 4 | EOA | `274471` | `0xaC46...d279` | 2026-10-09 |
-> | 5 | Diamond | `84418` | `0x9432...Cc51` | 2026-10-07 |
+> | 1 | GnosisSafeProxy | `14496700684` | `0x6506...Dd50` | 2026-11-15 |
+> | 2 | Diamond | `30960629` | `0xA844...fc25` | 2026-11-14 |
+> | 3 | EOA | `15079064` | `0xbEa8...3895` | 2026-11-10 |
+> | 4 | EOA | `1795242` | `0x0494...a00f` | 2026-11-10 |
+> | 5 | Gnosis Safe 6/9 | `amountSharesToRedeem=72655191728407816940124 (72,655.191728e18)` | `0xc405...e23F` (Gnosis Safe 6/9) | 2026-11-09 |
 
 ---
 <a id="c-0x6ecfa38fee8a5277b91efda204c235814f0122e8"></a>
@@ -42652,9 +42663,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `longPool-wstETH` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `counterparty()` → sstETH (TransparentUpgradeableProxy), `collateralToken()` → wstETH (WstETH), `configuration()` → TransparentUpgradeableProxy, `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `priceOracle()` → StETHPriceOracle
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `counterparty()` → sstETH (TransparentUpgradeableProxy), `collateralToken()` → wstETH (WstETH), `priceOracle()` → StETHPriceOracle
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -42741,7 +42752,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -42755,7 +42766,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -42780,7 +42791,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -42948,7 +42959,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newOracle=0x0C5C61025f047cB7e3e85852dC8eAFd7b9a4Abfb` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2025-03-19 |
-> | 2 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-01-01 |
+> | 2 | `0x3716352d57C2e48EEdB56Ee0712Ef29E0c2f3069` | `0xa1d0...a468` (EOA) | 2025-01-01 |
 
 > #### 💰 Supply Actions
 
@@ -46360,9 +46371,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `longPool-WBTC` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `counterparty()` → sWBTC (TransparentUpgradeableProxy), `collateralToken()` → WBTC (WBTC), `configuration()` → TransparentUpgradeableProxy, `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `priceOracle()` → WBTCPriceOracle
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `counterparty()` → sWBTC (TransparentUpgradeableProxy), `collateralToken()` → WBTC (WBTC), `priceOracle()` → WBTCPriceOracle
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -46455,7 +46466,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -46469,7 +46480,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -46494,7 +46505,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -46652,7 +46663,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-03-17 |
+> | 1 | `0xb3c90e64EB6f456A5F5C17Aa99b6aecA6f4a6390` | `0xa1d0...a468` (EOA) | 2025-03-17 |
 
 > #### 💰 Supply Actions
 
@@ -46692,7 +46703,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *2 roles · 3 members · 2 functions*
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `reservePool-ReservePool` on **PoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 ### > 🟢 `DEFAULT_ADMIN_ROLE` 🔄 5 changes
 
@@ -46735,7 +46746,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0xad9a0e7c08bc9f747df97a3e7e7f620632cb6155"></a>
 ## > MarketV2 `0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155`
 
-> *13 roles · 12 members · 18 functions*
+> *13 roles · 12 members · 16 functions*
 
 > > ⚠️ **Upgradeable** (TransparentUpgradeable) — impl: `0x184B6AEd8d975385e0aD02E026D649208a3C58A4`
 
@@ -48091,9 +48102,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-wstETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-wstETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `fToken()` → fstETH (TransparentUpgradeableProxy), `xToken()` → xstETH (TransparentUpgradeableProxy), `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `baseToken()` → wstETH (WstETH)
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `treasury()` → TransparentUpgradeableProxy, `baseToken()` → wstETH (WstETH), `fToken()` → fstETH (TransparentUpgradeableProxy), `xToken()` → xstETH (TransparentUpgradeableProxy)
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -48119,7 +48130,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Managed by:** `DEFAULT_ADMIN_ROLE`  
 > **Privileged write functions:**
 > - `updateReservePool(address _newReservePool)` — Change address of reserve pool contract.
-> - `updateRedeemFeeRatio(uint32 newRatio)` — Update the redeem fee ratio.
 > - `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)` — Update the redeem fee ratio.
 > - `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)` — Update the fee ratio for minting.
 > - `updateStabilityRatio(uint256 _newRatio)` — Update the stability ratio.
@@ -48143,7 +48153,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -48188,7 +48198,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -48225,7 +48235,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 ### > 🟠 `reservePool()`
 
 > **Privileged write functions:**
-> - `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` — Initialize the state of LiquidityGauge.
 > - `updateReservePool(address _newReservePool)` — Change address of reserve pool contract.
 > - `initialize(address _platform, address _reservePool, address _registry)` — Initialize the state of LiquidityGauge.
 
@@ -48234,17 +48243,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
 > | `0xb592E01dd77084b36430ffCB9c9D2F76fDE32631` | [↳ ReservePoolV2](#c-0xb592e01dd77084b36430ffcb9c9d2f76fde32631) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `treasury()`
-
-> **Privileged write functions:**
-> - `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` — Initialize the state of LiquidityGauge.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xED803540037B0ae069c93420F89Cd653B6e3Df1f` | [↳ TransparentUpgradeableProxy](#c-0xed803540037b0ae069c93420f89cd653b6e3df1f) | 🟠 HIGH | — | Storage only |  |
 
 > #### 🔧 Permissioned Parameters
 
@@ -48386,7 +48384,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `0x86e987a89Fd7345457d97b9e82906f346D61Df39` |
 > | Setter | `initialize(address _platform, address _reservePool, address _registry)` |
-> | Gated by | `reservePool(), platform(), registry()` |
+> | Gated by | `registry(), reservePool(), platform()` |
 > | Tags | — |
 > | Last changed | 2024-02-23 |
 > | Changed by | `0xa1d0...a468` (EOA) |
@@ -48450,7 +48448,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 1 | `1305500000000000000 (1.305500e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`xTokenMintFeeRatio`** 🔄 **ACTIVE** (11 changes)
 
@@ -48518,9 +48516,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`redeemFToken`** *(per-asset)* 🔄 **ACTIVE** (100 changes)
+> **`redeemFToken`** *(per-asset)* 🔄 **ACTIVE** (105 changes)
 
-> > ⚠️ This parameter has been changed **100 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **105 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
@@ -48529,9 +48527,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | `SUPPLY` |
 > | Last called | 2026-09-06 |
 > | Called by | `0x4659...467b` |
-> | Total calls | 100 🔄 |
+> | Total calls | ≥105 🔄 |
 
-> **Recent changes (showing last 5 of 100):**
+> **Recent changes (showing last 5 of 105):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
@@ -48552,7 +48550,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | `SUPPLY` |
 > | Last called | 2025-11-16 |
 > | Called by | `0xA066...035C` |
-> | Total calls | 100 🔄 |
+> | Total calls | ≥100 🔄 |
 
 > **Recent changes (showing last 5 of 100):**
 
@@ -48570,7 +48568,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *4 roles · 3 members · 5 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-wstETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `priceOracle()` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-wstETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `Chainlink_ETH_USD_Twap()` → ETH-USD (FxChainlinkTwapOracle), `Curve_ETH_stETH_Pool()` → stETH-ng-f
 
@@ -48596,7 +48594,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -48619,7 +48617,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -48648,7 +48646,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newMaxPriceDeviation=20000000000000000 (0.020000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2024-05-16 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2024-05-14 |
+> | 2 | `10000000000000000 (0.010000e18)` | `0xa1d0...a468` (EOA) | 2024-05-14 |
 
 ---
 <a id="c-0x81a777c4ab65229d1bf64dae4c831bdf628ccc7f"></a>
@@ -48656,7 +48654,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *1 role · 1 member · 0 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-wstETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `rateProvider()` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-wstETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `wstETH()` → wstETH (WstETH)
 
@@ -48664,7 +48662,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 <a id="c-0x714b853b3ba73e439c652cfe79660f329e6ebb42"></a>
 ## > MarketV2 `0x714B853b3bA73E439c652CfE79660F329E6ebB42`
 
-> *13 roles · 12 members · 18 functions*
+> *13 roles · 12 members · 16 functions*
 
 > > ⚠️ **Upgradeable** (TransparentUpgradeable) — impl: `0x910D63e04CA41B9E349c8CAba12e7ECae5E11A74`
 
@@ -50020,9 +50018,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-sfrxETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-sfrxETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `fToken()` → ffrxETH (TransparentUpgradeableProxy), `xToken()` → xfrxETH (TransparentUpgradeableProxy), `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `baseToken()` → sfrxETH (sfrxETH)
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `treasury()` → TransparentUpgradeableProxy, `baseToken()` → sfrxETH (sfrxETH), `fToken()` → ffrxETH (TransparentUpgradeableProxy), `xToken()` → xfrxETH (TransparentUpgradeableProxy)
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -50048,7 +50046,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > **Managed by:** `DEFAULT_ADMIN_ROLE`  
 > **Privileged write functions:**
 > - `updateReservePool(address _newReservePool)` — Change address of reserve pool contract.
-> - `updateRedeemFeeRatio(uint32 newRatio)` — Update the redeem fee ratio.
 > - `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)` — Update the redeem fee ratio.
 > - `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)` — Update the fee ratio for minting.
 > - `updateStabilityRatio(uint256 _newRatio)` — Update the stability ratio.
@@ -50072,7 +50069,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -50117,7 +50114,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -50154,7 +50151,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 ### > 🟠 `reservePool()`
 
 > **Privileged write functions:**
-> - `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` — Initialize the state of LiquidityGauge.
 > - `updateReservePool(address _newReservePool)` — Change address of reserve pool contract.
 > - `initialize(address _platform, address _reservePool, address _registry)` — Initialize the state of LiquidityGauge.
 
@@ -50163,17 +50159,6 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Address | Name / Type | Risk | Granted | Source | Details |
 > |---|---|---|---|---|---|
 > | `0xb592E01dd77084b36430ffCB9c9D2F76fDE32631` | [↳ ReservePoolV2](#c-0xb592e01dd77084b36430ffcb9c9d2f76fde32631) | 🟠 HIGH | — | Storage only |  |
-
-### > 🟠 `treasury()`
-
-> **Privileged write functions:**
-> - `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` — Initialize the state of LiquidityGauge.
-
-> **Members (1):**
-
-> | Address | Name / Type | Risk | Granted | Source | Details |
-> |---|---|---|---|---|---|
-> | `0xcfEEfF214b256063110d3236ea12Db49d2dF2359` | [↳ TransparentUpgradeableProxy](#c-0xcfeeff214b256063110d3236ea12db49d2df2359) | 🟠 HIGH | — | Storage only |  |
 
 > #### 🔧 Permissioned Parameters
 
@@ -50315,7 +50300,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > |---|---|
 > | Current Value | `0x345a345DAd48c3504113539ce83c0cB765627B54` |
 > | Setter | `initialize(address _platform, address _reservePool, address _registry)` |
-> | Gated by | `reservePool(), platform(), registry()` |
+> | Gated by | `registry(), reservePool(), platform()` |
 > | Tags | — |
 > | Last changed | 2024-02-23 |
 > | Changed by | `0xa1d0...a468` (EOA) |
@@ -50379,7 +50364,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0` | `0xa1d0...a468` (EOA) | 2024-02-23 |
+> | 1 | `1305500000000000000 (1.305500e18)` | `0xa1d0...a468` (EOA) | 2024-02-23 |
 
 > **`xTokenMintFeeRatio`** 🔄 **ACTIVE** (10 changes)
 
@@ -50447,34 +50432,34 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > _Mint / redeem / burn call tracking — last 5 calls per function, total counts preserved._
 
-> **`redeemFToken`** *(per-asset)* 🔄 **ACTIVE** (135 changes)
+> **`redeemFToken`** *(per-asset)* 🔄 **ACTIVE** (143 changes)
 
 > > ⚠️ **Over-counted history** — the 5 retained history rows resolve to only 4 distinct transaction(s), so some rows are duplicate records of the same call. Treat the change count as an upper bound.
 
-> > ⚠️ This parameter has been changed **135 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **143 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
 > | Setter | `redeemFToken(uint256 _fTokenIn, address _recipient, uint256 _minBaseOut)` |
 > | Gated by | `MIGRATOR_ROLE` |
 > | Tags | `SUPPLY` |
-> | Last called | 2025-04-23 |
-> | Called by | `0x0BdE...f786` |
-> | Total calls | 135 🔄 |
+> | Last called | 2026-10-26 |
+> | Called by | `0x7D34...15d4` |
+> | Total calls | ≥143 🔄 |
 
-> **Recent changes (showing last 5 of 135):**
+> **Recent changes (showing last 5 of 143):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
-> | 1 | fxUSD (TransparentUpgradeableProxy) | `8701385350204336 (0.008701e18)` | `0x0BdE...f786` | 2025-04-23 |
-> | 2 | fxUSD (TransparentUpgradeableProxy) | `5350053690966855 (0.005350e18)` | `0xfc99...e535` | 2025-04-23 |
-> | 3 | fxUSD (TransparentUpgradeableProxy) | `10822294438262264 (0.010822e18)` | `0xfc99...e535` | 2025-04-23 |
-> | 4 | fxUSD (TransparentUpgradeableProxy) | `6094630323580503 (0.006095e18)` | `0x0BdE...f786` | 2025-04-22 |
-> | 5 | fxUSD (TransparentUpgradeableProxy) | `35993938044483143 (0.035994e18)` | `0xfc99...e535` | 2025-04-22 |
+> | 1 | fxUSD (TransparentUpgradeableProxy) | `175736758412308` | `0x7D34...15d4` | 2026-10-26 |
+> | 2 | fxUSD (TransparentUpgradeableProxy) | `8701385350204336 (0.008701e18)` | `0x0BdE...f786` | 2025-04-23 |
+> | 3 | fxUSD (TransparentUpgradeableProxy) | `5350053690966855 (0.005350e18)` | `0xfc99...e535` | 2025-04-23 |
+> | 4 | fxUSD (TransparentUpgradeableProxy) | `10822294438262264 (0.010822e18)` | `0xfc99...e535` | 2025-04-23 |
+> | 5 | fxUSD (TransparentUpgradeableProxy) | `6094630323580503 (0.006095e18)` | `0x0BdE...f786` | 2025-04-22 |
 
-> **`redeemXToken`** *(per-asset)* 🔄 **ACTIVE** (101 changes)
+> **`redeemXToken`** *(per-asset)* 🔄 **ACTIVE** (107 changes)
 
-> > ⚠️ This parameter has been changed **101 times** — monitor for unexpected modifications.
+> > ⚠️ This parameter has been changed **107 times** — monitor for unexpected modifications.
 
 > | Field | Value |
 > |---|---|
@@ -50483,9 +50468,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | Tags | `SUPPLY` |
 > | Last called | 2026-06-21 |
 > | Called by | `0x92Fd...740B` |
-> | Total calls | 101 🔄 |
+> | Total calls | ≥107 🔄 |
 
-> **Recent changes (showing last 5 of 101):**
+> **Recent changes (showing last 5 of 107):**
 
 > | # | Asset | Value | Set By | Date |
 > |---|---|---|---|---|
@@ -50501,9 +50486,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *4 roles · 3 members · 5 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-sfrxETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `priceOracle()` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-sfrxETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `Curve_ETH_frxETH_Pool()` → frxeth-ng-f, `Chainlink_ETH_USD_Twap()` → ETH-USD (FxChainlinkTwapOracle)
+> 🔒 **Immutable References:** `Chainlink_ETH_USD_Twap()` → ETH-USD (FxChainlinkTwapOracle), `Curve_ETH_frxETH_Pool()` → frxeth-ng-f
 
 > ✅ **Two-step admin transfer:** `OZ Ownable2Step` — prevents accidental hand-off (request → accept flow).
 
@@ -50527,7 +50512,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -50550,7 +50535,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -50579,7 +50564,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
 > | 1 | `newMaxPriceDeviation=20000000000000000 (0.020000e18)` | `0x26B2...7BbF` (Gnosis Safe 6/9) | 2024-05-16 |
-> | 2 | `0` | `0xa1d0...a468` (EOA) | 2024-05-14 |
+> | 2 | `10000000000000000 (0.010000e18)` | `0xa1d0...a468` (EOA) | 2024-05-14 |
 
 ---
 <a id="c-0x7ced6167b5a08111dc8d0d2f9f7e482c4da62506"></a>
@@ -50587,7 +50572,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *1 role · 1 member · 0 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-sfrxETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `rateProvider()` on **WrappedTokenTreasuryV2**, upstream of `v1Treasury-sfrxETH` on **FxUSDRegeneracy**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `vault()` → sfrxETH (sfrxETH)
 
@@ -50597,7 +50582,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *4 roles · 4 members · 2 functions*
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `DEBT_REDUCER_ROLE` on **ShortPoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
 
 > 🔒 **Immutable References:** `poolManager()` → TransparentUpgradeableProxy
 
@@ -50624,7 +50609,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -53330,9 +53315,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `shortPool-wstETH` on **ShortPoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `debtToken()` → wstETH (WstETH), `counterparty()` → xstETH (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `priceOracle()` → InverseWstETHPriceOracle, `creditNote()` → wstETH-CN (TransparentUpgradeableProxy)
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `creditNote()` → wstETH-CN (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `debtToken()` → wstETH (WstETH), `counterparty()` → xstETH (TransparentUpgradeableProxy), `priceOracle()` → InverseWstETHPriceOracle
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -53421,7 +53406,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -53435,7 +53420,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -53460,7 +53445,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -53483,7 +53468,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 1 | `0x6Ecfa38FeE8a5277B91eFdA204c235814F0122E8` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 > **`getDebtRatioRange`**
 
@@ -53606,7 +53591,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-07-19 |
+> | 1 | `0x222786833b5fd5eE21532d8b576391bAbeFdAAd1` | `0xa1d0...a468` (EOA) | 2025-07-19 |
 
 > #### 💰 Supply Actions
 
@@ -54923,9 +54908,9 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > </details>
 
-> > 💰 **Inherited supply authority** — holds `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `shortPool-WBTC` on **ShortPoolManager**, upstream of `poolManager()` on **FxUSDRegeneracy**, `counterparty()` on **PoolManager**. Access controls on this contract gate root token supply.
 
-> 🔒 **Immutable References:** `debtToken()` → WBTC (WBTC), `counterparty()` → xWBTC (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `priceOracle()` → InversePriceOracle, `creditNote()` → WBTC-CN (TransparentUpgradeableProxy)
+> 🔒 **Immutable References:** `fxUSD()` → fxUSD (TransparentUpgradeableProxy), `creditNote()` → WBTC-CN (TransparentUpgradeableProxy), `configuration()` → TransparentUpgradeableProxy, `debtToken()` → WBTC (WBTC), `counterparty()` → xWBTC (TransparentUpgradeableProxy), `priceOracle()` → InversePriceOracle
 
 ### > 🔴 `upgradeability (TransparentUpgradeable)`
 
@@ -55014,7 +54999,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55028,7 +55013,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55053,7 +55038,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-05-13 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55076,7 +55061,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-07-25 |
+> | 1 | `0xAB709e26Fa6B0A30c119D8c55B887DeD24952473` | `0xa1d0...a468` (EOA) | 2025-07-25 |
 
 > **`getDebtRatioRange`**
 
@@ -55199,7 +55184,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | # | Value | Set By | Date |
 > |---|---|---|---|
-> | 1 | `0x0000000000000000000000000000000000000000` | `0xa1d0...a468` (EOA) | 2025-07-25 |
+> | 1 | `0x5d2c6215555B36889ef235c6d5cCDE22E9964e6a` | `0xa1d0...a468` (EOA) | 2025-07-25 |
 
 > #### 💰 Supply Actions
 
@@ -55254,7 +55239,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *2 roles · 1 member · 5 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-wstETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `registry()` on **MarketV2**, upstream of `v1Treasury-wstETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
 
 > ✅ **Two-step admin transfer:** `OZ Ownable2Step` — prevents accidental hand-off (request → accept flow).
 
@@ -55278,7 +55263,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55301,7 +55286,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55338,7 +55323,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *2 roles · 8 members · 3 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-wstETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `reservePool()` on **MarketV2**, upstream of `v1Treasury-wstETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
 
 ### > 🟢 `DEFAULT_ADMIN_ROLE`
 
@@ -55364,7 +55349,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55434,7 +55419,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > *2 roles · 1 member · 5 functions*
 
-> > 💰 **Inherited supply authority** — holds `v1Treasury-sfrxETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
+> > 💰 **Inherited supply authority** — holds `registry()` on **MarketV2**, upstream of `v1Treasury-sfrxETH` on **FxUSDRegeneracy**, `FX_MARKET_ROLE` on **WrappedTokenTreasuryV2**. Access controls on this contract gate root token supply.
 
 > ✅ **Two-step admin transfer:** `OZ Ownable2Step` — prevents accidental hand-off (request → accept flow).
 
@@ -55458,7 +55443,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55481,7 +55466,7 @@ _Mint / redeem / burn call tracking — last 5 calls per function, total counts 
 
 > | Signer | Type | Owner Since | Notes |
 > |---|---|---|---|
-> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,374 txs) | — | EOA |
+> | `0x38a93e70b0D8343657f802C1c3Fdb06aC8F8fe99` | EOA ⚠️ Hot wallet (4,446 txs) | — | EOA |
 > | `0x85DB62FdFA9Ee6050f8b422F74D75D2069dA102B` | EOA | 2025-04-16 | EOA |
 > | `0xe3522d85d37F55735e9327CD7a5cDe3abaf28E03` | EOA | — | EOA |
 > | `0x74390470F4001Ca85D93bD546A4Ab1724359654B` | EOA | — | EOA |
@@ -55525,12 +55510,12 @@ Controls **40 role(s)** across **20 contract(s)**
 | FxUSDRegeneracy `0x0857...d8f6` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | PegKeeper `0x5056...cd70` | `DEFAULT_ADMIN_ROLE` | `updateConverter(address newConverter)`, `updateCurvePool(address newPool)`, `updatePriceThreshold(uint256 newThreshold)` | 2026-04-20 |
 | PegKeeper `0x5056...cd70` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| PoolManager `0x2508...CD24` | `DEFAULT_ADMIN_ROLE` | `registerPool(address pool, uint96 collateralCapacity, uint96 debtCapacity)`, `updateRateProvider(address token, address provider)`, `updatePoolCapacity(address pool, uint96 collateralCapacity, uint96 debtCapacity)`, `updateThreshold(uint256 newThreshold)` +12 more | 2026-04-20 |
 | PoolManager `0x2508...CD24` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
+| PoolManager `0x2508...CD24` | `DEFAULT_ADMIN_ROLE` | `registerPool(address pool, uint96 collateralCapacity, uint96 debtCapacity)`, `updateRateProvider(address token, address provider)`, `updatePoolCapacity(address pool, uint96 collateralCapacity, uint96 debtCapacity)`, `updateThreshold(uint256 newThreshold)` +12 more | 2026-04-20 |
 | PoolManager `0x2508...CD24` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2026-04-20 |
 | PoolManager `0x2508...CD24` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| StETHPriceOracle `0x0C5C...Abfb` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateOnchainSpotEncodings(bytes memory encodings)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` +2 more | — |
-| WBTCPriceOracle `0xb3c9...6390` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateOnchainSpotEncodings(bytes memory encodings)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` +3 more | — |
+| StETHPriceOracle `0x0C5C...Abfb` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)`, `updateOnchainSpotEncodings(bytes memory encodings, uint256 spotType)` +1 more | — |
+| WBTCPriceOracle `0xb3c9...6390` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateOnchainSpotEncodings(bytes memory encodings)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` +2 more | — |
 | FxUSDPriceOracle `0x3eC6...53Fa` | `DEFAULT_ADMIN_ROLE` | `updateCurvePool(address newPool)`, `updateMaxPriceDeviation(uint256 newDePegDeviation, uint256 newUpPegDeviation)` | 2026-04-20 |
 | FxUSDPriceOracle `0x3eC6...53Fa` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | ProxyAdmin `0x9B54...DDA4` | `owner()` | `changeProxyAdmin(TransparentUpgradeableProxy proxy, address newAdmin)`, `upgrade(TransparentUpgradeableProxy proxy, address implementation)`, `upgradeAndCall(TransparentUpgradeableProxy proxy, address implementation, bytes memory data)`, `renounceOwnership()` +1 more | — |
@@ -55539,13 +55524,13 @@ Controls **40 role(s)** across **20 contract(s)**
 | ProtocolTreasury `0x87d5...f8Ce` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | PoolConfiguration `0x16b3...C28d` | `DEFAULT_ADMIN_ROLE` | `updatePoolFeeRatio(address pool, address recipient, uint256 supplyRatio, uint256 supplyRatioStep, uint256 withdrawFeeRatio, uint256 borrowFeeRatio, uint256 repayFeeRatio)`, `updateLongFundingRatioParameter(address pool, uint64 scalarA, uint64 scalarB, uint64 maxFxUSDratio)`, `updateShortFundingRatioParameter(address pool, uint64 scalarC, uint64 maxBorrowRatio)`, `updateStableDepegPrice(uint256 newStableDepegPrice)` +1 more | 2026-04-20 |
 | PoolConfiguration `0x16b3...C28d` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| ShortPoolManager `0xaCDc...d66D` | `POOL_KILLER_ROLE` | `killPool(address pool)`, `settleKillPool(address pool, uint256 colls)` | 2026-04-20 |
-| ShortPoolManager `0xaCDc...d66D` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateTreasury(address _newTreasury)`, `updateOpenRevenuePool(address _newPool)`, `updateCloseRevenuePool(address _newPool)` +12 more | 2026-04-20 |
 | ShortPoolManager `0xaCDc...d66D` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
+| ShortPoolManager `0xaCDc...d66D` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateTreasury(address _newTreasury)`, `updateOpenRevenuePool(address _newPool)`, `updateCloseRevenuePool(address _newPool)` +12 more | 2026-04-20 |
 | ShortPoolManager `0xaCDc...d66D` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2026-04-20 |
+| ShortPoolManager `0xaCDc...d66D` | `POOL_KILLER_ROLE` | `killPool(address pool)`, `settleKillPool(address pool, uint256 colls)` | 2026-04-20 |
 | ShortPoolManager `0xaCDc...d66D` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
-| FxUSDBasePool `0x65C9...A3be` | `DEFAULT_ADMIN_ROLE` | `updateStableDepegPrice(uint256 newPrice)`, `updateRedeemCoolDownPeriod(uint256 newPeriod)`, `updateInstantRedeemFeeRatio(uint256 newRatio)`, `kill(address asset)` +1 more | 2026-04-20 |
 | FxUSDBasePool `0x65C9...A3be` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
+| FxUSDBasePool `0x65C9...A3be` | `DEFAULT_ADMIN_ROLE` | `updateStableDepegPrice(uint256 newPrice)`, `updateRedeemCoolDownPeriod(uint256 newPeriod)`, `updateInstantRedeemFeeRatio(uint256 newRatio)`, `kill(address asset)` +1 more | 2026-04-20 |
 | FxUSDBasePool `0x65C9...A3be` | `upgradeability (TransparentUpgradeable)` | `upgradeTo(address)`, `upgradeToAndCall(address,bytes)` | — |
 | AaveFundingPool `0x6Ecf...22E8` | `DEFAULT_ADMIN_ROLE` | `updateDebtRatioRange(uint256 minRatio, uint256 maxRatio)`, `updateMaxRedeemRatioPerTick(uint256 ratio)`, `updateRebalanceRatios(uint256 debtRatio, uint256 bonusRatio)`, `updateLiquidateRatios(uint256 debtRatio, uint256 bonusRatio)` +1 more | 2026-04-20 |
 | AaveFundingPool `0x6Ecf...22E8` | `EMERGENCY_ROLE` | `updateBorrowAndRedeemStatus(bool borrowStatus, bool redeemStatus)`, `updatePriceOracle(address newOracle)` | 2026-04-20 |
@@ -55571,25 +55556,25 @@ Controls **30 role(s)** across **22 contract(s)**
 | FxUSDBasePoolFacet `0x3363...C708` | `upgradeability (Diamond (EIP-2535))` | `diamondCut((address,uint8,bytes4[])[],address,bytes)` | — |
 | PoolManager `0x2508...CD24` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2025-03-19 |
 | PoolManager `0x2508...CD24` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2025-04-23 |
+| TimelockController `0x6886...E61a` | `CANCELLER_ROLE` | `cancel(bytes32 id)` | 2026-04-06 |
 | TimelockController `0x6886...E61a` | `PROPOSER_ROLE` | `schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt, uint256 delay)`, `scheduleBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt, uint256 delay)` | 2026-04-06 |
 | TimelockController `0x6886...E61a` | `EXECUTOR_ROLE` | `execute(address target, uint256 value, bytes calldata payload, bytes32 predecessor, bytes32 salt)`, `executeBatch(address[] calldata targets, uint256[] calldata values, bytes[] calldata payloads, bytes32 predecessor, bytes32 salt)` | 2026-04-06 |
-| TimelockController `0x6886...E61a` | `CANCELLER_ROLE` | `cancel(bytes32 id)` | 2026-04-06 |
 | SpotPriceOracle `0xc231...9abc` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateReader(uint256 poolType, address newReader)`, `acceptOwnership()` | — |
-| WrappedTokenTreasuryV2 `0xED80...Df1f` | `DEFAULT_ADMIN_ROLE` | `updateStrategy(address _strategy)`, `updatePriceOracle(address _priceOracle)`, `updateBaseTokenCap(uint256 _baseTokenCap)`, `updateEMASampleInterval(uint24 _sampleInterval)` +5 more | 2024-02-26 |
 | WrappedTokenTreasuryV2 `0xED80...Df1f` | `SETTLE_WHITELIST_ROLE` | `settle()` | 2024-02-27 |
-| WrappedTokenTreasuryV2 `0xcfEE...2359` | `DEFAULT_ADMIN_ROLE` | `updateStrategy(address _strategy)`, `updatePriceOracle(address _priceOracle)`, `updateBaseTokenCap(uint256 _baseTokenCap)`, `updateEMASampleInterval(uint24 _sampleInterval)` +5 more | 2024-02-26 |
+| WrappedTokenTreasuryV2 `0xED80...Df1f` | `DEFAULT_ADMIN_ROLE` | `updateStrategy(address _strategy)`, `updatePriceOracle(address _priceOracle)`, `updateBaseTokenCap(uint256 _baseTokenCap)`, `updateEMASampleInterval(uint24 _sampleInterval)` +5 more | 2024-02-26 |
 | WrappedTokenTreasuryV2 `0xcfEE...2359` | `SETTLE_WHITELIST_ROLE` | `settle()` | 2024-02-27 |
+| WrappedTokenTreasuryV2 `0xcfEE...2359` | `DEFAULT_ADMIN_ROLE` | `updateStrategy(address _strategy)`, `updatePriceOracle(address _priceOracle)`, `updateBaseTokenCap(uint256 _baseTokenCap)`, `updateEMASampleInterval(uint24 _sampleInterval)` +5 more | 2024-02-26 |
 | ProtocolTreasury `0x87d5...f8Ce` | `DEFAULT_ADMIN_ROLE` | `withdraw(address baseToken, address recipient)` | 2025-10-31 |
 | DebtReducer `0xF32f...61aC` | `DEFAULT_ADMIN_ROLE` | `withdraw(address baseToken, address recipient)` | 2025-07-24 |
 | ShortPoolManager `0xaCDc...d66D` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2025-07-24 |
-| FxUSDBasePool `0x65C9...A3be` | `NO_INSTANT_REDEEM_FEE_ROLE` | `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` | 2025-11-04 |
 | FxUSDBasePool `0x65C9...A3be` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2025-03-19 |
+| FxUSDBasePool `0x65C9...A3be` | `NO_INSTANT_REDEEM_FEE_ROLE` | `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)` | 2025-11-04 |
 | AaveFundingPool `0x6Ecf...22E8` | `EMERGENCY_ROLE` | `updateBorrowAndRedeemStatus(bool borrowStatus, bool redeemStatus)`, `updatePriceOracle(address newOracle)` | 2025-01-07 |
 | AaveFundingPool `0xAB70...2473` | `EMERGENCY_ROLE` | `updateBorrowAndRedeemStatus(bool borrowStatus, bool redeemStatus)`, `updatePriceOracle(address newOracle)` | 2025-03-19 |
-| MarketV2 `0xAD9A...6155` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateRedeemFeeRatio(uint32 newRatio)`, `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)`, `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)` +4 more | 2024-02-26 |
+| MarketV2 `0xAD9A...6155` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)`, `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)`, `updateStabilityRatio(uint256 _newRatio)` +3 more | 2024-02-26 |
 | MarketV2 `0xAD9A...6155` | `EMERGENCY_DAO_ROLE` | `updateMintStatus(bool _newStatus)`, `updateRedeemStatus(bool _newStatus)`, `updateFTokenMintStatusInStabilityMode(bool _newStatus)`, `updateXTokenRedeemStatusInStabilityMode(bool _newStatus)` | 2024-02-27 |
 | FxStETHOracleV2 `0x83bD...3D20` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateOnchainSpotEncodings(bytes memory encodings, uint256 spotType)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` +1 more | — |
-| MarketV2 `0x714B...bB42` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateRedeemFeeRatio(uint32 newRatio)`, `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)`, `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)` +4 more | 2024-02-26 |
+| MarketV2 `0x714B...bB42` | `DEFAULT_ADMIN_ROLE` | `updateReservePool(address _newReservePool)`, `updateRedeemFeeRatio(uint256 _defaultFeeRatio, int256 _extraFeeRatio, bool _isFToken)`, `updateMintFeeRatio(uint128 _defaultFeeRatio, int128 _extraFeeRatio, bool _isFToken)`, `updateStabilityRatio(uint256 _newRatio)` +3 more | 2024-02-26 |
 | MarketV2 `0x714B...bB42` | `EMERGENCY_DAO_ROLE` | `updateMintStatus(bool _newStatus)`, `updateRedeemStatus(bool _newStatus)`, `updateFTokenMintStatusInStabilityMode(bool _newStatus)`, `updateXTokenRedeemStatusInStabilityMode(bool _newStatus)` | 2024-02-27 |
 | FxFrxETHOracleV2 `0xffe5...d793` | `owner()` | `renounceOwnership()`, `transferOwnership(address newOwner)`, `updateOnchainSpotEncodings(bytes memory encodings, uint256 spotType)`, `updateMaxPriceDeviation(uint256 newMaxPriceDeviation)` +1 more | — |
 | DebtReducer `0x2AC0...7Cb4` | `DEFAULT_ADMIN_ROLE` | `withdraw(address baseToken, address recipient)` | 2025-07-24 |
@@ -55606,12 +55591,12 @@ Controls **17 role(s)** across **8 contract(s)**
 |---|---|---|---|
 | PoolManager `0x2508...CD24` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
 | PoolManager `0x2508...CD24` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2025-04-23 |
-| ProtocolTreasury `0x87d5...f8Ce` | `DEFAULT_ADMIN_ROLE` | `withdraw(address baseToken, address recipient)` | 2025-11-04 |
 | ProtocolTreasury `0x87d5...f8Ce` | `TOKEN_RECEIVER_ROLE` | `batchTransfer(address token, address[] calldata receivers, uint256[] calldata amounts)` | 2025-11-04 |
+| ProtocolTreasury `0x87d5...f8Ce` | `DEFAULT_ADMIN_ROLE` | `withdraw(address baseToken, address recipient)` | 2025-11-04 |
 | ProtocolTreasury `0x87d5...f8Ce` | `BATCH_TRANSFER_ROLE` | `batchTransfer(address token, address[] calldata receivers, uint256[] calldata amounts)` | 2025-11-04 |
-| ShortPoolManager `0xaCDc...d66D` | `POOL_KILLER_ROLE` | `killPool(address pool)`, `settleKillPool(address pool, uint256 colls)` | 2025-07-24 |
 | ShortPoolManager `0xaCDc...d66D` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
 | ShortPoolManager `0xaCDc...d66D` | `EMERGENCY_ROLE` | `setPause(bool status)` | 2025-07-24 |
+| ShortPoolManager `0xaCDc...d66D` | `POOL_KILLER_ROLE` | `killPool(address pool)`, `settleKillPool(address pool, uint256 colls)` | 2025-07-24 |
 | FxUSDBasePool `0x65C9...A3be` | `ASSET_MANAGER_ROLE` | `manage(address asset, uint256 amount)` | 2026-04-20 |
 | AaveFundingPool `0x6Ecf...22E8` | `TREE_COMPRESS_ROLE` | `getRootNodeAndCompress(uint256 node)` | 2025-11-04 |
 | AaveFundingPool `0x6Ecf...22E8` | `EMERGENCY_ROLE` | `updateBorrowAndRedeemStatus(bool borrowStatus, bool redeemStatus)`, `updatePriceOracle(address newOracle)` | 2025-01-07 |
@@ -55690,6 +55675,14 @@ Controls **3 role(s)** across **3 contract(s)**
 | WrappedTokenTreasuryV2 `0xcfEE...2359` | `rebalancePoolSplitter()` | `updateRebalancePoolSplitter(address _splitter)`, `initialize(address _platform, address _rebalancePoolSplitter, address _rateProvider, address _priceOracle, uint256 _baseTokenCap, uint24 sampleInterval)` | — |
 | ProtocolTreasury `0x87d5...f8Ce` | `TOKEN_RECEIVER_ROLE` | `batchTransfer(address token, address[] calldata receivers, uint256[] calldata amounts)` | 2025-11-04 |
 
+### 🟠 `0x50562fe7e870420F5AAe480B7F94EB4ace2fcd70` — TransparentUpgradeableProxy
+Controls **2 role(s)** across **2 contract(s)**
+
+| Contract | Role | Privileged Functions | Granted |
+|---|---|---|---|
+| FxUSDRegeneracy `0x0857...d8f6` | `pegKeeper()` | `buyback(uint256 amountIn, address receiver, bytes calldata data)` | — |
+| FxUSDBasePool `0x65C9...A3be` | `pegKeeper()` | `arbitrage(address srcToken, uint256 amountIn, address receiver, bytes calldata data)` | — |
+
 ### 🟠 `0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0` — wstETH (WstETH)
 Controls **2 role(s)** across **2 contract(s)**
 
@@ -55705,30 +55698,6 @@ Controls **2 role(s)** across **2 contract(s)**
 |---|---|---|---|
 | FxUSDRegeneracy `0x0857...d8f6` | `market()` | `wrapFrom(address _pool, uint256 _amount, address _receiver)` | — |
 | WrappedTokenTreasuryV2 `0xcfEE...2359` | `baseToken()` | `initializeProtocol(uint256 _baseIn)` | — |
-
-### 🟠 `0x50562fe7e870420F5AAe480B7F94EB4ace2fcd70` — TransparentUpgradeableProxy
-Controls **2 role(s)** across **2 contract(s)**
-
-| Contract | Role | Privileged Functions | Granted |
-|---|---|---|---|
-| FxUSDRegeneracy `0x0857...d8f6` | `pegKeeper()` | `buyback(uint256 amountIn, address receiver, bytes calldata data)` | — |
-| FxUSDBasePool `0x65C9...A3be` | `pegKeeper()` | `arbitrage(address srcToken, uint256 amountIn, address receiver, bytes calldata data)` | — |
-
-### 🟠 `0xED803540037B0ae069c93420F89Cd653B6e3Df1f` — TransparentUpgradeableProxy
-Controls **2 role(s)** across **2 contract(s)**
-
-| Contract | Role | Privileged Functions | Granted |
-|---|---|---|---|
-| FxUSDRegeneracy `0x0857...d8f6` | `v1Treasury-wstETH` | `fxUSD.markets(wstETH).treasury (public mapping getter keyed by base token; no zero-argument getter)` | — |
-| MarketV2 `0xAD9A...6155` | `treasury()` | `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` | — |
-
-### 🟠 `0xcfEEfF214b256063110d3236ea12Db49d2dF2359` — TransparentUpgradeableProxy
-Controls **2 role(s)** across **2 contract(s)**
-
-| Contract | Role | Privileged Functions | Granted |
-|---|---|---|---|
-| FxUSDRegeneracy `0x0857...d8f6` | `v1Treasury-sfrxETH` | `fxUSD.markets(sfrxETH).treasury (public mapping getter keyed by base token; no zero-argument getter)` | — |
-| MarketV2 `0x714B...bB42` | `treasury()` | `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)` | — |
 
 ### 🟠 `0x87d5e4cAaF4358A4337C10859c7107c7AEF4f8Ce` — TransparentUpgradeableProxy
 Controls **2 role(s)** across **1 contract(s)**
@@ -55754,14 +55723,6 @@ Controls **2 role(s)** across **2 contract(s)**
 | PoolManager `0x2508...CD24` | `HARVESTER_ROLE` | `harvest(address pool)` | 2025-01-07 |
 | ShortPoolManager `0xaCDc...d66D` | `HARVESTER_ROLE` | `harvest(address pool)` | 2025-07-19 |
 
-### 🟠 `0x65C9A641afCEB9C0E6034e558A319488FA0FA3be` — fxSP (TransparentUpgradeableProxy)
-Controls **2 role(s)** across **1 contract(s)**
-
-| Contract | Role | Privileged Functions | Granted |
-|---|---|---|---|
-| PoolManager `0x2508...CD24` | `fxBASE()` | `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)`, `rebalance(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)`, `liquidate(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)` | — |
-| PoolManager `0x2508...CD24` | `fxBASE-fxSP` | `PoolManager.fxBASE (immutable)` | — |
-
 ### 🟠 `0x16b334f2644cc00b85DB1A1efF0C2C395e00C28d` — TransparentUpgradeableProxy
 Controls **2 role(s)** across **1 contract(s)**
 
@@ -55769,6 +55730,14 @@ Controls **2 role(s)** across **1 contract(s)**
 |---|---|---|---|
 | PoolManager `0x2508...CD24` | `configuration()` | `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)`, `rebalance(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)`, `liquidate(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)` | — |
 | PoolManager `0x2508...CD24` | `configuration-PoolConfiguration` | `PoolManager.configuration (immutable)` | — |
+
+### 🟠 `0x65C9A641afCEB9C0E6034e558A319488FA0FA3be` — fxSP (TransparentUpgradeableProxy)
+Controls **2 role(s)** across **1 contract(s)**
+
+| Contract | Role | Privileged Functions | Granted |
+|---|---|---|---|
+| PoolManager `0x2508...CD24` | `fxBASE()` | `rebalance(address pool, address receiver, int16 tick, uint256 maxFxUSD, uint256 maxStable)`, `rebalance(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)`, `liquidate(address pool, address receiver, uint256 maxFxUSD, uint256 maxStable)` | — |
+| PoolManager `0x2508...CD24` | `fxBASE-fxSP` | `PoolManager.fxBASE (immutable)` | — |
 
 ### 🟠 `0xAD9A0E7C08bc9F747dF97a3E7E7f620632CB6155` — TransparentUpgradeableProxy
 Controls **2 role(s)** across **2 contract(s)**
@@ -55791,16 +55760,16 @@ Controls **2 role(s)** across **1 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| ProtocolTreasury `0x87d5...f8Ce` | `STABILIZE_ROLE` | `stabilize(address srcToken, uint256 amountIn, bytes calldata data)`, `stabilize(address pegKeeper, address srcToken, uint256 amountIn, bytes calldata data)` | 2026-04-30 |
-| ProtocolTreasury `0x87d5...f8Ce` | `BUYBACK_ROLE` | `buyback(uint256 amountIn, bytes calldata data)`, `buyback(address pegKeeper, uint256 amountIn, bytes calldata data)` | 2026-04-30 |
+| ProtocolTreasury `0x87d5...f8Ce` | `STABILIZE_ROLE` | `stabilize(address pegKeeper, address srcToken, uint256 amountIn, bytes calldata data)` | 2026-04-30 |
+| ProtocolTreasury `0x87d5...f8Ce` | `BUYBACK_ROLE` | `buyback(address pegKeeper, uint256 amountIn, bytes calldata data)` | 2026-04-30 |
 
 ### 🟠 `0xb592E01dd77084b36430ffCB9c9D2F76fDE32631` — ReservePoolV2
 Controls **2 role(s)** across **2 contract(s)**
 
 | Contract | Role | Privileged Functions | Granted |
 |---|---|---|---|
-| MarketV2 `0xAD9A...6155` | `reservePool()` | `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)`, `updateReservePool(address _newReservePool)`, `initialize(address _platform, address _reservePool, address _registry)` | — |
-| MarketV2 `0x714B...bB42` | `reservePool()` | `initialize(address admin, uint256 _expenseRatio, uint256 _harvesterRatio, uint256 _flashLoanFeeRatio, address _treasury, address _revenuePool, address _reservePool)`, `updateReservePool(address _newReservePool)`, `initialize(address _platform, address _reservePool, address _registry)` | — |
+| MarketV2 `0xAD9A...6155` | `reservePool()` | `updateReservePool(address _newReservePool)`, `initialize(address _platform, address _reservePool, address _registry)` | — |
+| MarketV2 `0x714B...bB42` | `reservePool()` | `updateReservePool(address _newReservePool)`, `initialize(address _platform, address _reservePool, address _registry)` | — |
 
 
 ---
@@ -55808,9 +55777,9 @@ Controls **2 role(s)** across **2 contract(s)**
 
 | Source | Status |
 |---|---|
-| OFAC SDN | ✅ OFAC SDN screened (124 ETH addresses, cache: 2026-10-12) |
+| OFAC SDN | ✅ OFAC SDN screened (127 ETH addresses, cache: 2026-11-15) |
 | Chainalysis | ✅ Chainalysis screened |
-| **Result** | 84 addresses screened · ✅ 0 flagged |
+| **Result** | 87 addresses screened · ✅ 0 flagged |
 
 ---
 ## EOA Exposure Summary
@@ -55824,13 +55793,17 @@ The following roles are held by EOAs:
 - **PoolManager** → `HARVESTER_ROLE` held by EOA `0x11E91BB6d1334585AA37D8F4fde3932C7960B938`
   Functions: `harvest(address pool)`
 - **ProtocolTreasury** → `STABILIZE_ROLE` held by EOA `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13`
-  Functions: `stabilize(address srcToken, uint256 amountIn, bytes calldata data)`, `stabilize(address pegKeeper, address srcToken, uint256 amountIn, bytes calldata data)`
+  Functions: `stabilize(address pegKeeper, address srcToken, uint256 amountIn, bytes calldata data)`
 - **ProtocolTreasury** → `BUYBACK_ROLE` held by EOA `0xcDcB516937F95c18a98Dd70458afB64E3C43dC13`
-  Functions: `buyback(uint256 amountIn, bytes calldata data)`, `buyback(address pegKeeper, uint256 amountIn, bytes calldata data)`
+  Functions: `buyback(address pegKeeper, uint256 amountIn, bytes calldata data)`
 - **DebtReducer** → `PERMISSIONED_TRADER_ROLE` held by EOA `0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779`
   Functions: `swapAndReduceDebt(address pool, uint256 amountIn, address baseToken, address targetToken, TradingParameter memory params)`
 - **ShortPoolManager** → `HARVESTER_ROLE` held by EOA `0x11E91BB6d1334585AA37D8F4fde3932C7960B938`
   Functions: `harvest(address pool)`
+- **FxUSDBasePool** → `NO_INSTANT_REDEEM_FEE_ROLE` held by EOA `0x547090EB068220b3Da1F7b611ef21723Caa4121e`
+  Functions: `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)`
+- **FxUSDBasePool** → `NO_INSTANT_REDEEM_FEE_ROLE` held by EOA `0x61b09116D341C6cc45513F29FE3B6C13fE3699A3`
+  Functions: `instantRedeemNoFee(address receiver, uint256 amountSharesToRedeem)`
 - **DebtReducer** → `PERMISSIONED_TRADER_ROLE` held by EOA `0x4215F2014239Cf0E1A8617b31Fcaf88AaC6e4779`
   Functions: `swapAndReduceDebt(address pool, uint256 amountIn, address baseToken, address targetToken, TradingParameter memory params)`
 
